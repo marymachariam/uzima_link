@@ -1,0 +1,10 @@
+# Backend ignores
+uzima-link-backend/venv/
+uzima-link-backend/__pycache__/
+uzima-link-backend/*.db
+uzima-link-backend/.env
+
+# Frontend ignores
+uzima-link-frontend/.next/
+uzima-link-frontend/node_modules/
+uzima-link-frontend/.env.local
