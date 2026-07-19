@@ -1,0 +1,73 @@
+.shell {
+  min-height: 100vh;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  background: rgba(2, 6, 23, 0.6);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logoDot {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.brandName {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.navLink {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navLink:hover {
+  color: #34d399;
+}
+
+.operator {
+  text-align: right;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.operatorName {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.operatorMeta {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.logoutLink {
+  font-size: 0.8rem;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}

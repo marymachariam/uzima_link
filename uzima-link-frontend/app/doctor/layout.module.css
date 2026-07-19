@@ -1,0 +1,114 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 15rem;
+  flex-shrink: 0;
+  background: rgba(2, 6, 23, 0.6);
+  border-right: 1px solid rgba(51, 65, 85, 0.5);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.logoDot {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.brandName {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.navItem,
+.navItemActive {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.navItem:hover {
+  background: rgba(51, 65, 85, 0.3);
+}
+
+.navItemActive {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-weight: 600;
+}
+
+.footer {
+  border-top: 1px solid rgba(51, 65, 85, 0.5);
+  padding-top: 1rem;
+}
+
+.doctorInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.doctorAvatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.doctorName {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.doctorFacility {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.logoutLink {
+  font-size: 0.8rem;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0 0.5rem;
+}
+
+.content {
+  flex: 1;
+  padding: 2rem 2.5rem;
+}
