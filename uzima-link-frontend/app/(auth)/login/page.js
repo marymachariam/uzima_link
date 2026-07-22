@@ -26,7 +26,6 @@ export default function LoginPage() {
       if (response.role === "patient") router.push("/patient");
       else if (response.role === "doctor") router.push("/doctor");
       else router.push("/kiosk");
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -40,12 +39,22 @@ export default function LoginPage() {
         <h1 className={styles.title}>Log in</h1>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          <input type="email" placeholder="Email" value={email}
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={styles.input} required />
-          <input type="password" placeholder="Password" value={password}
+            className={styles.input}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={styles.input} required />
+            className={styles.input}
+            required
+          />
 
           {error && <p className={styles.error}>{error}</p>}
 
@@ -55,7 +64,15 @@ export default function LoginPage() {
         </form>
 
         <p className={styles.footer}>
-          No account? <a href="/register" className={styles.link}>Register here</a>
+          No account?{" "}
+          <a href="/register" className={styles.link}>
+            Register here
+          </a>
+        </p>
+        <p className={styles.footer}>
+          <a href="/forgot-password" className={styles.link}>
+            Forgot your password?
+          </a>
         </p>
       </div>
     </div>

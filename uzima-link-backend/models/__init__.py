@@ -4,3 +4,4 @@ from models.visit import Visit
 from models.clinical_entity import ClinicalEntity
 from models.allergy import Allergy
 from models.user import User
+from models.password_reset import PasswordResetToken

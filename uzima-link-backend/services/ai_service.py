@@ -16,7 +16,25 @@ def transcribe_audio(audio_file_path: str) -> str:
     Takes a path to an audio file, returns the raw transcript
     in whatever language the patient spoke.
     """
-    uploaded_file = client.files.upload(file=audio_file_path)
+    file_size = os.path.getsize(audio_file_path)
+    print(f"[DEBUG] Uploading audio file: {audio_file_path}, size: {file_size} bytes")
+
+    ext = os.path.splitext(audio_file_path)[1].lower()
+    mime_map = {
+        ".webm": "audio/webm",
+        ".mp3": "audio/mp3",
+        ".m4a": "audio/mp4",
+        ".wav": "audio/wav",
+        ".ogg": "audio/ogg",
+    }
+    mime_type = mime_map.get(ext, "audio/webm")
+    print(f"[DEBUG] Using mime_type: {mime_type}")
+
+    uploaded_file = client.files.upload(
+        file=audio_file_path,
+        config={"mime_type": mime_type}
+    )
+    print(f"[DEBUG] Initial state: {uploaded_file.state.name}, reported mime: {uploaded_file.mime_type}")
 
     max_wait_seconds = 30
     waited = 0
@@ -24,6 +42,8 @@ def transcribe_audio(audio_file_path: str) -> str:
         time.sleep(1)
         waited += 1
         uploaded_file = client.files.get(name=uploaded_file.name)
+
+    print(f"[DEBUG] Final state after {waited}s: {uploaded_file.state.name}")
 
     if uploaded_file.state.name != "ACTIVE":
         raise Exception("AUDIO_PROCESSING_FAILED")

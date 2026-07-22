@@ -65,3 +65,15 @@ export function getFacilityNotes(facilityId) {
 export function updatePatientProfile(patientId, data) {
   return apiRequest(`/patients/${patientId}`, { method: "PATCH", body: data });
 }
+
+export function getRecentRegistrations(limit = 5) {
+  return apiRequest(`/patients/notifications/recent?limit=${limit}`, { method: "GET" });
+}
+
+export function forgotPassword(email) {
+  return apiRequest("/auth/forgot-password", { method: "POST", body: { email }, auth: false });
+}
+
+export function resetPassword(token, newPassword) {
+  return apiRequest("/auth/reset-password", { method: "POST", body: { token, new_password: newPassword }, auth: false });
+}

@@ -63,3 +63,32 @@ def login(data: schemas.LoginRequest, db: Session = Depends(get_db)):
 
     token = auth_service.create_access_token(token_data)
     return {"access_token": token, "role": user.role}
+
+import services.email_service as email_service
+
+
+@router.post("/forgot-password")
+def forgot_password(data: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = user_repository.get_user_by_email(db, data.email)
+    if user:
+        reset_token = user_repository.create_password_reset_token(db, user.id)
+        try:
+            email_service.send_password_reset_email(user.email, reset_token.token)
+        except Exception as e:
+            print(f"Failed to send reset email: {e}")
+
+    # Always return the same message, whether or not the email exists —
+    # this prevents leaking which emails are registered in the system
+    return {"message": "If an account exists with that email, a reset link has been sent."}
+
+
+@router.post("/reset-password")
+def reset_password(data: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
+    reset_token = user_repository.get_valid_reset_token(db, data.token)
+    if not reset_token:
+        raise HTTPException(status_code=400, detail="This reset link is invalid or has expired.")
+
+    user_repository.update_user_password(db, reset_token.user, auth_service.hash_password(data.new_password))
+    user_repository.mark_token_used(db, reset_token)
+
+    return {"message": "Password reset successfully."}

@@ -44,6 +44,7 @@ def _serialize_visit(visit: models.Visit) -> dict:
     data["attending_doctor_name"] = visit.attending_doctor.full_name if visit.attending_doctor else None
     return data
 
+
 @router.post("/visits", response_model=schemas.VisitOut)
 def create_visit(
     visit: schemas.VisitCreate,
@@ -76,6 +77,7 @@ def create_visit(
     processed_visit = _run_ai_pipeline(db, new_visit)
     return _serialize_visit(processed_visit)
 
+
 @router.patch("/visits/{visit_id}/notes", response_model=schemas.VisitOut)
 def update_doctor_notes(
     visit_id: int,
@@ -92,6 +94,7 @@ def update_doctor_notes(
 
     updated = visit_repository.update_doctor_notes(db, visit, notes.doctor_notes, current_user.id)
     return _serialize_visit(updated)
+
 
 @router.post("/visits/audio", response_model=schemas.VisitOut)
 def create_visit_from_audio(
@@ -121,11 +124,16 @@ def create_visit_from_audio(
     else:
         facility_id = None
         source = "self_reported"
+        suffix = os_module.path.splitext(audio_file.filename)[1] or ".mp3"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            shutil.copyfileobj(audio_file.file, tmp)
+            tmp_path = tmp.name
 
-    suffix = os_module.path.splitext(audio_file.filename)[1] or ".mp3"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        shutil.copyfileobj(audio_file.file, tmp)
-        tmp_path = tmp.name
+    debug_dir = "debug_audio"
+    os_module.makedirs(debug_dir, exist_ok=True)
+    debug_path = os_module.path.join(debug_dir, f"last_upload{suffix}")
+    shutil.copy(tmp_path, debug_path)
+    print(f"[DEBUG] Saved a copy for inspection at: {debug_path}")
 
     try:
         raw_transcript = ai_service.transcribe_audio(tmp_path)
@@ -135,6 +143,12 @@ def create_visit_from_audio(
             raise HTTPException(status_code=422, detail="We couldn't process that recording. Please try again or type your answer instead.")
         raise HTTPException(status_code=502, detail=f"Transcription failed: {e}")
     os_module.remove(tmp_path)
+
+    new_visit = visit_repository.create_visit(db, patient_id, facility_id, raw_transcript, source)
+    processed_visit = _run_ai_pipeline(db, new_visit)
+    return _serialize_visit(processed_visit)
+
+
 @router.get("/patients/{patient_id}/dashboard")
 def get_patient_dashboard(
     patient_id: int,
@@ -162,6 +176,7 @@ def get_patient_dashboard(
         "visit_history": [_serialize_visit(v) for v in visits[1:]] if len(visits) > 1 else []
     }
 
+
 @router.get("/facilities/{facility_id}/recent-patients", response_model=list[schemas.PatientListItem])
 def get_recent_patients(
     facility_id: int,
@@ -185,6 +200,7 @@ def get_recent_patients(
             has_allergy_alert=len(allergies) > 0
         ))
     return items
+
 
 @router.get("/facilities/{facility_id}/notes", response_model=list[schemas.VisitNoteItem])
 def get_facility_notes(

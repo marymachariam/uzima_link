@@ -112,3 +112,80 @@
   flex: 1;
   padding: 2rem 2.5rem;
 }
+.notifSection {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.notifButton {
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.6rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notifButton:hover {
+  background: rgba(51, 65, 85, 0.3);
+}
+
+.notifBadge {
+  background: #dc2626;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  margin-left: auto;
+}
+
+.notifDropdown {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  top: 100%;
+  margin-top: 0.25rem;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  z-index: 20;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.notifEmpty {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.notifItem {
+  padding: 0.6rem 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.notifItem:hover {
+  background: rgba(51, 65, 85, 0.3);
+}
+
+.notifName {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.notifTime {
+  font-size: 0.72rem;
+  color: #64748b;
+}
