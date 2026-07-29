@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 from typing import Optional, List
 
@@ -8,7 +8,14 @@ from schemas.clinical_entity import ClinicalEntityOut
 class VisitCreate(BaseModel):
     patient_id: int
     facility_id: Optional[int] = None
-    raw_transcript: Optional[str] = None
+    raw_transcript: str
+
+    @field_validator("raw_transcript")
+    @classmethod
+    def transcript_not_empty(cls, v):
+        if not v or not v.strip():
+            raise ValueError("Complaint text cannot be empty")
+        return v
 
 
 class VisitOut(BaseModel):

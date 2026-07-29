@@ -17,3 +17,11 @@
 .saveButton { padding: 0.65rem; border-radius: 0.5rem; background: #059669; color: white; border: none; font-weight: 600; cursor: pointer; }
 .saveButton:hover:not(:disabled) { background: #10b981; }
 .saveButton:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 640px) {
+  .allergyHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+}

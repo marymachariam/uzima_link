@@ -9,3 +9,14 @@
 .notePatient { font-weight: 600; font-size: 0.95rem; }
 .noteDate { font-size: 0.8rem; color: #64748b; }
 .noteText { font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .noteCard {
+    padding: 0.9rem 1rem;
+  }
+  .noteHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+}

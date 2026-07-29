@@ -16,6 +16,15 @@ def register_patient(data: schemas.PatientRegister, db: Session = Depends(get_db
     if user_repository.get_user_by_email(db, data.email):
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    if data.phone_number:
+        existing = patient_repository.get_patient_by_phone(db, data.phone_number)
+        if existing:
+            raise HTTPException(status_code=400, detail="A patient with this phone number already exists")
+    if data.national_id:
+        existing = patient_repository.get_patient_by_national_id(db, data.national_id)
+        if existing:
+            raise HTTPException(status_code=400, detail="A patient with this national ID already exists")
+
     new_patient = patient_repository.create_patient(
         db, data.full_name, data.date_of_birth, data.gender, data.phone_number, data.national_id
     )
@@ -24,7 +33,7 @@ def register_patient(data: schemas.PatientRegister, db: Session = Depends(get_db
         db, data.email, auth_service.hash_password(data.password), "patient", patient_id=new_patient.id
     )
 
-    token = auth_service.create_access_token({"user_id": new_user.id, "role": "patient"})
+    token = auth_service.create_access_token({"user_id": new_user.id, "role": "patient", "patient_id": new_patient.id})
     return {"access_token": token, "role": "patient"}
 
 
@@ -76,9 +85,6 @@ def forgot_password(data: schemas.ForgotPasswordRequest, db: Session = Depends(g
             email_service.send_password_reset_email(user.email, reset_token.token)
         except Exception as e:
             print(f"Failed to send reset email: {e}")
-
-    # Always return the same message, whether or not the email exists —
-    # this prevents leaking which emails are registered in the system
     return {"message": "If an account exists with that email, a reset link has been sent."}
 
 

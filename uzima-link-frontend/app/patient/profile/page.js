@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getPatientDashboard, updatePatientProfile } from "@/lib/endpoints";
 import styles from "./profile.module.css";
+import PatientIdCard from "@/components/PatientIdCard";
 
 function ProfileContent() {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [showCard, setShowCard] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -37,7 +39,10 @@ function ProfileContent() {
     setSaved(false);
     setSaving(true);
     try {
-      await updatePatientProfile(user.patientId, { phone_number: phone, national_id: nationalId });
+      await updatePatientProfile(user.patientId, {
+        phone_number: phone,
+        national_id: nationalId,
+      });
       setSaved(true);
     } catch (err) {
       setError(err.message);
@@ -69,10 +74,18 @@ function ProfileContent() {
 
         <form onSubmit={handleSave} className={styles.form}>
           <label className={styles.formLabel}>Phone number</label>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} className={styles.input} />
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className={styles.input}
+          />
 
           <label className={styles.formLabel}>National ID</label>
-          <input value={nationalId} onChange={(e) => setNationalId(e.target.value)} className={styles.input} />
+          <input
+            value={nationalId}
+            onChange={(e) => setNationalId(e.target.value)}
+            className={styles.input}
+          />
 
           {error && <p className={styles.errorText}>{error}</p>}
           {saved && <p className={styles.successText}>Saved</p>}
@@ -81,6 +94,20 @@ function ProfileContent() {
             {saving ? "Saving..." : "Save changes"}
           </button>
         </form>
+
+        <button
+          onClick={() => setShowCard(!showCard)}
+          className={styles.button}
+          style={{ marginTop: "1rem" }}
+        >
+          {showCard ? "Hide my card" : "View my digital card"}
+        </button>
+
+        {showCard && (
+          <div style={{ marginTop: "1.5rem" }}>
+            <PatientIdCard patient={patient} />
+          </div>
+        )}
       </div>
     </div>
   );

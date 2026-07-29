@@ -31,7 +31,7 @@ export default function LandingPage() {
         />
         <FeatureCard
           title="Works everywhere"
-          description="Your history follows you across any participating hospital or clinic — no more starting from zero."
+          description="Your history follows you across any participating hospital or clinic  no more starting from zero."
         />
       </div>
 

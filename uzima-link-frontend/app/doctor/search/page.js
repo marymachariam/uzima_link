@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { lookupPatient } from "@/lib/endpoints";
+import QrScannerModal from "@/components/QrScanner";
 import styles from "./search.module.css";
 
 function DoctorSearchContent() {
@@ -10,6 +11,7 @@ function DoctorSearchContent() {
   const [searchValue, setSearchValue] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const router = useRouter();
 
   async function handleSearch(e) {
@@ -22,6 +24,20 @@ function DoctorSearchContent() {
       router.push(`/doctor/patient/${patient.id}`);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleQrScan(decodedText) {
+    setShowScanner(false);
+    setError("");
+    setLoading(true);
+    try {
+      const patient = await lookupPatient({ system_uid: decodedText });
+      router.push(`/doctor/patient/${patient.id}`);
+    } catch (err) {
+      setError("No patient found for that card.");
     } finally {
       setLoading(false);
     }
@@ -46,6 +62,19 @@ function DoctorSearchContent() {
           {loading ? "Searching..." : "Find patient"}
         </button>
       </form>
+
+      <button
+        type="button"
+        onClick={() => setShowScanner(true)}
+        className={styles.button}
+        style={{ marginTop: "0.75rem", background: "transparent", border: "2px solid #334155" }}
+      >
+        📇 Scan patient card instead
+      </button>
+
+      {showScanner && (
+        <QrScannerModal onScan={handleQrScan} onClose={() => setShowScanner(false)} />
+      )}
     </div>
   );
 }

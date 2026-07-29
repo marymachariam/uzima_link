@@ -90,3 +90,9 @@
   color: #f87171;
   font-size: 0.85rem;
 }
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1.75rem 1.5rem;
+  }
+}

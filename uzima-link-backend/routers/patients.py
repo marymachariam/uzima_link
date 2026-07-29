@@ -12,6 +12,15 @@ router = APIRouter(prefix="/patients", tags=["patients"])
 
 @router.post("", response_model=schemas.PatientOut)
 def create_patient(patient: schemas.PatientCreate, db: Session = Depends(get_db)):
+    if patient.phone_number:
+        existing = patient_repository.get_patient_by_phone(db, patient.phone_number)
+        if existing:
+            raise HTTPException(status_code=400, detail="A patient with this phone number already exists")
+    if patient.national_id:
+        existing = patient_repository.get_patient_by_national_id(db, patient.national_id)
+        if existing:
+            raise HTTPException(status_code=400, detail="A patient with this national ID already exists")
+
     return patient_repository.create_patient(
         db, patient.full_name, patient.date_of_birth, patient.gender,
         patient.phone_number, patient.national_id

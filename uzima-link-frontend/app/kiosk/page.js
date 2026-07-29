@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { lookupPatient, createPatient, createAllergy } from "@/lib/endpoints";
+import QrScannerModal from "@/components/QrScanner";
 import styles from "./kiosk.module.css";
 
 function KioskContent() {
@@ -15,6 +16,7 @@ function KioskContent() {
   const [loading, setLoading] = useState(false);
   const [recentLookups, setRecentLookups] = useState([]);
   const [language, setLanguage] = useState("en");
+  const [showScanner, setShowScanner] = useState(false);
   const router = useRouter();
 
   const [allergies, setAllergies] = useState([
@@ -88,6 +90,22 @@ function KioskContent() {
       } else {
         setError(err.message);
       }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleQrScan(decodedText) {
+    setShowScanner(false);
+    setError("");
+    setLoading(true);
+    try {
+      const patient = await lookupPatient({ system_uid: decodedText });
+      addToRecent(patient);
+      router.push(`/kiosk/intake/${patient.id}`);
+    } catch (err) {
+      setSearchValue(decodedText);
+      setView("not_found");
     } finally {
       setLoading(false);
     }
@@ -184,7 +202,7 @@ function KioskContent() {
               <button type="button" onClick={() => setView("register")} className={styles.secondaryAction}>
                 + New patient
               </button>
-              <button type="button" disabled className={styles.disabledAction} title="Coming soon">
+              <button type="button" onClick={() => setShowScanner(true)} className={styles.secondaryAction}>
                 📇 Scan ID card
               </button>
             </div>
@@ -196,7 +214,7 @@ function KioskContent() {
             <div className={styles.notFoundIcon}>🔍</div>
             <h2 className={styles.notFoundTitle}>No record found</h2>
             <p className={styles.notFoundText}>
-              We couldnt find a patient matching <strong>{searchValue}</strong>.
+              We couldn't find a patient matching <strong>{searchValue}</strong>.
               Would you like to register them as a new patient?
             </p>
             <div className={styles.notFoundActions}>
@@ -295,6 +313,10 @@ function KioskContent() {
           )}
         </div>
       </div>
+
+      {showScanner && (
+        <QrScannerModal onScan={handleQrScan} onClose={() => setShowScanner(false)} />
+      )}
     </div>
   );
 }

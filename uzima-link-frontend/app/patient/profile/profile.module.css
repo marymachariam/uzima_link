@@ -14,3 +14,14 @@
 .button:disabled { opacity: 0.5; cursor: not-allowed; }
 .errorText { color: #f87171; font-size: 0.85rem; }
 .successText { color: #34d399; font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+  .card {
+    max-width: 100%;
+    padding: 1.25rem;
+  }
+  .readonlyRow {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+}

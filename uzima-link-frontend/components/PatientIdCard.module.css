@@ -1,0 +1,22 @@
+.wrapper { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.card {
+  width: 20rem;
+  background: linear-gradient(135deg, #0f172a, #052e2b);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #f1f5f9;
+}
+.cardHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.logo { font-weight: 700; font-size: 1rem; }
+.cardType { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #34d399; }
+.cardBody { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.info { flex: 1; }
+.name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.detail { font-size: 0.8rem; color: #94a3b8; }
+.uid { font-size: 0.85rem; font-weight: 600; color: #34d399; margin-top: 0.5rem; letter-spacing: 0.03em; }
+.qrBox { background: white; padding: 0.4rem; border-radius: 0.5rem; flex-shrink: 0; }
+.footerNote { font-size: 0.7rem; color: #64748b; margin-top: 1.25rem; }
+.actions { display: flex; gap: 0.75rem; }
+.actionButton { padding: 0.6rem 1.1rem; border-radius: 0.6rem; background: #059669; color: white; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.actionButton:hover { background: #10b981; }
