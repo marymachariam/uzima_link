@@ -38,7 +38,16 @@ async function apiRequest(path, { method = "GET", body = null, isFormData = fals
   }
 
   if (!response.ok) {
-    const message = data?.detail || `Request failed with status ${response.status}`;
+    let message = `Request failed with status ${response.status}`;
+
+    if (data?.detail) {
+      if (typeof data.detail === "string") {
+        message = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        message = data.detail.map((e) => e.msg).join(", ");
+      }
+    }
+
     throw new Error(message);
   }
 
