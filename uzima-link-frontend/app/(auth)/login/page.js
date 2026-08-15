@@ -18,7 +18,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const response = await loginRequest(email, password);
       login(response.access_token, response.role);
@@ -32,7 +31,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   }
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -62,7 +60,6 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
-
         <p className={styles.footer}>
           No account?{" "}
           <a href="/register" className={styles.link}>
