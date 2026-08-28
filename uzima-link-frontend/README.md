@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Frontend README
+markdown
+# Uzima Link — Frontend
 
-## Getting Started
+Next.js frontend for Uzima Link, serving three distinct user experiences from one app: hospital kiosk check-in, doctor dashboard, and patient self-service.
 
-First, run the development server:
+## Tech Stack
 
+- **Framework:** Next.js (App Router)
+- **Styling:** CSS Modules, one per page
+- **State:** React Context (`AuthContext`) for auth/session
+- **QR codes:** `qrcode.react` (generation), `qr-scanner` (camera scanning)
+- **Testing:** Cypress (end-to-end)
+
+## Structure
+
+├── app/
+│ ├── page.js # Landing page
+│ ├── (auth)/login, register, forgot-password, reset-password
+│ ├── kiosk/ # Patient check-in + intake (text/voice)
+│ ├── doctor/ # Search, queue, patient dashboard, notes, alerts
+│ └── patient/ # Own dashboard, self-report, allergies, profile, ID card
+├── lib/
+│ ├── api.js # Central fetch wrapper (auth headers, error handling)
+│ ├── auth.js # Token storage/decoding
+│ └── endpoints.js # One function per backend endpoint
+├── context/AuthContext.js # App-wide logged-in user state
+├── components/ # Shared UI (AuthGuard, PatientIdCard, QrScanner)
+└── cypress/e2e/ # End-to-end test suites
+
+
+## Core Features
+
+- **Role-based routing** — `AuthGuard` component restricts pages by role, redirects unauthenticated users
+- **Kiosk flow** — patient lookup (phone/ID/QR scan), registration with allergies, text or voice intake
+- **Doctor flow** — sidebar dashboard, patient queue, allergy alerts, transcript language toggle, clinical notes
+- **Patient flow** — own dashboard, self-report from home, allergy self-management, digital ID card with QR code (download/print)
+- **Mobile responsive** — sidebar collapses to a horizontal nav below 768px
+
+## Setup
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Ensure the backend is running at `http://127.0.0.1:8000` (update `lib/api.js` if different).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Run the dev server:
+```bash
+   npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+App runs at `http://localhost:3000`.
 
-## Learn More
+## Testing
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx cypress run
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+21 end-to-end tests across authentication, kiosk, doctor, and patient flows. Requires both the frontend (`npm run dev`) and backend (`uvicorn`) running simultaneously — tests hit the real app and real API, not mocks.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Known Limitations
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Voice input relies on the browser's Web Speech API — not supported in Firefox; typing is always available as a fallback.
+- Voice transcription accuracy is strong for English and Swahili; lower-resource languages (e.g. Kikuyu) are a known industry-wide gap.
+- Admin facility management currently has no dedicated UI — done via the backend's Swagger docs.
