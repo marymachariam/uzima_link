@@ -1,0 +1,59 @@
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from sqlalchemy.orm import Session
+
+from database import get_db
+from app.core.dependencies import require_role
+import app.repository.patient_repository as patient_repository
+import app.services.cloudinary_service as cloudinary_service
+import app.services.audit_service as audit_service
+import app.models as models
+import app.schemas as schemas
+
+router = APIRouter(prefix="/patient/kyc", tags=["patient-kyc"])
+
+@router.post("/submit", response_model=schemas.KycStatusOut)
+def submit_identity_verification(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    user: models.User = Depends(require_role("patient")),
+):
+    patient = patient_repository.get_patient_by_id(db, user.patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient profile not found")
+
+    if not patient.national_id or patient.id_type == "none":
+        raise HTTPException(status_code=400, detail="An ID number must be on file before identity verification")
+
+    if file.content_type not in ("image/jpeg", "image/png"):
+        raise HTTPException(status_code=400, detail="Photo must be a JPEG or PNG image")
+
+    selfie_url = cloudinary_service.upload_kyc_selfie(file.file, str(patient.id))
+    patient_repository.submit_kyc(db, patient, selfie_url)
+
+    audit_service.log_action(db, user_id=user.id, action="submit_kyc", resource_type="patient", resource_id=patient.id)
+
+    return schemas.KycStatusOut(
+        kyc_status="pending", kyc_verified=False,
+        message="Your identity verification has been submitted and is pending review."
+    )
+
+
+@router.get("/status", response_model=schemas.KycStatusOut)
+def get_kyc_status(
+    db: Session = Depends(get_db),
+    user: models.User = Depends(require_role("patient")),
+):
+    patient = patient_repository.get_patient_by_id(db, user.patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient profile not found")
+
+    messages = {
+        None: "You have not submitted identity verification yet.",
+        "pending": "Your identity verification is pending review.",
+        "approved": "Your identity has been verified.",
+        "rejected": "Your identity verification was not approved. Please resubmit with a clearer photo.",
+    }
+    return schemas.KycStatusOut(
+        kyc_status=patient.kyc_status, kyc_verified=patient.kyc_verified,
+        message=messages.get(patient.kyc_status, "")
+    )

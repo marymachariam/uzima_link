@@ -1,7 +1,7 @@
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 function getToken() {
-  if (typeof window === "undefined") return null; // guards against server-side rendering
+  if (typeof window === "undefined") return null; 
   return localStorage.getItem("uzima_token");
 }
 
