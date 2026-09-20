@@ -14,12 +14,13 @@ def get_cached_drug(db: Session, query_name: str) -> models.Drug | None:
         return None  
     return drug
 
-
-def upsert_drug(db: Session, query_name: str, generic_name: str = None, brand_name: str = None,
-                 purpose: str = None, warnings: str = None, dosage_info: str = None) -> models.Drug:
+def upsert_drug(db: Session, query_name: str, source: str = None, generic_name: str = None,
+                brand_name: str = None, purpose: str = None, warnings: str = None,
+                dosage_info: str = None) -> models.Drug:
     query_name = query_name.lower().strip()
     drug = db.query(models.Drug).filter(models.Drug.query_name == query_name).first()
     if drug:
+        drug.source = source
         drug.generic_name = generic_name
         drug.brand_name = brand_name
         drug.purpose = purpose
@@ -28,8 +29,8 @@ def upsert_drug(db: Session, query_name: str, generic_name: str = None, brand_na
         drug.fetched_at = datetime.utcnow()
     else:
         drug = models.Drug(
-            query_name=query_name, generic_name=generic_name, brand_name=brand_name,
-            purpose=purpose, warnings=warnings, dosage_info=dosage_info,
+            query_name=query_name, source=source, generic_name=generic_name,
+            brand_name=brand_name, purpose=purpose, warnings=warnings, dosage_info=dosage_info,
         )
         db.add(drug)
     db.commit()

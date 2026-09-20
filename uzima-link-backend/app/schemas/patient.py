@@ -106,10 +106,12 @@ class DoctorPatientView(BaseModel):
     patient: "PatientOut"
     allergies: list["AllergyOut"] = []
     visits: list["VisitOut"] = []
+    prescriptions: list["PrescriptionOut"] = []
 
 
 from app.schemas.allergy import AllergyOut
 from app.schemas.visit import VisitOut
+from app.schemas.prescription import PrescriptionOut
 DoctorPatientView.model_rebuild()
 
 class PatientProfileOut(BaseModel):

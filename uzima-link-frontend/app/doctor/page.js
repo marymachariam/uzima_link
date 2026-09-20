@@ -1,99 +1,102 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
-import { getRecentPatients } from "@/lib/endpoints";
-import styles from "./doctor.module.css";
+import Link from "next/link";
+import { getDoctorProfile, getDoctorQueue } from "@/lib/endpoints";
+import styles from "./page.module.css";
 
-function QueueContent() {
-  const { user } = useAuth();
-  const router = useRouter();
-  const [patients, setPatients] = useState([]);
-  const [error, setError] = useState("");
+export default function DoctorDashboard() {
+  const [profile, setProfile] = useState(null);
+  const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      if (!user?.facilityId) {
-        setError("No facility linked to this account.");
-        setLoading(false);
-        return;
-      }
-      try {
-        const result = await getRecentPatients(user.facilityId);
-        setPatients(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [user]);
+    Promise.all([getDoctorProfile(), getDoctorQueue().catch(() => [])])
+      .then(([p, q]) => {
+        setProfile(p);
+        setQueue(q);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  const alertCount = patients.filter((p) => p.has_allergy_alert).length;
-  const today = new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+  if (loading) return <p className={styles.loadingText}>Loading...</p>;
+
+  const waiting = queue.filter((q) => q.status === "waiting");
+  const inProgress = queue.filter((q) => q.status === "in_progress");
+  const facility = profile?.facility;
 
   return (
     <div>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Recent patients</h1>
-          <p className={styles.subtitle}>
-            {today} · {patients.length} patient{patients.length !== 1 ? "s" : ""} seen recently
-          </p>
+          <h1 className={styles.greeting}>Good day, Dr. {profile?.full_name?.split(" ")[0]}</h1>
+          <p className={styles.subtitle}>{facility?.name || "No facility linked"}</p>
         </div>
-        <button onClick={() => router.push("/doctor/search")} className={styles.searchBar}>
-          🔍 Find patient
-        </button>
+        <span className={profile?.kyc_verified ? styles.badgeGood : styles.badgeBad}>
+          {profile?.kyc_verified ? "✓ Verified" : "Pending verification"}
+        </span>
       </div>
 
-      <div className={styles.statsRow}>
-        <div className={styles.statBox}>
-          <p className={styles.statLabel}>Recent patients</p>
-          <p className={styles.statValue}>{patients.length}</p>
-        </div>
-        <div className={styles.statBoxAlert}>
-          <p className={styles.statLabel}>Allergy alerts</p>
-          <p className={styles.statValueAlert}>{alertCount}</p>
-        </div>
+      <div className={styles.statsGrid}>
+        <StatCard label="Waiting" value={waiting.length} href="/doctor/queue" tone="waiting" />
+        <StatCard label="In progress" value={inProgress.length} href="/doctor/queue" tone="progress" />
+        <StatCard label="Facility county" value={facility?.county || "—"} isText />
       </div>
 
-      <div className={styles.list}>
-        {loading ? (
-          <p className={styles.empty}>Loading...</p>
-        ) : error ? (
-          <p className={styles.errorText}>{error}</p>
-        ) : patients.length === 0 ? (
-          <p className={styles.empty}>No recent patients at your facility yet.</p>
-        ) : (
-          patients.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => router.push(`/doctor/patient/${p.id}`)}
-              className={styles.patientRow}
-            >
-              <span className={styles.avatar}>{p.full_name?.[0]?.toUpperCase() || "?"}</span>
-              <span className={styles.info}>
-                <span className={styles.name}>{p.full_name}</span>
-                <span className={styles.meta}>
-                  Last visit {new Date(p.last_visit).toLocaleDateString()}
-                </span>
-              </span>
-              {p.has_allergy_alert ? (
-                <span className={styles.alertBadge}>Allergy alert</span>
-              ) : (
-                <span className={styles.okBadge}>No alerts</span>
-              )}
-            </button>
-          ))
-        )}
+      {waiting.length > 0 && (
+        <>
+          <h2 className={styles.sectionTitle}>Next up</h2>
+          <div className={styles.queuePreview}>
+            {waiting.slice(0, 3).map((entry) => (
+              <Link
+                key={entry.id}
+                href={entry.patient_system_uid ? `/doctor/scan/${entry.patient_system_uid}` : "/doctor/queue"}
+                className={styles.queueRow}
+              >
+                <span className={styles.queueName}>{entry.patient_name || "Unknown patient"}</span>
+                <span className={styles.queueTime}>{new Date(entry.created_at).toLocaleTimeString()}</span>
+              </Link>
+            ))}
+            {waiting.length > 3 && (
+              <Link href="/doctor/queue" className={styles.queueMore}>
+                +{waiting.length - 3} more in queue →
+              </Link>
+            )}
+          </div>
+        </>
+      )}
+
+      <h2 className={styles.sectionTitle}>Quick actions</h2>
+      <div className={styles.actionsGrid}>
+        <ActionCard href="/doctor/scan" title="Scan a patient" description="Look up a patient's health record" />
+        <ActionCard href="/doctor/queue" title="View full queue" description="See everyone waiting at your facility" />
+        <ActionCard href="/doctor/profile" title="Update your profile" description="Photo, specialty, facility details" />
       </div>
     </div>
   );
 }
 
-export default function DoctorPage() {
-  return <QueueContent />;
+function StatCard({ label, value, href, tone, isText }) {
+  const content = (
+    <>
+      <span className={isText ? styles.statValueText : `${styles.statValue} ${tone ? styles[`tone_${tone}`] : ""}`}>
+        {value}
+      </span>
+      <span className={styles.statLabel}>{label}</span>
+    </>
+  );
+  return href ? (
+    <Link href={href} className={styles.statCard}>{content}</Link>
+  ) : (
+    <div className={styles.statCard}>{content}</div>
+  );
+}
+
+function ActionCard({ href, title, description }) {
+  return (
+    <Link href={href} className={styles.actionCard}>
+      <h3 className={styles.actionTitle}>{title}</h3>
+      <p className={styles.actionDescription}>{description}</p>
+    </Link>
+  );
 }

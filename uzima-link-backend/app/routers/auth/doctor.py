@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from jose import jwt, JWTError
 
 from database import get_db
 import app.repository.user_repository as user_repository
@@ -16,18 +15,25 @@ router = APIRouter(prefix="/doctor/auth", tags=["auth"])
 def register_doctor(data: schemas.DoctorRegister, db: Session = Depends(get_db)):
     if user_repository.get_user_by_email(db, data.email):
         raise HTTPException(status_code=400, detail="Unable to register with these details")
+    if user_repository.get_user_by_national_id(db, data.national_id):
+        raise HTTPException(status_code=400, detail="Unable to register with these details")
 
-    facility = facility_repository.get_facility_by_invite_code(db, data.invite_code)
+    facility = facility_repository.get_facility_by_registration_number(db, data.facility_registration_number)
     if not facility:
-        raise HTTPException(status_code=400, detail="Invalid invite code")
+        facility = facility_repository.create_facility(
+            db, name=data.facility_name, ppb_registration_number=data.facility_registration_number,
+            source="doctor_reported",
+        )
 
     new_user = user_repository.create_user(
         db, data.email, auth_service.hash_password(data.password), "doctor",
-        full_name=data.full_name, facility_id=facility.id, is_verified=False
+        full_name=data.full_name, facility_id=facility.id, is_verified=False,
+        national_id=data.national_id, phone_number=data.phone_number,
     )
 
     email_sent = True
-    verification_token = auth_service.create_email_verification_token(new_user.id)
+    verification_token = auth_service.generate_email_verification_token()
+    user_repository.set_email_verification_token(db, new_user, verification_token)
     try:
         email_service.send_verification_email(new_user.email, data.full_name, verification_token)
     except Exception as e:
@@ -35,19 +41,38 @@ def register_doctor(data: schemas.DoctorRegister, db: Session = Depends(get_db))
         email_sent = False
 
     return schemas.RegistrationPendingOut(
-        message="Account created. Please verify your email before logging in.",
+        message="Account created. Please verify your email, then complete identity verification.",
         email_verification_sent=email_sent,
     )
 
-
-@router.post("/login", response_model=schemas.TokenResponse)
+@router.post("/login", response_model=schemas.LoginOtpSentOut)
 def login_doctor(data: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = user_repository.get_user_by_email(db, data.email)
     if not user or user.role != "doctor" or not auth_service.verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="Please verify your email before logging in.")
+
+    code = auth_service.generate_otp()
+    user_repository.set_login_otp(db, user, auth_service.hash_otp(code))
+    try:
+        email_service.send_login_otp_email(user.email, user.full_name, code)
+    except Exception as e:
+        print(f"Failed to send login OTP: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send login code. Please try again.")
+
+    masked = auth_service.mask_email(user.email)
+    return schemas.LoginOtpSentOut(message=f"A verification code has been sent to your email: {masked}")
+
+
+@router.post("/login/verify", response_model=schemas.TokenResponse)
+def verify_doctor_login(data: schemas.StaffLoginVerify, db: Session = Depends(get_db)):
+    user = user_repository.get_user_by_email(db, data.email)
+    if not user or user.role != "doctor":
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user_repository.verify_login_otp(db, user, auth_service.hash_otp(data.otp)):
+        raise HTTPException(status_code=400, detail="Invalid or expired code")
+    user_repository.clear_login_otp(db, user)
 
     token = auth_service.create_access_token({
         "user_id": user.id, "role": "doctor", "facility_id": user.facility_id, "verified": True
@@ -58,7 +83,7 @@ def login_doctor(data: schemas.LoginRequest, db: Session = Depends(get_db)):
 @router.post("/forgot-password")
 def forgot_password(data: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = user_repository.get_user_by_email(db, data.email)
-    if user and user.role == "doctor":  # or "kiosk_operator" for frontdesk
+    if user and user.role == "doctor":
         reset_token = auth_service.generate_reset_token()
         user_repository.set_reset_token(db, user, reset_token)
         try:

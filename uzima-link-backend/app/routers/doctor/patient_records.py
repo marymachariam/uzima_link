@@ -6,6 +6,7 @@ from app.core.dependencies import require_role
 import app.repository.patient_repository as patient_repository
 import app.repository.allergy_repository as allergy_repository
 import app.repository.visit_repository as visit_repository
+import app.repository.prescription_repository as prescription_repository
 import app.repository.consent_repository as consent_repository
 import app.services.audit_service as audit_service
 import app.models as models
@@ -29,7 +30,24 @@ def view_patient_record(
 
     allergies = allergy_repository.get_allergies_for_patient(db, patient.id)
     visits = visit_repository.get_visits_for_patient(db, patient.id)
+    prescriptions = prescription_repository.get_prescriptions_for_patient(db, patient.id)
 
     audit_service.log_action(db, user_id=user.id, action="view_patient_record", resource_type="patient", resource_id=patient.id)
 
-    return schemas.DoctorPatientView(patient=patient, allergies=allergies, visits=visits)
+    return schemas.DoctorPatientView(patient=patient, allergies=allergies, visits=visits, prescriptions=prescriptions)
+
+
+@router.post("/{system_uid}/request-consent")
+def request_patient_consent(
+    system_uid: str,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(require_role("doctor")),
+):
+    patient = patient_repository.get_patient_by_system_uid(db, system_uid)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    consent_repository.create_consent_request(db, patient_id=patient.id, facility_id=user.facility_id, requested_by=user.id)
+    audit_service.log_action(db, user_id=user.id, action="request_consent", resource_type="patient", resource_id=patient.id)
+
+    return {"message": "A consent request has been sent to the patient."}

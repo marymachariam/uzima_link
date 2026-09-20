@@ -22,8 +22,7 @@ def create_patient(db: Session, full_name: str, date_of_birth: str, gender: str,
     db.refresh(new_patient)
     return new_patient
 
-
-def get_patient_by_id(db: Session, patient_id: UUID) -> models.Patient | None:
+def get_patient_by_id(db: Session, patient_id: str | UUID) -> models.Patient | None:
     return db.query(models.Patient).filter(models.Patient.id == patient_id).first()
 
 
@@ -37,7 +36,6 @@ def get_patient_by_national_id(db: Session, national_id: str) -> models.Patient 
 
 def get_patient_by_system_uid(db: Session, system_uid: str) -> models.Patient | None:
     return db.query(models.Patient).filter(models.Patient.system_uid == system_uid).first()
-
 
 def update_patient(db: Session, patient: models.Patient, phone_number: str = None, national_id: str = None) -> models.Patient:
     if phone_number is not None:
@@ -97,8 +95,9 @@ def search_patients(db: Session, query: str, limit: int = 20):
         .all()
     )
 
-def submit_kyc(db: Session, patient: models.Patient, selfie_url: str) -> models.Patient:
+def submit_kyc(db: Session, patient: models.Patient, selfie_url: str, id_document_url: str) -> models.Patient:
     patient.kyc_selfie_url = selfie_url
+    patient.kyc_id_document_url = id_document_url
     patient.kyc_status = "pending"
     db.commit()
     db.refresh(patient)

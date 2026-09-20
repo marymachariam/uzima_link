@@ -53,11 +53,11 @@ def upload_doctor_kyc_selfie(file_obj, user_id: str) -> str:
     return result["secure_url"]
 
 
-def upload_doctor_kyc_id_document(file_obj, user_id: str) -> str:
+def upload_kyc_id_document(file_obj, patient_id: str) -> str:
     result = cloudinary.uploader.upload(
         file_obj,
-        folder="uzima_link/doctor_kyc_id_documents",
-        public_id=user_id,
+        folder="uzima_link/kyc_id_documents",
+        public_id=patient_id,
         overwrite=True,
         resource_type="image",
     )

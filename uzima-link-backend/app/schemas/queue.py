@@ -15,11 +15,10 @@ class QueueAssign(BaseModel):
 class QueueEntryOut(BaseModel):
     id: UUID
     patient_id: UUID
+    patient_name: Optional[str] = None
+    patient_system_uid: Optional[str] = None
     facility_id: UUID
     assigned_doctor_id: Optional[UUID] = None
     status: str
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True

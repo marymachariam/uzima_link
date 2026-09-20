@@ -28,7 +28,7 @@ def register_frontdesk(data: schemas.FrontdeskRegister, db: Session = Depends(ge
     )
 
     email_sent = True
-    verification_token = auth_service.create_email_verification_token(new_user.id)
+    verification_token = auth_service.generate_email_verification_token()
     try:
         email_service.send_verification_email(new_user.email, data.full_name, verification_token)
     except Exception as e:
@@ -41,14 +41,34 @@ def register_frontdesk(data: schemas.FrontdeskRegister, db: Session = Depends(ge
     )
 
 
-@router.post("/login", response_model=schemas.TokenResponse)
+@router.post("/login", response_model=schemas.LoginOtpSentOut)
 def login_frontdesk(data: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = user_repository.get_user_by_email(db, data.email)
     if not user or user.role != "kiosk_operator" or not auth_service.verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="Please verify your email before logging in.")
+
+    code = auth_service.generate_otp()
+    user_repository.set_login_otp(db, user, auth_service.hash_otp(code))
+    try:
+        email_service.send_login_otp_email(user.email, user.full_name, code)
+    except Exception as e:
+        print(f"Failed to send login OTP: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send login code. Please try again.")
+
+    masked = auth_service.mask_email(user.email)
+    return schemas.LoginOtpSentOut(message=f"A verification code has been sent to your email: {masked}")
+
+
+@router.post("/login/verify", response_model=schemas.TokenResponse)
+def verify_frontdesk_login(data: schemas.StaffLoginVerify, db: Session = Depends(get_db)):
+    user = user_repository.get_user_by_email(db, data.email)
+    if not user or user.role != "kiosk_operator":
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user_repository.verify_login_otp(db, user, auth_service.hash_otp(data.otp)):
+        raise HTTPException(status_code=400, detail="Invalid or expired code")
+    user_repository.clear_login_otp(db, user)
 
     token = auth_service.create_access_token({
         "user_id": user.id, "role": "kiosk_operator", "facility_id": user.facility_id, "verified": True

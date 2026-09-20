@@ -15,6 +15,8 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, nullable=False)
     full_name = Column(String, nullable=True)
+    national_id = Column(String, unique=True, index=True, nullable=True)
+    phone_number = Column(String, nullable=True)
     facility_id = Column(UUID(as_uuid=True), ForeignKey("facilities.id"), nullable=True)
     patient_id = Column(UUID(as_uuid=True), ForeignKey("patients.id"), nullable=True)
     is_verified = Column(Boolean, nullable=False, default=False)
@@ -30,7 +32,7 @@ class User(Base):
     login_otp_hash = Column(String, nullable=True)
     login_otp_expires_at = Column(DateTime, nullable=True)
 
-    kyc_status = Column(String, nullable=True)  # None | "pending" | "approved" | "rejected"
+    kyc_status = Column(String, nullable=True)
     kyc_selfie_url = Column(String, nullable=True)
     kyc_id_document_url = Column(String, nullable=True)
     kyc_verified = Column(Boolean, nullable=False, default=False)

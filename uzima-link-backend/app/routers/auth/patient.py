@@ -89,8 +89,8 @@ def start_login(request: Request, data: schemas.PatientLoginStart, db: Session =
         raise HTTPException(status_code=400, detail="Use /patient/auth/login/choose-channel for national ID login")
 
     user, patient = _resolve_patient_login(db, data.method, data.value)
-    if not user or user.role != "patient":
-        raise HTTPException(status_code=401, detail="Invalid login details")
+    if not user or user.role != "patient" or not auth_service.verify_password(data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="Please verify your email before logging in.")
 
@@ -108,10 +108,12 @@ def start_login(request: Request, data: schemas.PatientLoginStart, db: Session =
 def choose_login_channel(request: Request, data: schemas.PatientLoginChooseChannel, db: Session = Depends(get_db)):
     patient = patient_repository.get_patient_by_national_id(db, data.national_id)
     if not patient:
-        raise HTTPException(status_code=401, detail="Invalid login details")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     user = user_repository.get_user_by_patient_id(db, patient.id)
-    if not user or not user.is_verified:
+    if not user or not auth_service.verify_password(data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user.is_verified:
         raise HTTPException(status_code=403, detail="Please verify your email before logging in.")
 
     try:
@@ -122,7 +124,7 @@ def choose_login_channel(request: Request, data: schemas.PatientLoginChooseChann
 
     note = " SMS delivery is temporarily unavailable, so we've sent it to your email instead." if data.channel == "phone" else ""
     return schemas.LoginOtpSentOut(message=f"A verification code has been sent to your email: {masked}.{note}")
-
+    
 
 @router.post("/login/verify", response_model=schemas.TokenResponse)
 @limiter.limit("10/hour")

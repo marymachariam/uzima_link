@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
+import io
 
 from database import get_db
 from app.core.dependencies import require_role
@@ -44,8 +45,10 @@ def log_symptoms_voice(
         english_transcript = transcription_service.translate_audio_to_english(
             io.BytesIO(audio_bytes), file.filename or "audio.webm"
         )
-    except Exception:
-        raise HTTPException(status_code=502, detail="Failed to process audio. Please try again.")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=502, detail=f"Audio processing failed: {e}")
 
     visit = visit_repository.create_visit(
         db,

@@ -1,0 +1,22 @@
+.title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 0 0 0.3rem; color: black;}
+.subtitle { color: #64748b; font-size: 0.9rem; margin: 0 0 1.25rem; }
+.error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 0.5rem; padding: 0.6rem 0.85rem; font-size: 0.85rem; margin-bottom: 0.85rem; }
+.form { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.1rem; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.formRow { display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; }
+.input, .select { padding: 0.65rem 0.9rem; border-radius: 0.55rem; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+.input:focus, .select:focus { outline: none; border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
+.submitButton { padding: 0.65rem; border-radius: 0.55rem; background: #059669; color: white; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; align-self: flex-start; padding-left: 1.5rem; padding-right: 1.5rem; }
+.submitButton:disabled { opacity: 0.5; }
+.loadingText, .emptyText { color: #64748b; font-size: 0.88rem; }
+.list { display: flex; flex-direction: column; gap: 0.75rem; }
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 0.8rem; padding: 1rem; }
+.cardHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+.severityTag { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.2rem 0.55rem; border-radius: 999px; }
+.severity_mild { background: #f0fdf4; color: #059669; }
+.severity_moderate { background: #fffbeb; color: #b45309; }
+.severity_severe { background: #fef2f2; color: #b91c1c; }
+.reaction { font-size: 0.85rem; color: #64748b; margin: 0 0 0.4rem; }
+.recommendation { font-size: 0.85rem; color: #0f172a; background: #f8fafc; border-radius: 0.5rem; padding: 0.6rem 0.75rem; margin: 0; }
+@media (max-width: 560px) { .formRow { grid-template-columns: 1fr; } }
+.card { color: #0f172a; }
+.input, .select { color: #0f172a; background: white; }

@@ -3,10 +3,10 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 import app.models as models
-
+from sqlalchemy import func
 
 def get_user_by_email(db: Session, email: str) -> models.User | None:
-    return db.query(models.User).filter(models.User.email == email).first()
+    return db.query(models.User).filter(func.lower(models.User.email) == email.lower()).first()
 
 
 def get_user_by_id(db: Session, user_id: UUID) -> models.User | None:
@@ -16,23 +16,22 @@ def get_user_by_id(db: Session, user_id: UUID) -> models.User | None:
 def get_user_by_patient_id(db: Session, patient_id: UUID) -> models.User | None:
     return db.query(models.User).filter(models.User.patient_id == patient_id).first()
 
-
 def create_user(db: Session, email: str, password_hash: str, role: str,
                  full_name: str = None, facility_id: UUID = None, patient_id: UUID = None,
-                 is_verified: bool = False) -> models.User:
+                 is_verified: bool = False, national_id: str = None, phone_number: str = None) -> models.User:
     new_user = models.User(
-        email=email,
-        password_hash=password_hash,
-        role=role,
-        full_name=full_name,
-        facility_id=facility_id,
-        patient_id=patient_id,
-        is_verified=is_verified,
+        email=email.lower(), password_hash=password_hash, role=role, full_name=full_name,
+        facility_id=facility_id, patient_id=patient_id, is_verified=is_verified,
+        national_id=national_id, phone_number=phone_number,
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+def get_user_by_national_id(db: Session, national_id: str) -> models.User | None:
+    return db.query(models.User).filter(models.User.national_id == national_id).first()
 
 
 def mark_user_verified(db: Session, user: models.User):

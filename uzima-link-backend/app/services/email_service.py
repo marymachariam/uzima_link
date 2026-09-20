@@ -96,12 +96,17 @@ def _base_template(
 
 
 def _send(to_email: str, to_name: str, subject: str, html_content: str):
-    client.transactional_emails.send_transac_email(
-        sender=SendTransacEmailRequestSender(name=SENDER_NAME, email=SENDER_EMAIL),
-        to=[SendTransacEmailRequestToItem(email=to_email, name=to_name or "there")],
-        subject=subject,
-        html_content=html_content,
-    )
+    try:
+        # Use proper Brevo SDK type classes to avoid payload drops or serialization mismatches
+        client.transactional_emails.send_transac_email(
+            sender=SendTransacEmailRequestSender(name=SENDER_NAME, email=SENDER_EMAIL),
+            to=[SendTransacEmailRequestToItem(email=to_email, name=to_name or "there")],
+            subject=subject,
+            html_content=html_content,
+        )
+    except Exception as e:
+        print(f"CRITICAL: Failed to send email to {to_email}: {e}")
+        raise e
 
 
 # ====================== EMAILS ======================
@@ -194,3 +199,69 @@ def send_welcome_email(to_email: str, to_name: str, role: str):
         footer_note="We're glad to have you on board."
     )
     _send(to_email, to_name, "Welcome to Uzima Link", html)
+    
+def send_staff_invite_email(to_email: str, to_name: str, role: str, facility_name: str, invite_code: str):
+    role_label = {"doctor": "doctor", "kiosk_operator": "frontdesk operator"}.get(role, role)
+    register_link = f"{FRONTEND_URL}/register/{role}?invite_code={invite_code}"
+    html = _base_template(
+        title="You've been invited to Uzima Link",
+        body_html=f"""
+          Hi <strong>{to_name.split()[0]}</strong>,<br><br>
+          You've been invited to join <strong>{facility_name}</strong> on Uzima Link as a <strong>{role_label}</strong>.
+          <br><br>
+          Your facility invite code:
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px 24px;text-align:center;margin:20px 0;">
+            <span style="font-size:24px;font-weight:700;letter-spacing:2px;color:#059669;">{invite_code}</span>
+          </div>
+          Use this code when you register your account.
+        """,
+        button_text="Register Now",
+        button_url=register_link,
+    )
+    _send(to_email, to_name, f"You've been invited to Uzima Link ({facility_name})", html)
+
+
+def send_admin_kyc_notification(admin_email: str, subject_name: str, role: str):
+    html = _base_template(
+        title="New identity verification pending",
+        body_html=f"""
+          <strong>{subject_name}</strong> ({role}) has submitted identity verification and is waiting for review.
+        """,
+        button_text="Review Pending KYC",
+        button_url=f"{FRONTEND_URL}/admin/kyc",
+    )
+    _send(admin_email, "Admin", "New KYC submission pending review", html)
+    
+def send_doctor_approval_email(to_email: str, to_name: str, facility_name: str, invite_code: str):
+    login_link = f"{FRONTEND_URL}/login/staff"
+    html = _base_template(
+        title="You're approved!",
+        body_html=f"""
+          Hi <strong>{to_name.split()[0]}</strong>,<br><br>
+          Your identity has been verified and your account at <strong>{facility_name}</strong> is now active.
+          <br><br>
+          As the verified lead doctor, you can share your facility's unique invite code with your authorized frontdesk / kiosk operators so they can securely join your facility:
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px 24px;text-align:center;margin:20px 0;">
+            <span style="font-size:24px;font-weight:700;letter-spacing:2px;color:#059669;">{invite_code}</span>
+          </div>
+          Keep this code secure. Authorized staff will require it during registration.
+        """,
+        button_text="Log In to Staff Portal",
+        button_url=login_link,
+        footer_note="Uzima Link Security Team — Protecting patient data at all costs."
+    )
+    _send(to_email, to_name, "Your Uzima Link doctor account is approved & facility code generated", html)
+    
+def send_patient_kyc_approved_email(to_email: str, to_name: str):
+    html = _base_template(
+        title="You're verified!",
+        body_html=f"""
+          Hi <strong>{(to_name or 'there').split()[0]}</strong>,<br><br>
+          Your identity has been verified and your Uzima Link account is now fully active.
+          <br><br>
+          You can now log in and start using your health record.
+        """,
+        button_text="Log In",
+        button_url=f"{FRONTEND_URL}/login",
+    )
+    _send(to_email, to_name or "there", "Your Uzima Link account is verified", html)

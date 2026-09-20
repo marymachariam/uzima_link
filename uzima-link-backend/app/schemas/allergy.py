@@ -4,7 +4,7 @@ from uuid import UUID
 
 
 class AllergyCreate(BaseModel):
-    patient_id: UUID
+    patient_id: Optional[UUID] = None   # set by the server from the logged-in user
     allergen: str
     severity: str
     reaction: Optional[str] = None
@@ -19,7 +19,8 @@ class AllergyOut(BaseModel):
 
     class Config:
         from_attributes = True
-    
+
+
 class AllergyRecommendation(BaseModel):
     allergen: str
     severity: str

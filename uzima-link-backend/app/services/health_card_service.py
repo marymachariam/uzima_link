@@ -1,14 +1,19 @@
 import io
+import requests
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
 
 from config import settings
 
-CARD_WIDTH = 900
+CARD_WIDTH = 500
 CARD_HEIGHT = 560
 GREEN = (5, 150, 105)
 DARK = (15, 23, 42)
 GRAY = (100, 116, 139)
+
+PHOTO_SIZE = 140
+PHOTO_X = CARD_WIDTH - 200
+PHOTO_Y = 150
 
 
 def _load_font(size: int, bold: bool = False):
@@ -27,6 +32,21 @@ def _build_qr(system_uid: str) -> Image.Image:
     return qr.make_image(fill_color="black", back_color="white").convert("RGB")
 
 
+def _load_patient_photo(photo_url: str) -> Image.Image | None:
+    """Downloads the patient's photo from Cloudinary. Returns None if unavailable
+    so the card still generates cleanly for patients without a photo yet."""
+    if not photo_url:
+        return None
+    try:
+        response = requests.get(photo_url, timeout=8)
+        response.raise_for_status()
+        img = Image.open(io.BytesIO(response.content)).convert("RGB")
+        return img.resize((PHOTO_SIZE, PHOTO_SIZE))
+    except Exception as e:
+        print(f"Failed to load patient photo for health card: {e}")
+        return None
+
+
 def generate_health_card_image(patient, allergies: list) -> Image.Image:
     card = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), "white")
     draw = ImageDraw.Draw(card)
@@ -34,6 +54,16 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
     draw.rectangle([0, 0, CARD_WIDTH, 120], fill=GREEN)
     draw.text((32, 40), "Uzima Link", font=_load_font(36, bold=True), fill="white")
     draw.text((32, 85), "Your health record, wherever care finds you.", font=_load_font(14), fill="white")
+
+    # --- Patient photo ---
+    photo = _load_patient_photo(patient.photo_url)
+    if photo:
+        card.paste(photo, (PHOTO_X, PHOTO_Y))
+        draw.rectangle([PHOTO_X, PHOTO_Y, PHOTO_X + PHOTO_SIZE, PHOTO_Y + PHOTO_SIZE], outline=GRAY, width=2)
+    else:
+        # Placeholder box so the layout stays consistent even with no photo yet
+        draw.rectangle([PHOTO_X, PHOTO_Y, PHOTO_X + PHOTO_SIZE, PHOTO_Y + PHOTO_SIZE], outline=GRAY, width=2)
+        draw.text((PHOTO_X + 20, PHOTO_Y + 60), "No photo", font=_load_font(13), fill=GRAY)
 
     y = 150
     draw.text((32, y), patient.full_name, font=_load_font(28, bold=True), fill=DARK)

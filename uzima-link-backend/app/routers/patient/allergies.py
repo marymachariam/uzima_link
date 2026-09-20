@@ -24,9 +24,6 @@ def add_allergy(
     db: Session = Depends(get_db),
     user: models.User = Depends(require_role("patient")),
 ):
-    if data.patient_id != user.patient_id:
-        raise HTTPException(status_code=403, detail="You can only add allergies to your own record")
-
     return allergy_repository.create_allergy(
         db, patient_id=user.patient_id, allergen=data.allergen,
         severity=data.severity, reaction=data.reaction

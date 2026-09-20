@@ -1,130 +1,103 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { getPatientDashboard } from "@/lib/endpoints";
-import styles from "./allergies.module.css";
-import { createAllergy } from "@/lib/endpoints";
+import { getAllergies, createAllergy, getAllergyRecommendations } from "@/lib/endpoints";
+import styles from "./page.module.css";
 
-function AllergiesContent() {
-  const [showForm, setShowForm] = useState(false);
-  const [allergen, setAllergen] = useState("");
-  const [severity, setSeverity] = useState("Mild");
-  const [reaction, setReaction] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState("");
-  const { user } = useAuth();
+export default function AllergiesPage() {
   const [allergies, setAllergies] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({ allergen: "", severity: "mild", reaction: "" });
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleAddAllergy(e) {
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  function loadData() {
+    setLoading(true);
+    Promise.all([getAllergies(), getAllergyRecommendations().catch(() => [])])
+      .then(([a, r]) => {
+        setAllergies(a);
+        setRecommendations(r);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    setFormError("");
-    setSaving(true);
+    setError("");
+    setSubmitting(true);
     try {
-      const newAllergy = await createAllergy({
-        patient_id: user.patientId,
-        allergen,
-        severity,
-        reaction: reaction || null,
-      });
-      setAllergies((prev) => [...prev, newAllergy]);
-      setAllergen("");
-      setReaction("");
-      setShowForm(false);
+      await createAllergy(form);
+      setForm({ allergen: "", severity: "mild", reaction: "" });
+      loadData();
     } catch (err) {
-      setFormError(err.message);
+      setError(err.message);
     } finally {
-      setSaving(false);
+      setSubmitting(false);
     }
   }
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const result = await getPatientDashboard(user.patientId);
-        setAllergies(result.allergies);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    if (user?.patientId) load();
-  }, [user]);
-
   return (
     <div>
-      <h1 className={styles.title}>My allergies</h1>
-      <p className={styles.subtitle}>Whats on file for your care team</p>
-      <button
-        onClick={() => setShowForm(!showForm)}
-        className={styles.addButton}
-      >
-        {showForm ? "Cancel" : "+ Add an allergy"}
-      </button>
+      <h1 className={styles.title}>Your allergies</h1>
+      <p className={styles.subtitle}>Keep this updated your doctor sees this every time they scan your record.</p>
 
-      {showForm && (
-        <form onSubmit={handleAddAllergy} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        {error && <p className={styles.error}>{error}</p>}
+        <div className={styles.formRow}>
           <input
-            placeholder="What are you allergic to?"
-            value={allergen}
-            onChange={(e) => setAllergen(e.target.value)}
+            placeholder="Allergen (e.g. Penicillin)"
+            value={form.allergen}
+            onChange={(e) => setForm((f) => ({ ...f, allergen: e.target.value }))}
             className={styles.input}
             required
           />
           <select
-            value={severity}
-            onChange={(e) => setSeverity(e.target.value)}
-            className={styles.input}
+            value={form.severity}
+            onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))}
+            className={styles.select}
           >
-            <option value="Mild">Mild</option>
-            <option value="Moderate">Moderate</option>
-            <option value="Severe">Severe</option>
+            <option value="mild">Mild</option>
+            <option value="moderate">Moderate</option>
+            <option value="severe">Severe</option>
           </select>
-          <input
-            placeholder="Reaction (optional)"
-            value={reaction}
-            onChange={(e) => setReaction(e.target.value)}
-            className={styles.input}
-          />
-          {formError && <p className={styles.errorText}>{formError}</p>}
-          <button type="submit" disabled={saving} className={styles.saveButton}>
-            {saving ? "Saving..." : "Save allergy"}
-          </button>
-        </form>
-      )}
-      {loading ? (
-        <p className={styles.empty}>Loading...</p>
-      ) : error ? (
-        <p className={styles.errorText}>{error}</p>
-      ) : allergies.length === 0 ? (
-        <div className={styles.emptyCard}>
-          <p>
-            No allergies on file. If you have any, let your doctor or kiosk
-            operator know at your next visit.
-          </p>
         </div>
+        <input
+          placeholder="Reaction (optional)"
+          value={form.reaction}
+          onChange={(e) => setForm((f) => ({ ...f, reaction: e.target.value }))}
+          className={styles.input}
+        />
+        <button type="submit" disabled={submitting} className={styles.submitButton}>
+          {submitting ? "Adding..." : "Add allergy"}
+        </button>
+      </form>
+
+      {loading ? (
+        <p className={styles.loadingText}>Loading...</p>
+      ) : allergies.length === 0 ? (
+        <p className={styles.emptyText}>No allergies on record.</p>
       ) : (
         <div className={styles.list}>
-          {allergies.map((a) => (
-            <div key={a.id} className={styles.allergyCard}>
-              <div className={styles.allergyHeader}>
-                <span className={styles.allergen}>{a.allergen}</span>
-                <span className={styles.severity}>{a.severity}</span>
+          {allergies.map((a) => {
+            const rec = recommendations.find((r) => r.allergen === a.allergen);
+            return (
+              <div key={a.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <strong>{a.allergen}</strong>
+                  <span className={`${styles.severityTag} ${styles[`severity_${a.severity}`]}`}>{a.severity}</span>
+                </div>
+                {a.reaction && <p className={styles.reaction}>Reaction: {a.reaction}</p>}
+                {rec && <p className={styles.recommendation}>{rec.recommendation}</p>}
               </div>
-              {a.reaction && (
-                <p className={styles.reaction}>Reaction: {a.reaction}</p>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
   );
-}
-
-export default function AllergiesPage() {
-  return <AllergiesContent />;
 }

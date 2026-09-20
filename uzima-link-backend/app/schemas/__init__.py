@@ -2,7 +2,7 @@ from app.schemas.auth import (
     PatientRegister, PatientLoginStart, PatientLoginChooseChannel, PatientLoginVerify,
     LoginOtpSentOut, DoctorRegister, FrontdeskRegister, LoginRequest,
     TokenResponse, ForgotPasswordRequest, ResetPasswordRequest,
-    VerifyEmailRequest, RegistrationPendingOut,
+    VerifyEmailRequest, RegistrationPendingOut, ResendVerificationRequest, StaffLoginVerify,
 )
 
 from app.schemas.patient import (
@@ -23,3 +23,6 @@ from app.schemas.consent import (
 from app.schemas.kyc import KycStatusOut, KycDecision
 from app.schemas.prescription import PrescriptionCreate, PrescriptionOut
 from app.schemas.queue import QueueEntryCreate, QueueAssign, QueueEntryOut
+from app.schemas.admin import (
+    InviteStaffRequest, StaffInviteOut, AdminPatientKycOut, AdminDoctorKycOut,
+)

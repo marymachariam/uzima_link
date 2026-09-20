@@ -1,0 +1,9 @@
+.title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 0 0 0.3rem; }
+.subtitle { color: #64748b; font-size: 0.9rem; margin: 0 0 1.25rem; line-height: 1.5; }
+.error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 0.5rem; padding: 0.6rem 0.85rem; font-size: 0.85rem; margin-bottom: 1rem; }
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; }
+.cardText { font-size: 0.9rem; color: #475569; margin: 0 0 1.25rem; }
+.buttonRow { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.primaryButton { padding: 0.75rem 1.5rem; border-radius: 0.6rem; background: #059669; color: white; border: none; font-weight: 600; cursor: pointer; }
+.secondaryButton { padding: 0.75rem 1.5rem; border-radius: 0.6rem; background: white; color: #059669; border: 1px solid #059669; font-weight: 600; cursor: pointer; }
+.primaryButton:disabled, .secondaryButton:disabled { opacity: 0.5; cursor: not-allowed; }

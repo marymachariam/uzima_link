@@ -1,0 +1,32 @@
+.title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 0 0 0.3rem; }
+.subtitle { color: #64748b; font-size: 0.9rem; margin: 0 0 1rem; }
+.loadingText { color: #64748b; font-size: 0.9rem; }
+.error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 0.5rem; padding: 0.7rem 0.9rem; font-size: 0.88rem; margin-bottom: 0.75rem; }
+.hint { color: #64748b; font-size: 0.85rem; line-height: 1.5; }
+.patientHeader { margin-bottom: 1rem; }
+.infoGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 0.9rem; padding: 1rem; margin-bottom: 1.5rem; }
+.sectionTitle { font-size: 1.02rem; font-weight: 700; color: #0f172a; margin: 1.75rem 0 0.75rem; }
+.emptyText { color: #64748b; font-size: 0.88rem; }
+.allergyList { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.allergyTag { font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.7rem; border-radius: 999px; }
+.severity_mild { background: #f0fdf4; color: #059669; }
+.severity_moderate { background: #fffbeb; color: #b45309; }
+.severity_severe { background: #fef2f2; color: #b91c1c; }
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 0.9rem; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.cardText { font-size: 0.88rem; color: #64748b; margin: 0; }
+.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #047857; border-radius: 0.5rem; padding: 0.6rem 0.85rem; font-size: 0.85rem; margin: 0; }
+.recordButton, .recordButtonActive { padding: 0.65rem 1.25rem; border-radius: 0.55rem; border: 1px solid #cbd5e1; background: white; color: #334155; font-weight: 600; cursor: pointer; align-self: flex-start; }
+.recordButtonActive { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+.input { padding: 0.65rem 0.9rem; border-radius: 0.55rem; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+.input:focus { outline: none; border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
+.submitButton { padding: 0.65rem; border-radius: 0.55rem; background: #059669; color: white; border: none; font-weight: 600; cursor: pointer; align-self: flex-start; padding-left: 1.5rem; padding-right: 1.5rem; }
+.submitButton:disabled { opacity: 0.5; }
+.visitList { display: flex; flex-direction: column; gap: 0.85rem; }
+.visitCard { background: white; border: 1px solid #e2e8f0; border-radius: 0.9rem; padding: 1rem; }
+.visitMeta { display: flex; justify-content: space-between; font-size: 0.78rem; color: #94a3b8; margin-bottom: 0.5rem; }
+.sourceTag { text-transform: capitalize; background: #f0fdf4; color: #059669; padding: 0.15rem 0.5rem; border-radius: 999px; font-weight: 600; }
+.transcript { font-size: 0.88rem; color: #334155; margin: 0 0 0.6rem; line-height: 1.5; }
+.notesTextarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 0.55rem; padding: 0.65rem; font-size: 0.88rem; font-family: inherit; resize: vertical; margin-bottom: 0.5rem; }
+.notesTextarea:focus { outline: none; border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
+.saveNotesButton { padding: 0.4rem 0.9rem; border-radius: 0.5rem; background: #059669; color: white; border: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.saveNotesButton:disabled { opacity: 0.5; }

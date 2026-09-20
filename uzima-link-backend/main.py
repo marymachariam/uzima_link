@@ -48,7 +48,7 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
-# Auth — all together, registered first
+
 app.include_router(patient_auth_router)
 app.include_router(doctor_auth_router)
 app.include_router(frontdesk_auth_router)

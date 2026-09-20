@@ -1,3 +1,5 @@
+import re
+import secrets
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -13,6 +15,10 @@ def get_facility_by_kmhfr_code(db: Session, kmhfr_code: str) -> models.Facility 
     return db.query(models.Facility).filter(models.Facility.kmhfr_code == kmhfr_code).first()
 
 
+def get_facility_by_registration_number(db: Session, ppb_registration_number: str) -> models.Facility | None:
+    return db.query(models.Facility).filter(models.Facility.ppb_registration_number == ppb_registration_number).first()
+
+
 def get_facility_by_invite_code(db: Session, invite_code: str) -> models.Facility | None:
     return db.query(models.Facility).filter(models.Facility.invite_code == invite_code).first()
 
@@ -26,16 +32,19 @@ def search_facilities(db: Session, name: str = None, county: str = None, limit: 
     return query.limit(limit).all()
 
 
-def create_facility(db: Session, name: str, kmhfr_code: str = None, facility_type: str = None,
-                     county: str = None, sub_county: str = None, source: str = "manual") -> models.Facility:
+def create_facility(db: Session, name: str, kmhfr_code: str = None, ppb_registration_number: str = None,
+                     facility_type: str = None, county: str = None, sub_county: str = None,
+                     source: str = "manual") -> models.Facility:
     new_facility = models.Facility(
         name=name,
         kmhfr_code=kmhfr_code,
+        ppb_registration_number=ppb_registration_number,
         facility_type=facility_type,
         county=county,
         sub_county=sub_county,
         source=source,
-        last_synced_at=datetime.utcnow() if source != "manual" else None,
+        invite_code=generate_facility_code(name), 
+        last_synced_at=datetime.utcnow() if source not in ("manual", "doctor_reported") else None,
     )
     db.add(new_facility)
     db.commit()
@@ -60,8 +69,15 @@ def update_facility_from_sync(db: Session, facility: models.Facility, name: str 
     return facility
 
 
-def generate_invite_code_for_facility(db: Session, facility: models.Facility, invite_code: str) -> models.Facility:
-    facility.invite_code = invite_code
+def generate_facility_code(name: str) -> str:
+    """Readable, unique facility code, e.g. NAIROBIHOS-4F2A9C — mirrors the patient system_uid pattern."""
+    slug = re.sub(r"[^A-Za-z0-9]", "", name).upper()[:10] or "FAC"
+    suffix = secrets.token_hex(3).upper()
+    return f"{slug}-{suffix}"
+
+
+def generate_invite_code_for_facility(db: Session, facility: models.Facility, invite_code: str = None) -> models.Facility:
+    facility.invite_code = invite_code or generate_facility_code(facility.name)
     db.commit()
     db.refresh(facility)
-    return facility
+    return facility  

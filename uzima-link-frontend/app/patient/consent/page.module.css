@@ -1,0 +1,11 @@
+.title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 0 0 0.3rem; }
+.subtitle { color: #64748b; font-size: 0.9rem; margin: 0 0 1.25rem; }
+.loadingText, .emptyText { color: #64748b; font-size: 0.88rem; }
+.list { display: flex; flex-direction: column; gap: 0.75rem; }
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 0.9rem; padding: 1.1rem; }
+.cardText { font-size: 0.92rem; color: #0f172a; margin: 0 0 0.3rem; font-weight: 500; }
+.date { font-size: 0.78rem; color: #94a3b8; margin: 0 0 0.85rem; }
+.buttonRow { display: flex; gap: 0.6rem; }
+.approveButton { padding: 0.5rem 1.1rem; border-radius: 0.5rem; background: #059669; color: white; border: none; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+.denyButton { padding: 0.5rem 1.1rem; border-radius: 0.5rem; background: white; color: #dc2626; border: 1px solid #fecaca; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+.approveButton:disabled, .denyButton:disabled { opacity: 0.5; cursor: not-allowed; }

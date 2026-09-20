@@ -6,9 +6,14 @@ export function saveSession(token, role) {
   localStorage.setItem(ROLE_KEY, role);
 }
 
+
 export function getToken() {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(TOKEN_KEY);
+}
+
+export function getAuthToken() {
+  return getToken();
 }
 
 export function getRole() {

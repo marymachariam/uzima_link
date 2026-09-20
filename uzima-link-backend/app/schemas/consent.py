@@ -22,8 +22,8 @@ class ConsentOut(BaseModel):
 
     class Config:
         from_attributes = True
-        
-    
+
+
 class ConsentRequestOut(BaseModel):
     id: UUID
     patient_id: UUID

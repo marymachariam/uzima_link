@@ -1,8 +1,11 @@
 import io
 
-from fastapi import APIRouter, Depends, UploadFile, File
+import traceback
+
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import app.services.transcription_service as transcription_service
 
 from database import get_db
 from app.core.dependencies import require_role
@@ -25,12 +28,19 @@ GENERAL_NOTE = (
     f"To check if a product is officially registered in Kenya, search the PPB registry: {PPB_REGISTRY_URL}"
 )
 
-# Order matters: tried in sequence until one returns a match
+
 SOURCES = [
     ("openfda", openfda_service.fetch_drug_info),
     ("rxnorm", rxnorm_service.fetch_drug_info),
     ("dailymed", dailymed_service.fetch_drug_info),
 ]
+
+
+def _safe_video(query: str):
+    try:
+        return youtube_service.find_explainer_video(query)
+    except Exception:
+        return None
 
 
 @router.get("/check", response_model=schemas.DrugInfoOut)
@@ -41,7 +51,7 @@ def check_medicine(
 ):
     cached = drug_repository.get_cached_drug(db, name)
     if cached:
-        video_url = youtube_service.find_explainer_video(cached.generic_name or name)
+        video_url = _safe_video(cached.generic_name or name)
         return schemas.DrugInfoOut(
             query=name,
             found=True,
@@ -59,12 +69,11 @@ def check_medicine(
         try:
             result = fetch_fn(name)
         except Exception:
-
             continue
 
         if result:
             saved = drug_repository.upsert_drug(db, query_name=name, source=source_name, **result)
-            video_url = youtube_service.find_explainer_video(saved.generic_name or name)
+            video_url = _safe_video(saved.generic_name or name)
             return schemas.DrugInfoOut(
                 query=name,
                 found=True,
@@ -124,7 +133,18 @@ def check_medicine_by_voice(
     db: Session = Depends(get_db),
     user: models.User = Depends(require_role("patient")),
 ):
-    transcript = speech_service.transcribe(audio.file)
+    audio_bytes = audio.file.read()
+
+    try:
+        transcript = transcription_service.transcribe_audio(
+            io.BytesIO(audio_bytes), audio.filename or "audio.webm"
+        )
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=502, detail=f"Audio processing failed: {e}")
+
+    # Whisper often adds a full stop ("Paracetamol."), which would miss the lookup
+    transcript = (transcript or "").strip().strip(".,!?;:").strip()
 
     if not transcript:
         return schemas.DrugInfoOut(

@@ -1,104 +1,97 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import AuthGuard from "@/components/AuthGuard";
-import { useAuth } from "@/context/AuthContext";
-import { getPatientDashboard } from "@/lib/endpoints";
-import styles from "./patient.module.css";
 
-function PatientDashboardContent() {
-  const { user } = useAuth();
-  const [data, setData] = useState(null);
-  const [error, setError] = useState("");
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  getPatientProfile,
+  getSymptomHistory,
+  getAllergies,
+  getPrescriptions,
+  getConsentRequests,
+} from "@/lib/endpoints";
+import styles from "./page.module.css";
+
+export default function PatientDashboard() {
+  const [profile, setProfile] = useState(null);
+  const [symptomCount, setSymptomCount] = useState(0);
+  const [allergyCount, setAllergyCount] = useState(0);
+  const [prescriptionCount, setPrescriptionCount] = useState(0);
+  const [pendingConsent, setPendingConsent] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      if (!user?.patientId) {
-        setError("No patient record linked to this account.");
-        setLoading(false);
-        return;
-      }
-      try {
-        const result = await getPatientDashboard(user.patientId);
-        setData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [user]);
+    Promise.all([
+      getPatientProfile(),
+      getSymptomHistory().catch(() => []),
+      getAllergies().catch(() => []),
+      getPrescriptions().catch(() => []),
+      getConsentRequests().catch(() => []),
+    ])
+      .then(([p, symptoms, allergies, prescriptions, consent]) => {
+        setProfile(p);
+        setSymptomCount(symptoms.length);
+        setAllergyCount(allergies.length);
+        setPrescriptionCount(prescriptions.length);
+        setPendingConsent(consent.length);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  if (loading)
-    return <div className={styles.loading}>Loading your records...</div>;
-  if (error) return <div className={styles.errorFull}>{error}</div>;
-  if (!data) return null;
-
-  const { patient, allergy_alert, allergies, current_visit, visit_history } =
-    data;
+  const firstName = profile?.full_name?.split(" ")[0] || "there";
 
   return (
-    <div className={styles.container}>
-      <div className={styles.welcomeCard}>
-        <h1 className={styles.welcomeTitle}>Welcome, {patient.full_name}</h1>
-        <p className={styles.welcomeMeta}>
-          Your medical record · {patient.system_uid}
-        </p>
+    <div>
+      <div className={styles.header}>
+        <div>
+          <h1 className={styles.greeting}>Hi, {firstName}</h1>
+          <p className={styles.subtitle}>Here&apos;s a quick look at your health record.</p>
+        </div>
+        <span className={styles.verifiedBadge}>✓ Verified</span>
       </div>
-      <Link href="/patient/report" className={styles.reportButton}>
-        How are you feeling today?
-      </Link>
 
-      {allergy_alert && (
-        <div className={styles.allergyBanner}>
-          Your allergy records:{" "}
-          {allergies.map((a) => `${a.allergen} (${a.severity})`).join(", ")}
-        </div>
-      )}
-
-      {current_visit && (
-        <div className={styles.card}>
-          <h2 className={styles.sectionTitle}>Most Recent Visit</h2>
-          <p className={styles.visitDate}>
-            {new Date(current_visit.visit_date).toLocaleDateString()}
-          </p>
-          <p className={styles.visitText}>
-            {current_visit.english_transcript || current_visit.raw_transcript}
-          </p>
-          {current_visit.doctor_notes && (
-            <div className={styles.notesBlock}>
-              <p className={styles.notesLabel}>Doctor's notes</p>
-              <p className={styles.notesText}>{current_visit.doctor_notes}</p>
-            </div>
+      {loading ? (
+        <p className={styles.loadingText}>Loading your dashboard...</p>
+      ) : (
+        <>
+          {pendingConsent > 0 && (
+            <Link href="/patient/consent" className={styles.alertBanner}>
+              A facility is requesting access to your record ({pendingConsent} pending) — review now
+            </Link>
           )}
-        </div>
-      )}
 
-      {visit_history.length > 0 && (
-        <div className={styles.card}>
-          <h2 className={styles.sectionTitle}>Past Visits</h2>
-          <div className={styles.historyList}>
-            {visit_history.map((v) => (
-              <div key={v.id} className={styles.historyItem}>
-                <p className={styles.historyDate}>
-                  {new Date(v.visit_date).toLocaleDateString()}
-                </p>
-                <p className={styles.historyText}>
-                  {v.english_transcript || v.raw_transcript}
-                </p>
-              </div>
-            ))}
+          <div className={styles.statsGrid}>
+            <StatCard label="Symptom entries" value={symptomCount} href="/patient/symptoms" />
+            <StatCard label="Allergies on file" value={allergyCount} href="/patient/allergies" />
+            <StatCard label="Prescriptions" value={prescriptionCount} href="/patient/prescriptions" />
           </div>
-        </div>
+
+          <h2 className={styles.sectionTitle}>Quick actions</h2>
+          <div className={styles.actionsGrid}>
+            <ActionCard href="/patient/symptoms" title="Log how you're feeling" description="Text or voice, in your own language" />
+            <ActionCard href="/patient/medicine" title="Check a medicine" description="See if it's genuine before you take it" />
+            <ActionCard href="/patient/health-card" title="Download your health card" description="Share it with any doctor" />
+            <ActionCard href="/patient/profile" title="Update your profile" description="Photo, contact details" />
+          </div>
+        </>
       )}
     </div>
   );
 }
 
-export default function PatientPage() {
+function StatCard({ label, value, href }) {
   return (
-      <PatientDashboardContent />
+    <Link href={href} className={styles.statCard}>
+      <span className={styles.statValue}>{value}</span>
+      <span className={styles.statLabel}>{label}</span>
+    </Link>
+  );
+}
+
+function ActionCard({ href, title, description }) {
+  return (
+    <Link href={href} className={styles.actionCard}>
+      <h3 className={styles.actionTitle}>{title}</h3>
+      <p className={styles.actionDescription}>{description}</p>
+    </Link>
   );
 }
