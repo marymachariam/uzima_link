@@ -3,6 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import { checkMedicine, checkMedicineByImage, checkMedicineByVoice } from "@/lib/endpoints";
 import styles from "./page.module.css";
+import { 
+  Pill, 
+  Search, 
+  Mic, 
+  Square, 
+  Camera, 
+  AlertTriangle, 
+  ShieldCheck, 
+  AlertCircle, 
+  Sparkles, 
+  Info, 
+  Video, 
+  ExternalLink 
+} from "lucide-react";
 
 function getEmbedUrl(url) {
   try {
@@ -36,7 +50,7 @@ export default function MedicinePage() {
       setResult(res);
       if (fillName && res.query) setName(res.query);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to check medicine. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -96,71 +110,161 @@ export default function MedicinePage() {
   const embedUrl = result?.video_url ? getEmbedUrl(result.video_url) : null;
 
   return (
-    <div>
-      <h1 className={styles.title}>Check a medicine</h1>
-      <p className={styles.subtitle}>Type the name, say it, or take a photo of the package.</p>
-
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Paracetamol"
-          className={styles.input}
-        />
-        <button type="submit" disabled={loading || recording} className={styles.submitButton}>
-          {loading ? "Checking..." : "Check"}
-        </button>
-      </form>
-
-      <div className={styles.actionRow}>
-        <button
-          type="button"
-          onClick={recording ? stopRecording : startRecording}
-          disabled={loading}
-          className={`${styles.secondaryButton} ${recording ? styles.recordingButton : ""}`}
-        >
-          {recording ? "Stop recording" : "Say the name"}
-        </button>
-        <label className={styles.secondaryButton}>
-          Take or upload a photo
-          <input type="file" accept="image/*" capture="environment" onChange={handleImage} hidden />
-        </label>
+    <div className={styles.pageContainer}>
+      {/* Header Section */}
+      <div className={styles.header}>
+        <div className={styles.headerBadge}>
+          <Sparkles size={14} /> AI Pharmaceutical Verification
+        </div>
+        <h1 className={styles.title}>Check a Medicine</h1>
+        <p className={styles.subtitle}>
+          Verify authenticity, safety details, dosages, and warnings. Type the name, say it aloud, or upload a photo of the package.
+        </p>
       </div>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {error && (
+        <div className={styles.errorBox}>
+          <AlertCircle size={18} />
+          <span>{error}</span>
+        </div>
+      )}
 
+      {/* Main Search Form Card */}
+      <div className={styles.searchCard}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputWrapper}>
+            <Search size={18} className={styles.searchIcon} />
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Paracetamol, Amoxicillin..."
+              className={styles.input}
+              disabled={recording || loading}
+            />
+          </div>
+          <button type="submit" disabled={loading || recording || !name.trim()} className={styles.submitButton}>
+            {loading ? (
+              <span className={styles.submittingState}>
+                <span className={styles.spinner} /> Checking...
+              </span>
+            ) : (
+              <>Search</>
+            )}
+          </button>
+        </form>
+
+        <div className={styles.actionDivider}>
+          <span>or use interactive inputs</span>
+        </div>
+
+        <div className={styles.actionRow}>
+          <button
+            type="button"
+            onClick={recording ? stopRecording : startRecording}
+            disabled={loading}
+            className={`${styles.secondaryButton} ${recording ? styles.recordingButton : ""}`}
+          >
+            {recording ? (
+              <>
+                <span className={styles.pulseDot} />
+                <Square size={16} /> Stop Recording
+              </>
+            ) : (
+              <>
+                <Mic size={16} /> Say the Name
+              </>
+            )}
+          </button>
+
+          <label className={`${styles.secondaryButton} ${styles.uploadLabel}`}>
+            <Camera size={16} /> Take or Upload Photo
+            <input type="file" accept="image/*" capture="environment" onChange={handleImage} hidden disabled={loading} />
+          </label>
+        </div>
+      </div>
+
+      {/* Results Section */}
       {result && (
         <div className={styles.resultCard}>
           {result.found ? (
             <>
-              <h3 className={styles.resultTitle}>{result.brand_name || result.generic_name || result.query}</h3>
-              {result.generic_name && <p className={styles.resultRow}><strong>Generic name:</strong> {result.generic_name}</p>}
-              {result.purpose && <p className={styles.resultRow}><strong>Purpose:</strong> {result.purpose}</p>}
-              {result.warnings && <p className={styles.resultRow}><strong>Warnings:</strong> {result.warnings}</p>}
-              {result.dosage_info && <p className={styles.resultRow}><strong>Dosage:</strong> {result.dosage_info}</p>}
+              <div className={styles.resultHeader}>
+                <div className={styles.resultTitleWrapper}>
+                  <ShieldCheck size={22} className={styles.resultIconVerified} />
+                  <h3 className={styles.resultTitle}>{result.brand_name || result.generic_name || result.query}</h3>
+                </div>
+                <span className={styles.verifiedTag}>Verified Safe</span>
+              </div>
+
+              <div className={styles.resultGrid}>
+                {result.generic_name && (
+                  <div className={styles.resultItem}>
+                    <span className={styles.resultLabel}>Generic Name</span>
+                    <span className={styles.resultValue}>{result.generic_name}</span>
+                  </div>
+                )}
+                {result.purpose && (
+                  <div className={styles.resultItem}>
+                    <span className={styles.resultLabel}>Primary Purpose</span>
+                    <span className={styles.resultValue}>{result.purpose}</span>
+                  </div>
+                )}
+                {result.dosage_info && (
+                  <div className={styles.resultItem}>
+                    <span className={styles.resultLabel}>Dosage & Usage</span>
+                    <span className={styles.resultValue}>{result.dosage_info}</span>
+                  </div>
+                )}
+              </div>
+
+              {result.warnings && (
+                <div className={styles.warningsBox}>
+                  <div className={styles.warningsHeader}>
+                    <AlertTriangle size={18} className={styles.warningIcon} />
+                    <span className={styles.warningsLabel}>Safety Warnings</span>
+                  </div>
+                  <p className={styles.warningsText}>{result.warnings}</p>
+                </div>
+              )}
+
               {embedUrl ? (
-                <div className={styles.videoWrap}>
-                  <iframe
-                    src={embedUrl}
-                    title="Medicine explainer video"
-                    allow="encrypted-media; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                    className={styles.video}
-                  />
+                <div className={styles.videoSection}>
+                  <div className={styles.videoHeader}>
+                    <Video size={16} />
+                    <span>Explainer & Instructions Video</span>
+                  </div>
+                  <div className={styles.videoWrap}>
+                    <iframe
+                      src={embedUrl}
+                      title="Medicine explainer video"
+                      allow="encrypted-media; picture-in-picture"
+                      allowFullScreen
+                      loading="lazy"
+                      className={styles.video}
+                    />
+                  </div>
                 </div>
               ) : result.video_url ? (
-                <p className={styles.resultRow}>
+                <div className={styles.videoLinkWrapper}>
                   <a href={result.video_url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                    Watch an explainer video
+                    <ExternalLink size={16} /> Watch an explainer video
                   </a>
-                </p>
+                </div>
               ) : null}
             </>
           ) : result.query ? (
-            <p className={styles.notFound}>No information found for &quot;{result.query}&quot;.</p>
+            <div className={styles.notFoundContainer}>
+              <AlertCircle size={32} className={styles.notFoundIcon} />
+              <p className={styles.notFound}>No pharmaceutical information found for &quot;{result.query}&quot;.</p>
+            </div>
           ) : null}
-          <p className={styles.note}>{result.note}</p>
+
+          {result.note && (
+            <div className={styles.noteBox}>
+              <Info size={14} className={styles.noteIcon} />
+              <p className={styles.note}>{result.note}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

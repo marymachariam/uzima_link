@@ -29,6 +29,10 @@ export function patientLoginChooseChannel({ national_id, password, channel }) {
   return apiRequest("/patient/auth/login/choose-channel", { method: "POST", body: { national_id, password, channel }, auth: false });
 }
 
+export function addDoctorNote(patientId, note) {
+  return apiRequest("/doctor/visits/note", { method: "POST", body: { patient_id: patientId, note } });
+}
+
 export function patientLoginVerify({ method, value, otp }) {
   return apiRequest("/patient/auth/login/verify", { method: "POST", body: { method, value, otp }, auth: false });
 }
@@ -276,4 +280,14 @@ export function completeQueueConsultation(entryId) {
 
 export function requestPatientConsent(systemUid) {
   return apiRequest(`/doctor/patients/${systemUid}/request-consent`, { method: "POST" });
+}
+
+// ---------- Patient Consent Management ----------
+
+export function getConsents() {
+  return apiRequest("/patient/consent", { method: "GET" });
+}
+
+export function revokeConsent(consentId) {
+  return apiRequest(`/patient/consent/${consentId}`, { method: "DELETE" });
 }

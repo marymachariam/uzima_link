@@ -9,8 +9,18 @@ export default function DoctorDashboard() {
   const [profile, setProfile] = useState(null);
   const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
+    setCurrentTime(
+      new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    );
+
     Promise.all([getDoctorProfile(), getDoctorQueue().catch(() => [])])
       .then(([p, q]) => {
         setProfile(p);
@@ -19,84 +29,186 @@ export default function DoctorDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className={styles.loadingText}>Loading...</p>;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner} />
+        <p className={styles.loadingText}>Loading your clinical workspace...</p>
+      </div>
+    );
+  }
 
   const waiting = queue.filter((q) => q.status === "waiting");
   const inProgress = queue.filter((q) => q.status === "in_progress");
   const facility = profile?.facility;
 
   return (
-    <div>
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.greeting}>Good day, Dr. {profile?.full_name?.split(" ")[0]}</h1>
-          <p className={styles.subtitle}>{facility?.name || "No facility linked"}</p>
+    <div className={styles.dashboardWrapper}>
+      {/* Hero Welcome Banner */}
+      <div className={styles.heroBanner}>
+        <div className={styles.heroContent}>
+          <div className={styles.dateBadge}>📅 {currentTime}</div>
+          <h1 className={styles.greeting}>
+            Good day, Dr. {profile?.full_name?.split(" ")[0] || "Doctor"} 👋
+          </h1>
+          <p className={styles.subtitle}>
+            <span>🏥 {facility?.name || "Watamu Hospital"}</span>
+            <span className={styles.dotDivider}>•</span>
+            <span>📍 {facility?.county || "County Facility"}</span>
+          </p>
         </div>
-        <span className={profile?.kyc_verified ? styles.badgeGood : styles.badgeBad}>
-          {profile?.kyc_verified ? "✓ Verified" : "Pending verification"}
-        </span>
+        <div className={styles.heroStatusWrapper}>
+          <div className={profile?.kyc_verified ? styles.badgeGood : styles.badgeBad}>
+            {profile?.kyc_verified ? "✓ Verified Practitioner" : "⚠ Pending Verification"}
+          </div>
+          <span className={styles.dutyStatus}>● On Duty & Active</span>
+        </div>
       </div>
 
+      {/* Stats Grid */}
       <div className={styles.statsGrid}>
-        <StatCard label="Waiting" value={waiting.length} href="/doctor/queue" tone="waiting" />
-        <StatCard label="In progress" value={inProgress.length} href="/doctor/queue" tone="progress" />
-        <StatCard label="Facility county" value={facility?.county || "—"} isText />
+        <StatCard
+          icon="👥"
+          label="Patients Waiting"
+          value={waiting.length}
+          href="/doctor/queue"
+          tone="waiting"
+          description="In queue for consultation"
+        />
+        <StatCard
+          icon="⚡"
+          label="In Progress"
+          value={inProgress.length}
+          href="/doctor/queue"
+          tone="progress"
+          description="Currently being examined"
+        />
+        <StatCard
+          icon="🏢"
+          label="Facility County"
+          value={facility?.county || "Kenya"}
+          isText
+          description="Assigned region jurisdiction"
+        />
       </div>
 
-      {waiting.length > 0 && (
-        <>
-          <h2 className={styles.sectionTitle}>Next up</h2>
-          <div className={styles.queuePreview}>
-            {waiting.slice(0, 3).map((entry) => (
-              <Link
-                key={entry.id}
-                href={entry.patient_system_uid ? `/doctor/scan/${entry.patient_system_uid}` : "/doctor/queue"}
-                className={styles.queueRow}
-              >
-                <span className={styles.queueName}>{entry.patient_name || "Unknown patient"}</span>
-                <span className={styles.queueTime}>{new Date(entry.created_at).toLocaleTimeString()}</span>
-              </Link>
-            ))}
-            {waiting.length > 3 && (
+      {/* Main Content Split Grid */}
+      <div className={styles.contentGrid}>
+        {/* Left Column: Live Queue Preview */}
+        <div className={styles.column}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Live Patient Queue</h2>
+            <Link href="/doctor/queue" className={styles.seeAllLink}>
+              View all →
+            </Link>
+          </div>
+
+          <div className={styles.queueCard}>
+            {waiting.length === 0 && inProgress.length === 0 ? (
+              <div className={styles.emptyQueue}>
+                <span className={styles.emptyIcon}>🎉</span>
+                <p className={styles.emptyText}>Queue is completely clear!</p>
+                <span className={styles.emptySubtext}>No patients are currently waiting at your facility.</span>
+              </div>
+            ) : (
+              <div className={styles.queueList}>
+                {waiting.slice(0, 4).map((entry, index) => (
+                  <Link
+                    key={entry.id || index}
+                    href={entry.patient_system_uid ? `/doctor/scan/${entry.patient_system_uid}` : "/doctor/queue"}
+                    className={styles.queueRow}
+                  >
+                    <div className={styles.queuePatientInfo}>
+                      <span className={styles.queueAvatar}>👤</span>
+                      <div>
+                        <span className={styles.queueName}>{entry.patient_name || "Unknown patient"}</span>
+                        <span className={styles.queueId}>ID: {entry.patient_system_uid?.slice(0, 8) || "Standard"}</span>
+                      </div>
+                    </div>
+                    <div className={styles.queueMeta}>
+                      <span className={styles.queueTime}>
+                        {new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <span className={styles.queueBadge}>Waiting</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+            {waiting.length > 4 && (
               <Link href="/doctor/queue" className={styles.queueMore}>
-                +{waiting.length - 3} more in queue →
+                +{waiting.length - 4} more patients waiting in queue →
               </Link>
             )}
           </div>
-        </>
-      )}
+        </div>
 
-      <h2 className={styles.sectionTitle}>Quick actions</h2>
-      <div className={styles.actionsGrid}>
-        <ActionCard href="/doctor/scan" title="Scan a patient" description="Look up a patient's health record" />
-        <ActionCard href="/doctor/queue" title="View full queue" description="See everyone waiting at your facility" />
-        <ActionCard href="/doctor/profile" title="Update your profile" description="Photo, specialty, facility details" />
+        {/* Right Column: Quick Actions & Clinical Tools */}
+        <div className={styles.column}>
+          <h2 className={styles.sectionTitle}>Clinical Actions</h2>
+          <div className={styles.actionsGrid}>
+            <ActionCard
+              href="/doctor/scan"
+              icon="🔍"
+              title="Scan Patient Health Card"
+              description="Look up complete medical records via QR code or manual ID."
+              color="#0d9488"
+            />
+            <ActionCard
+              href="/doctor/queue"
+              icon="📋"
+              title="Manage Facility Queue"
+              description="Monitor active consultations, triage status, and patient flow."
+              color="#2563eb"
+            />
+            <ActionCard
+              href="/doctor/profile"
+              icon="⚙️"
+              title="Doctor Profile & Settings"
+              description="Update medical credentials, profile photo, and specialty tags."
+              color="#7c3aed"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value, href, tone, isText }) {
+function StatCard({ icon, label, value, href, tone, isText, description }) {
   const content = (
-    <>
-      <span className={isText ? styles.statValueText : `${styles.statValue} ${tone ? styles[`tone_${tone}`] : ""}`}>
-        {value}
-      </span>
-      <span className={styles.statLabel}>{label}</span>
-    </>
+    <div className={styles.statCardInner}>
+      <div className={styles.statHeaderRow}>
+        <span className={styles.statIconBadge}>{icon}</span>
+        <span className={styles.statLabel}>{label}</span>
+      </div>
+      <div className={styles.statDataRow}>
+        <span className={isText ? styles.statValueText : `${styles.statValue} ${tone ? styles[`tone_${tone}`] : ""}`}>
+          {value}
+        </span>
+      </div>
+      <span className={styles.statDesc}>{description}</span>
+    </div>
   );
+
   return href ? (
-    <Link href={href} className={styles.statCard}>{content}</Link>
+    <Link href={href} className={styles.statCardLink}>{content}</Link>
   ) : (
     <div className={styles.statCard}>{content}</div>
   );
 }
 
-function ActionCard({ href, title, description }) {
+function ActionCard({ href, icon, title, description, color }) {
   return (
     <Link href={href} className={styles.actionCard}>
-      <h3 className={styles.actionTitle}>{title}</h3>
-      <p className={styles.actionDescription}>{description}</p>
+      <div className={styles.actionIconWrapper} style={{ backgroundColor: `${color}15`, color: color }}>
+        {icon}
+      </div>
+      <div className={styles.actionTextContent}>
+        <h3 className={styles.actionTitle}>{title}</h3>
+        <p className={styles.actionDescription}>{description}</p>
+      </div>
+      <span className={styles.actionArrow}>→</span>
     </Link>
   );
 }

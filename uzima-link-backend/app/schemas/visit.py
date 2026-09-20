@@ -41,3 +41,7 @@ class SymptomEntryCreate(BaseModel):
 
 class VisitNotesUpdate(BaseModel):
     doctor_notes: str
+    
+class DoctorNoteCreate(BaseModel):
+    patient_id: UUID
+    note: str

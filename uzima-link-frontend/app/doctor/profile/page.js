@@ -2,6 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getDoctorProfile, updateDoctorProfile, uploadDoctorPhoto } from "@/lib/endpoints";
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  Award, 
+  ShieldCheck, 
+  ShieldAlert, 
+  Building2, 
+  Camera, 
+  CheckCircle2, 
+  AlertCircle, 
+  FileText, 
+  Stethoscope, 
+  Clock, 
+  Languages, 
+  Calendar,
+  Save
+} from "lucide-react";
 import styles from "./page.module.css";
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
@@ -24,16 +42,15 @@ const SPECIALTIES = [
   "Dentistry",
 ];
 
-// Editable fields. A field only appears once the API returns it.
 const FIELDS = [
-  { key: "specialty", label: "Specialty", section: "professional", placeholder: "e.g. Paediatrics", list: "specialties" },
-  { key: "license_number", label: "Medical licence number", section: "professional", placeholder: "KMPDC registration number" },
-  { key: "qualifications", label: "Qualifications", section: "professional", placeholder: "e.g. MBChB, MMed Radiology" },
-  { key: "years_experience", label: "Years of experience", section: "professional", type: "number", placeholder: "e.g. 8" },
-  { key: "languages", label: "Languages spoken", section: "professional", placeholder: "e.g. English, Swahili" },
-  { key: "consultation_hours", label: "Consultation hours", section: "professional", placeholder: "e.g. Mon to Fri, 8am to 5pm", full: true },
-  { key: "bio", label: "About you", section: "about", type: "textarea", placeholder: "A short introduction that patients and colleagues can read.", max: 600, full: true },
-  { key: "phone_number", label: "Phone number", section: "contact", type: "tel", placeholder: "+254712345678" },
+  { key: "specialty", label: "Specialty", section: "professional", placeholder: "e.g. Paediatrics", list: "specialties", icon: Stethoscope },
+  { key: "license_number", label: "Medical licence number", section: "professional", placeholder: "KMPDC registration number", icon: Award },
+  { key: "qualifications", label: "Qualifications", section: "professional", placeholder: "e.g. MBChB, MMed Radiology", icon: FileText },
+  { key: "years_experience", label: "Years of experience", section: "professional", type: "number", placeholder: "e.g. 8", icon: Clock },
+  { key: "languages", label: "Languages spoken", section: "professional", placeholder: "e.g. English, Swahili", icon: Languages },
+  { key: "consultation_hours", label: "Consultation hours", section: "professional", placeholder: "e.g. Mon to Fri, 8am to 5pm", full: true, icon: Calendar },
+  { key: "bio", label: "About you", section: "about", type: "textarea", placeholder: "A short introduction that patients and colleagues can read.", max: 600, full: true, icon: User },
+  { key: "phone_number", label: "Phone number", section: "contact", type: "tel", placeholder: "+254712345678", icon: Phone },
 ];
 
 function has(profile, key) {
@@ -92,21 +109,24 @@ function toForm(profile) {
 
 function getChecklist(p) {
   const items = [
-    { label: "Add a profile photo", done: !!p.photo_url },
-    has(p, "specialty") && { label: "Add your specialty", done: !!norm(p.specialty) },
-    has(p, "license_number") && { label: "Add your licence number", done: !!norm(p.license_number) },
-    has(p, "bio") && { label: "Write a short bio", done: !!norm(p.bio) },
-    has(p, "phone_number") && { label: "Add a phone number", done: !!norm(p.phone_number) },
-    { label: "Verify your email", done: !!p.is_verified },
-    { label: "Complete identity verification", done: !!p.kyc_verified },
+    { label: "Add a professional profile photo", done: !!p.photo_url },
+    has(p, "specialty") && { label: "Specify your medical specialty", done: !!norm(p.specialty) },
+    has(p, "license_number") && { label: "Provide your professional licence number", done: !!norm(p.license_number) },
+    has(p, "bio") && { label: "Write a short professional biography", done: !!norm(p.bio) },
+    has(p, "phone_number") && { label: "Add a secure contact phone number", done: !!norm(p.phone_number) },
+    { label: "Verify your email address", done: !!p.is_verified },
+    { label: "Complete national identity verification", done: !!p.kyc_verified },
   ];
   return items.filter(Boolean);
 }
 
-function Field({ label, value }) {
+function Field({ label, value, icon: Icon }) {
   return (
     <div className={styles.field}>
-      <span className={styles.label}>{label}</span>
+      <span className={styles.labelGroup}>
+        {Icon && <Icon size={14} className={styles.fieldIcon} />}
+        <span className={styles.label}>{label}</span>
+      </span>
       <span className={styles.value}>{value || "Not provided"}</span>
     </div>
   );
@@ -114,11 +134,15 @@ function Field({ label, value }) {
 
 function FormField({ def, value, onChange }) {
   const id = `field-${def.key}`;
+  const IconComponent = def.icon;
   return (
     <div className={`${styles.field} ${def.full ? styles.fieldFull : ""}`}>
-      <label htmlFor={id} className={styles.label}>{def.label}</label>
+      <label htmlFor={id} className={styles.labelGroup}>
+        {IconComponent && <IconComponent size={14} className={styles.fieldIcon} />}
+        <span className={styles.label}>{def.label}</span>
+      </label>
       {def.type === "textarea" ? (
-        <>
+        <div className={styles.textareaWrapper}>
           <textarea
             id={id}
             value={value}
@@ -129,7 +153,7 @@ function FormField({ def, value, onChange }) {
             className={`${styles.input} ${styles.textarea}`}
           />
           <span className={styles.counter}>{value.length}/{def.max}</span>
-        </>
+        </div>
       ) : (
         <input
           id={id}
@@ -192,15 +216,15 @@ export default function DoctorProfilePage() {
     for (const f of changed) {
       const v = norm(form[f.key]);
       if (f.key === "specialty" && !v) {
-        setSaveError("Please enter your specialty.");
+        setSaveError("Please enter your medical specialty.");
         return;
       }
       if (f.key === "phone_number" && !PHONE_PATTERN.test(v)) {
-        setSaveError("Enter a valid phone number, for example +254712345678.");
+        setSaveError("Enter a valid phone number format, for example +254712345678.");
         return;
       }
       if (f.key === "years_experience" && v && (!/^\d+$/.test(v) || Number(v) > 60)) {
-        setSaveError("Years of experience must be a whole number between 0 and 60.");
+        setSaveError("Years of experience must be a valid whole number between 0 and 60.");
         return;
       }
     }
@@ -219,7 +243,7 @@ export default function DoctorProfilePage() {
       setProfile(fresh);
       setForm(toForm(fresh));
       if (notSaved.length > 0) {
-        setSaveError(`These could not be saved yet: ${notSaved.map((f) => f.label).join(", ")}.`);
+        setSaveError(`These fields could not be updated: ${notSaved.map((f) => f.label).join(", ")}.`);
       } else {
         setSuccess(true);
       }
@@ -236,11 +260,11 @@ export default function DoctorProfilePage() {
     if (!file) return;
     setPhotoError("");
     if (!file.type.startsWith("image/")) {
-      setPhotoError("Please choose an image file.");
+      setPhotoError("Please select a valid image file.");
       return;
     }
     if (file.size > MAX_PHOTO_BYTES) {
-      setPhotoError("The image must be smaller than 5 MB.");
+      setPhotoError("Image size must be less than 5 MB.");
       return;
     }
     setUploading(true);
@@ -259,8 +283,10 @@ export default function DoctorProfilePage() {
   if (loading) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>Your profile</h1>
-        <p className={styles.subtitle}>Loading your profile...</p>
+        <div className={styles.loadingState}>
+          <div className={styles.spinner} />
+          <p className={styles.subtitle}>Loading clinical profile data...</p>
+        </div>
       </div>
     );
   }
@@ -268,11 +294,14 @@ export default function DoctorProfilePage() {
   if (loadError || !profile) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>Your profile</h1>
-        <p className={styles.error}>{loadError || "Could not load your profile."}</p>
-        <button type="button" onClick={loadProfile} className={styles.primaryButton}>
-          Try again
-        </button>
+        <div className={styles.errorCardBox}>
+          <AlertCircle size={32} className={styles.errorIconSymbol} />
+          <h1 className={styles.title}>Unable to load profile</h1>
+          <p className={styles.error}>{loadError || "Could not retrieve your profile information."}</p>
+          <button type="button" onClick={loadProfile} className={styles.primaryButton}>
+            Try again
+          </button>
+        </div>
       </div>
     );
   }
@@ -288,83 +317,119 @@ export default function DoctorProfilePage() {
   const contact = activeFields.filter((f) => f.section === "contact");
 
   const facts = [];
-  if (profile.created_at) facts.push({ label: "Member since", value: formatMonthYear(profile.created_at) });
+  if (profile.created_at) facts.push({ label: "Member since", value: formatMonthYear(profile.created_at), icon: Calendar });
   if (profile.years_experience != null && norm(profile.years_experience) !== "") {
-    facts.push({ label: "Experience", value: `${profile.years_experience} yrs` });
+    facts.push({ label: "Experience", value: `${profile.years_experience} years`, icon: Clock });
   }
-  if (norm(profile.languages)) facts.push({ label: "Languages", value: profile.languages });
+  if (norm(profile.languages)) facts.push({ label: "Languages", value: profile.languages, icon: Languages });
 
   const facilityFields = facility
     ? [
-        { label: "Facility type", value: facility.facility_type ? prettify(facility.facility_type) : "" },
-        { label: "KMHFR code", value: facility.kmhfr_code },
-        { label: "County", value: facility.county },
-        { label: "Sub-county", value: facility.sub_county },
+        { label: "Facility type", value: facility.facility_type ? prettify(facility.facility_type) : "", icon: Building2 },
+        { label: "KMHFR code", value: facility.kmhfr_code, icon: Award },
+        { label: "County", value: facility.county, icon: Building2 },
+        { label: "Sub-county", value: facility.sub_county, icon: Building2 },
       ].filter((f) => f.value)
     : [];
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Your profile</h1>
-      <p className={styles.subtitle}>How patients and colleagues see you on Uzima Link.</p>
+      
+      {/* Page Header */}
+      <div className={styles.pageHeaderBlock}>
+        <div>
+          <h1 className={styles.title}>Professional Profile</h1>
+          <p className={styles.subtitle}>Manage how your clinical credentials and profile appear across the Uzima Link network.</p>
+        </div>
+      </div>
 
+      {/* Hero Card */}
       <section className={`${styles.card} ${styles.heroCard}`}>
         <div className={styles.banner} />
         <div className={styles.heroBody}>
           <div className={styles.avatarWrap}>
             {profile.photo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={profile.photo_url} alt="Your profile" className={styles.avatar} />
+              <img src={profile.photo_url} alt="Profile preview" className={styles.avatar} />
             ) : (
               <div className={styles.avatarFallback}>{getInitials(profile.full_name)}</div>
             )}
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className={styles.avatarOverlayButton}
+              title="Change photo"
+            >
+              <Camera size={16} />
+            </button>
           </div>
 
           <div className={styles.heroText}>
             <h2 className={styles.name}>{displayName}</h2>
             <p className={styles.meta}>
-              {[profile.specialty, facility?.name].filter(Boolean).join(" · ") || "Add your specialty below"}
+              {[profile.specialty, facility?.name].filter(Boolean).join(" · ") || "Specify your medical specialty below"}
             </p>
             <div className={styles.badgeRow}>
-              <span className={`${styles.badge} ${profile.kyc_verified ? "" : styles.badgeWarn}`}>
-                {profile.kyc_verified ? "Identity verified" : "Identity pending"}
+              <span className={`${styles.badge} ${profile.kyc_verified ? styles.badgeSuccess : styles.badgeWarn}`}>
+                {profile.kyc_verified ? <ShieldCheck size={12} /> : <ShieldAlert size={12} />}
+                {profile.kyc_verified ? "Identity Verified" : "Identity Pending"}
               </span>
-              <span className={`${styles.badge} ${profile.is_verified ? "" : styles.badgeWarn}`}>
-                {profile.is_verified ? "Email verified" : "Email not verified"}
+              <span className={`${styles.badge} ${profile.is_verified ? styles.badgeSuccess : styles.badgeWarn}`}>
+                {profile.is_verified ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
+                {profile.is_verified ? "Email Verified" : "Email Unverified"}
               </span>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className={styles.outlineButton}
-          >
-            {uploading ? "Uploading..." : "Change photo"}
-          </button>
-          <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} hidden />
+          <div className={styles.heroActions}>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className={styles.outlineButton}
+            >
+              <Camera size={15} />
+              {uploading ? "Uploading..." : "Change Photo"}
+            </button>
+            <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} hidden />
+          </div>
         </div>
 
-        {photoError && <p className={`${styles.error} ${styles.heroError}`}>{photoError}</p>}
+        {photoError && (
+          <div className={`${styles.errorAlert} ${styles.heroErrorMargin}`}>
+            <AlertCircle size={16} />
+            <span>{photoError}</span>
+          </div>
+        )}
 
         {facts.length > 0 && (
-          <div className={styles.facts}>
-            {facts.map((f) => (
-              <div key={f.label} className={styles.fact}>
-                <span className={styles.factValue}>{f.value}</span>
-                <span className={styles.factLabel}>{f.label}</span>
-              </div>
-            ))}
+          <div className={styles.factsGrid}>
+            {facts.map((f) => {
+              const FactIcon = f.icon;
+              return (
+                <div key={f.label} className={styles.factItem}>
+                  {FactIcon && <FactIcon size={16} className={styles.factIcon} />}
+                  <div>
+                    <span className={styles.factValue}>{f.value}</span>
+                    <span className={styles.factLabel}>{f.label}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
 
+      {/* Profile Strength Checklist */}
       {percent < 100 && (
         <section className={styles.card}>
           <div className={styles.progressHeader}>
-            <h3 className={styles.cardTitle}>Profile strength</h3>
-            <span className={styles.percent}>{percent}%</span>
+            <div>
+              <h3 className={styles.cardTitle}>Profile Completion Status</h3>
+              <p className={styles.cardSubtitle}>Complete missing fields to build maximum patient trust.</p>
+            </div>
+            <span className={styles.percentBadge}>{percent}% Complete</span>
           </div>
           <div className={styles.progressTrack}>
             <div className={styles.progressBar} style={{ width: `${percent}%` }} />
@@ -372,17 +437,26 @@ export default function DoctorProfilePage() {
           <ul className={styles.checklist}>
             {checklist.map((c) => (
               <li key={c.label} className={c.done ? styles.checkDone : styles.checkTodo}>
-                {c.done ? "✓" : "○"} {c.label}
+                {c.done ? <CheckCircle2 size={16} className={styles.checkIconDone} /> : <div className={styles.checkCircleTodo} />}
+                <span>{c.label}</span>
               </li>
             ))}
           </ul>
         </section>
       )}
 
+      {/* Profile Editing Form */}
       <form onSubmit={handleSave}>
+        
         {professional.length > 0 && (
           <section className={styles.card}>
-            <h3 className={styles.cardTitle}>Professional details</h3>
+            <div className={styles.sectionCardHeader}>
+              <Stethoscope size={20} className={styles.sectionIcon} />
+              <div>
+                <h3 className={styles.cardTitle}>Professional Credentials</h3>
+                <p className={styles.cardSubtitle}>Your medical background, qualifications, and active practice details.</p>
+              </div>
+            </div>
             <div className={styles.grid}>
               {professional.map((f) => (
                 <FormField key={f.key} def={f} value={form[f.key] ?? ""} onChange={updateField} />
@@ -398,7 +472,13 @@ export default function DoctorProfilePage() {
 
         {about.length > 0 && (
           <section className={styles.card}>
-            <h3 className={styles.cardTitle}>About</h3>
+            <div className={styles.sectionCardHeader}>
+              <User size={20} className={styles.sectionIcon} />
+              <div>
+                <h3 className={styles.cardTitle}>Biography & Background</h3>
+                <p className={styles.cardSubtitle}>Introduce yourself to patients and collaborating clinicians.</p>
+              </div>
+            </div>
             <div className={styles.grid}>
               {about.map((f) => (
                 <FormField key={f.key} def={f} value={form[f.key] ?? ""} onChange={updateField} />
@@ -408,67 +488,106 @@ export default function DoctorProfilePage() {
         )}
 
         <section className={styles.card}>
-          <h3 className={styles.cardTitle}>Contact</h3>
+          <div className={styles.sectionCardHeader}>
+            <Phone size={20} className={styles.sectionIcon} />
+            <div>
+              <h3 className={styles.cardTitle}>Contact Information</h3>
+              <p className={styles.cardSubtitle}>Secure communication channels for professional use.</p>
+            </div>
+          </div>
           <div className={styles.grid}>
-            <Field label="Email" value={profile.email} />
+            <Field label="Email Address" value={profile.email} icon={Mail} />
             {contact.map((f) => (
               <FormField key={f.key} def={f} value={form[f.key] ?? ""} onChange={updateField} />
             ))}
           </div>
         </section>
 
-        {saveError && <p className={styles.error}>{saveError}</p>}
+        {saveError && (
+          <div className={styles.errorAlert}>
+            <AlertCircle size={18} />
+            <span>{saveError}</span>
+          </div>
+        )}
 
+        {/* Sticky Action Footer */}
         <div className={styles.saveBar}>
           <button type="submit" disabled={saving || !hasChanges} className={styles.primaryButton}>
-            {saving ? "Saving..." : "Save changes"}
+            <Save size={16} />
+            {saving ? "Saving Changes..." : "Save Changes"}
           </button>
-          {hasChanges && !saving && <span className={styles.unsaved}>You have unsaved changes</span>}
-          {success && <span className={styles.success}>Profile updated</span>}
+          {hasChanges && !saving && (
+            <span className={styles.unsavedNotice}>
+              <AlertCircle size={14} /> You have unsaved edits
+            </span>
+          )}
+          {success && (
+            <span className={styles.successNotice}>
+              <CheckCircle2 size={16} /> Profile successfully updated
+            </span>
+          )}
         </div>
       </form>
 
+      {/* Facility Information Box */}
       <section className={styles.card}>
-        <h3 className={styles.cardTitle}>Facility</h3>
+        <div className={styles.sectionCardHeader}>
+          <Building2 size={20} className={styles.sectionIcon} />
+          <div>
+            <h3 className={styles.cardTitle}>Assigned Medical Facility</h3>
+            <p className={styles.cardSubtitle}>Primary workplace linked via regional regulatory records.</p>
+          </div>
+        </div>
         {facility ? (
-          <>
+          <div className={styles.facilityContent}>
             <p className={styles.facilityName}>{facility.name}</p>
             {facilityFields.length > 0 ? (
               <div className={styles.grid}>
                 {facilityFields.map((f) => (
-                  <Field key={f.label} label={f.label} value={f.value} />
+                  <Field key={f.label} label={f.label} value={f.value} icon={f.icon} />
                 ))}
               </div>
             ) : (
               <p className={styles.hint}>
-                Registry details (type, county, KMHFR code) will appear here once this facility is matched to the national facility registry.
+                Regulatory registry data (type, county, KMHFR code) will automatically mirror once synchronized with the national health registry.
               </p>
             )}
-          </>
+          </div>
         ) : (
-          <p className={styles.hint}>No facility is linked to your account yet.</p>
+          <p className={styles.hint}>No medical facility is currently linked to your practitioner account.</p>
         )}
       </section>
 
+      {/* Governance & System Verification Box */}
       <section className={styles.card}>
-        <h3 className={styles.cardTitle}>Account and verification</h3>
+        <div className={styles.sectionCardHeader}>
+          <ShieldCheck size={20} className={styles.sectionIcon} />
+          <div>
+            <h3 className={styles.cardTitle}>Account Governance & Verification</h3>
+            <p className={styles.cardSubtitle}>Official details derived from your verified onboarding credentials.</p>
+          </div>
+        </div>
         <div className={styles.grid}>
-          <Field label="Member since" value={formatMonthYear(profile.created_at)} />
-          <Field label="Email status" value={profile.is_verified ? "Verified" : "Not verified"} />
+          <Field label="Member Since" value={formatMonthYear(profile.created_at)} icon={Calendar} />
+          <Field label="Email Status" value={profile.is_verified ? "Verified Active" : "Unverified"} icon={Mail} />
           <Field
-            label="Identity verification"
+            label="Identity Status"
             value={
               profile.kyc_verified
                 ? profile.kyc_verified_at
                   ? `Verified on ${formatDate(profile.kyc_verified_at)}`
                   : "Verified"
-                : "Pending review"
+                : "Pending Review"
             }
+            icon={ShieldCheck}
           />
-          {profile.national_id && <Field label="National ID" value={maskId(profile.national_id)} />}
+          {profile.national_id && <Field label="National ID Number" value={maskId(profile.national_id)} icon={Award} />}
         </div>
-        <p className={styles.hint}>Your name, email, ID and facility come from your registration and verified ID.</p>
+        <p className={styles.hint}>
+          Legal names, credentials, and identity numbers are governed by official registry validation standards and cannot be edited directly. Contact support for updates.
+        </p>
       </section>
+
     </div>
   );
 }

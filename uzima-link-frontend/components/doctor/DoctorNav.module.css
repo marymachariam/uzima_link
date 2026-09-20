@@ -34,3 +34,7 @@
   .logout:hover { background: #fef2f2; color: #dc2626; }
   .bottomBar { display: none; }
 }
+
+.subLink { display: flex; flex-direction: column; gap: 0.1rem; margin: -0.15rem 0 0.35rem 2.35rem; padding: 0.45rem 0.7rem; border-left: 2px solid #a7f3d0; border-radius: 0 0.5rem 0.5rem 0; text-decoration: none; background: #f0fdf4; }
+.subLabel { font-size: 0.8rem; font-weight: 600; color: #047857; }
+.subUid { font-family: ui-monospace, monospace; font-size: 0.72rem; color: #64748b; word-break: break-all; }

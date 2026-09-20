@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "lucide-react": "^1.47.0",
     "next": "15.1.0",
     "qr-scanner": "^1.4.2",
     "qrcode.react": "^4.2.0",

@@ -1,50 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyDoctorLogin, verifyFrontdeskLogin, getDoctorKycStatus } from "@/lib/endpoints";
 import { saveSession } from "@/lib/auth";
 import styles from "../../../auth.module.css";
+import { ShieldCheck, AlertCircle } from "lucide-react";
 
 export default function StaffVerifyOtpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const infoMessage = searchParams.get("message");
-  const [pending, setPending] = useState(null);
+  const message = searchParams.get("message") || "Enter the verification code sent to your email.";
+
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const raw = sessionStorage.getItem("uzima_pending_staff_login");
-    if (!raw) {
-      router.replace("/login/staff");
-      return;
-    }
-    setPending(JSON.parse(raw));
-  }, [router]);
-
-  async function handleSubmit(e) {
+  async function handleVerify(e) {
     e.preventDefault();
-    if (!pending) return;
     setError("");
     setLoading(true);
+
     try {
-      const res =
-        pending.role === "doctor"
-          ? await verifyDoctorLogin(pending.email, otp)
-          : await verifyFrontdeskLogin(pending.email, otp);
-      saveSession(res.access_token, res.role);
+      const pendingStaffStr = sessionStorage.getItem("uzima_pending_staff_login");
+      
+      if (!pendingStaffStr) {
+        throw new Error("Staff session data not found. Please sign in again.");
+      }
+
+      const { role, email } = JSON.parse(pendingStaffStr);
+      let res;
+
+      if (role === "doctor") {
+        res = await verifyDoctorLogin(email, otp);
+      } else {
+        res = await verifyFrontdeskLogin(email, otp);
+      }
+
+      // Pass token and role as separate parameters to match lib/auth.js
+      saveSession(res.access_token, role);
       sessionStorage.removeItem("uzima_pending_staff_login");
 
-      if (pending.role === "doctor") {
-        const kyc = await getDoctorKycStatus();
-        router.push(kyc.kyc_verified ? "/doctor" : "/doctor/kyc");
+      if (role === "doctor") {
+        try {
+          const kyc = await getDoctorKycStatus();
+          if (kyc && kyc.kyc_status === "approved") {
+            router.push("/doctor");
+            return;
+          }
+        } catch {
+          // Fallback if KYC check fails
+        }
+        router.push("/kyc");
       } else {
-        router.push("/kiosk");
+        router.push("/frontdesk");
       }
+
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Invalid or expired verification code.");
     } finally {
       setLoading(false);
     }
@@ -58,29 +71,37 @@ export default function StaffVerifyOtpPage() {
           <span className={styles.leftBrandName}>Uzima Link</span>
         </div>
         <img src="/image.png" alt="" className={styles.leftImage} />
-        <p className={styles.leftCaption}>Your health record, wherever care finds you.</p>
+        <p className={styles.leftCaption}>Secure verification for staff access.</p>
       </div>
 
       <div className={styles.rightPanel}>
         <div className={styles.card}>
-          <h1 className={styles.title}>Enter your code</h1>
-          <p className={styles.subtitle}>{infoMessage || "We sent a 6-digit code to your email."}</p>
+          <div className={styles.iconHeader}>
+            <ShieldCheck size={32} className={styles.brandIcon} />
+          </div>
+          <h1 className={styles.title}>Staff Verification</h1>
+          <p className={styles.subtitle}>{message}</p>
 
-          {error && <p className={styles.error}>{error}</p>}
-
-          <form onSubmit={handleSubmit} className={styles.form}>
+          <form onSubmit={handleVerify} className={styles.form}>
             <input
+              type="text"
+              placeholder="Enter 6-digit OTP"
               value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              inputMode="numeric"
-              maxLength={6}
-              placeholder="000000"
+              onChange={(e) => setOtp(e.target.value)}
               className={styles.input}
-              style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.5rem" }}
+              maxLength={6}
               required
             />
-            <button type="submit" disabled={loading || otp.length !== 6} className={styles.button}>
-              {loading ? "Verifying..." : "Verify and log in"}
+
+            {error && (
+              <div className={styles.errorAlert}>
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <button type="submit" disabled={loading} className={styles.button}>
+              {loading ? "Verifying..." : "Confirm & Sign In"}
             </button>
           </form>
         </div>

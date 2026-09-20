@@ -1,20 +1,45 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./DoctorNav.module.css";
 
 const NAV_ITEMS = [
-  { href: "/doctor", label: "Home", icon: HomeIcon },
+  { href: "/doctor", label: "Home", icon: HomeIcon, exact: true },
   { href: "/doctor/queue", label: "Queue", icon: QueueIcon },
-  { href: "/doctor/scan", label: "Scan Patient", icon: ScanIcon },
+  { href: "/doctor/scan", label: "Scan Patient", icon: ScanIcon, also: ["/doctor/consent", "/doctor/patients"] },
   { href: "/doctor/profile", label: "Profile", icon: UserIcon },
 ];
 
+function isActive(item, pathname) {
+  if (item.exact) return pathname === item.href;
+  return [item.href, ...(item.also || [])].some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+function safeDecode(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function getPatientFlow(pathname) {
+  const match = pathname.match(/^\/doctor\/(consent|patients)\/([^/]+)/);
+  if (!match) return null;
+  return {
+    label: match[1] === "consent" ? "Patient consent" : "Patient record",
+    uid: safeDecode(match[2]),
+    href: match[0],
+  };
+}
+
 export default function DoctorNav() {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const router = useRouter();
+  const flow = getPatientFlow(pathname);
 
   function handleLogout() {
     clearSession();
@@ -30,13 +55,22 @@ export default function DoctorNav() {
         </div>
 
         <div className={styles.links}>
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href;
+          {NAV_ITEMS.map((item) => {
+            const { href, label, icon: Icon } = item;
+            const active = isActive(item, pathname);
             return (
-              <Link key={href} href={href} className={`${styles.link} ${active ? styles.linkActive : ""}`}>
-                <Icon />
-                <span>{label}</span>
-              </Link>
+              <Fragment key={href}>
+                <Link href={href} className={`${styles.link} ${active ? styles.linkActive : ""}`}>
+                  <Icon />
+                  <span>{label}</span>
+                </Link>
+                {href === "/doctor/scan" && flow && (
+                  <Link href={flow.href} className={styles.subLink}>
+                    <span className={styles.subLabel}>{flow.label}</span>
+                    <span className={styles.subUid}>{flow.uid}</span>
+                  </Link>
+                )}
+              </Fragment>
             );
           })}
         </div>
@@ -48,8 +82,9 @@ export default function DoctorNav() {
       </nav>
 
       <nav className={styles.bottomBar}>
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href;
+        {NAV_ITEMS.map((item) => {
+          const { href, label, icon: Icon } = item;
+          const active = isActive(item, pathname);
           return (
             <Link key={href} href={href} className={`${styles.bottomLink} ${active ? styles.bottomLinkActive : ""}`}>
               <Icon />

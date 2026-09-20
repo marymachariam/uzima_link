@@ -15,7 +15,7 @@ from app.schemas.allergy import AllergyCreate, AllergyOut, AllergyRecommendation
 from app.schemas.clinical_entity import ClinicalEntityOut
 from app.schemas.facility import FacilityOut, FacilityCreate
 from app.schemas.user import UserOut, StaffProfileUpdate, StaffProfileOut
-from app.schemas.visit import VisitCreate, VisitOut, SymptomEntryCreate, VisitNotesUpdate
+from app.schemas.visit import VisitCreate, VisitOut, SymptomEntryCreate, VisitNotesUpdate, DoctorNoteCreate
 from app.schemas.drug import DrugInfoOut
 from app.schemas.consent import (
     ConsentGrant, ConsentOut, ConsentRequestOut, ConsentRequestDecision,

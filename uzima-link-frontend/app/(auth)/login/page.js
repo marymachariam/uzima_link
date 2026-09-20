@@ -30,8 +30,12 @@ export default function PatientLoginPage() {
         method === "national_id"
           ? await patientLoginChooseChannel({ national_id: value, password, channel })
           : await patientLoginStart({ method, value, password });
+
+      // Save pending login info for the verification page and clear staff sessions
       sessionStorage.setItem("uzima_pending_login", JSON.stringify({ method, value }));
-      router.push(`/login/verify-otp?message=${encodeURIComponent(res.message)}`);
+      sessionStorage.removeItem("uzima_pending_staff_login");
+
+      router.push(`/login/verify-otp?message=${encodeURIComponent(res.message || "Enter the verification code sent to you.")}`);
     } catch (err) {
       setError(err.message);
     } finally {

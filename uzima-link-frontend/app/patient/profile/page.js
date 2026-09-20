@@ -3,6 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import { getPatientProfile, updatePatientProfile, uploadPatientPhoto } from "@/lib/endpoints";
 import styles from "./page.module.css";
+import { 
+  User, 
+  ShieldCheck, 
+  ShieldAlert, 
+  Phone, 
+  Calendar, 
+  FileText, 
+  Camera, 
+  Copy, 
+  Check, 
+  Sparkles,
+  Lock,
+  Users,
+  AlertCircle
+} from "lucide-react";
 
 const PHONE_PATTERN = /^\+?[0-9\s-]{9,15}$/;
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
@@ -110,7 +125,7 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       await updatePatientProfile({
-        full_name: profile.full_name, // unchanged: name comes from the verified ID
+        full_name: profile.full_name,
         phone_number: phone,
         guardian_name: form.guardian_name.trim(),
         guardian_phone: form.guardian_phone.trim(),
@@ -119,6 +134,7 @@ export default function ProfilePage() {
       setProfile(fresh);
       setForm(toForm(fresh));
       setSuccess(true);
+      setTimeout(() => setSuccess(false), 4000);
     } catch (err) {
       setSaveError(err.message);
     } finally {
@@ -132,7 +148,7 @@ export default function ProfilePage() {
     if (!file) return;
     setPhotoError("");
     if (!file.type.startsWith("image/")) {
-      setPhotoError("Please choose an image file.");
+      setPhotoError("Please choose a valid image file.");
       return;
     }
     if (file.size > MAX_PHOTO_BYTES) {
@@ -158,15 +174,17 @@ export default function ProfilePage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard not available; ignore
+      // ignore
     }
   }
 
   if (loading) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>Your profile</h1>
-        <p className={styles.subtitle}>Loading your profile...</p>
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner} />
+          <p className={styles.subtitle}>Loading your profile...</p>
+        </div>
       </div>
     );
   }
@@ -174,11 +192,14 @@ export default function ProfilePage() {
   if (loadError || !profile) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>Your profile</h1>
-        <p className={styles.error}>{loadError || "Could not load your profile."}</p>
-        <button type="button" onClick={loadProfile} className={styles.primaryButton}>
-          Try again
-        </button>
+        <div className={styles.errorCard}>
+          <AlertCircle size={28} color="#dc2626" />
+          <h3>Could not load profile</h3>
+          <p className={styles.error}>{loadError || "An unexpected error occurred."}</p>
+          <button type="button" onClick={loadProfile} className={styles.primaryButton}>
+            Try again
+          </button>
+        </div>
       </div>
     );
   }
@@ -187,121 +208,179 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Your profile</h1>
-      <p className={styles.subtitle}>Manage your personal details and who we contact on your behalf.</p>
+      {/* Header Banner */}
+      <div className={styles.header}>
+        <div className={styles.headerBadge}>
+          <Sparkles size={14} /> Patient Account
+        </div>
+        <h1 className={styles.title}>Personal Profile</h1>
+        <p className={styles.subtitle}>Manage your verified identity, emergency contacts, and account preferences.</p>
+      </div>
 
-      <section className={`${styles.card} ${styles.hero}`}>
-        <div className={styles.avatarWrap}>
+      {/* Hero Profile Card */}
+      <section className={styles.heroCard}>
+        <div className={styles.avatarContainer}>
           {profile.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.photo_url} alt="Your profile" className={styles.avatar} />
+            <img src={profile.photo_url} alt="Profile" className={styles.avatar} />
           ) : (
             <div className={styles.avatarFallback}>{getInitials(profile.full_name)}</div>
           )}
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className={styles.avatarUploadBtn}
+            title="Change photo"
+          >
+            <Camera size={14} />
+          </button>
+          <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} hidden />
         </div>
 
-        <div className={styles.heroInfo}>
-          <h2 className={styles.name}>
-            {profile.full_name}
-            <span className={`${styles.badge} ${profile.kyc_verified ? "" : styles.badgeWarn}`}>
-              {profile.kyc_verified ? "Identity verified" : "Not verified"}
+        <div className={styles.heroDetails}>
+          <div className={styles.heroNameRow}>
+            <h2 className={styles.name}>{profile.full_name}</h2>
+            <span className={`${styles.verificationBadge} ${profile.kyc_verified ? styles.verified : styles.unverified}`}>
+              {profile.kyc_verified ? <ShieldCheck size={13} /> : <ShieldAlert size={13} />}
+              {profile.kyc_verified ? "Verified Identity" : "Unverified"}
             </span>
-          </h2>
-          {profile.created_at && <p className={styles.meta}>Member since {formatMonthYear(profile.created_at)}</p>}
-
-          <div className={styles.idRow}>
-            <span className={styles.idLabel}>Uzima Link ID</span>
-            <span className={styles.idValue}>{profile.system_uid}</span>
-            <button type="button" onClick={copyId} className={styles.linkButton}>
-              {copied ? "Copied" : "Copy"}
-            </button>
           </div>
 
-          <div className={styles.idRow}>
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={uploading}
-              className={styles.linkButton}
-            >
-              {uploading ? "Uploading..." : "Change photo"}
-            </button>
-            <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} hidden />
+          {profile.created_at && (
+            <p className={styles.metaText}>Member since {formatMonthYear(profile.created_at)}</p>
+          )}
+
+          <div className={styles.idChipRow}>
+            <div className={styles.idChip}>
+              <span className={styles.chipLabel}>Uzima ID:</span>
+              <span className={styles.chipValue}>{profile.system_uid}</span>
+              <button type="button" onClick={copyId} className={styles.copyButton} title="Copy ID">
+                {copied ? <Check size={13} color="#059669" /> : <Copy size={13} />}
+                <span>{copied ? "Copied" : "Copy"}</span>
+              </button>
+            </div>
           </div>
-          {photoError && <p className={styles.error}>{photoError}</p>}
+          {photoError && <p className={styles.inlineError}>{photoError}</p>}
         </div>
       </section>
 
+      {/* Verified ID Details Section */}
       <section className={styles.card}>
-        <h3 className={styles.cardTitle}>Personal details</h3>
-        <div className={styles.grid}>
-          <div className={styles.field}>
-            <span className={styles.label}>Full name</span>
-            <span className={styles.value}>{profile.full_name}</span>
+        <div className={styles.cardHeader}>
+          <div className={styles.cardIconWrap}>
+            <FileText size={18} />
           </div>
-          <div className={styles.field}>
-            <span className={styles.label}>Date of birth</span>
-            <span className={styles.value}>
-              {formatDate(profile.date_of_birth)}
-              {age !== null ? ` (${age} years)` : ""}
-            </span>
-          </div>
-          <div className={styles.field}>
-            <span className={styles.label}>Gender</span>
-            <span className={styles.value}>{prettify(profile.gender)}</span>
-          </div>
-          <div className={styles.field}>
-            <span className={styles.label}>{prettify(profile.id_type)}</span>
-            <span className={styles.value}>{maskId(profile.national_id)}</span>
+          <div>
+            <h3 className={styles.cardTitle}>Verified Government Details</h3>
+            <p className={styles.cardDesc}>Pulled directly from your official ID records</p>
           </div>
         </div>
-        <p className={styles.hint}>These details come from your verified ID, so they can&apos;t be edited here.</p>
+
+        <div className={styles.grid}>
+          <div className={styles.fieldItem}>
+            <span className={styles.fieldLabel}>Full Legal Name</span>
+            <span className={styles.fieldValue}>{profile.full_name}</span>
+          </div>
+
+          <div className={styles.fieldItem}>
+            <span className={styles.fieldLabel}>Date of Birth</span>
+            <span className={styles.fieldValue}>
+              {formatDate(profile.date_of_birth)} {age !== null && <span className={styles.subInfo}>({age} yrs)</span>}
+            </span>
+          </div>
+
+          <div className={styles.fieldItem}>
+            <span className={styles.fieldLabel}>Gender</span>
+            <span className={styles.fieldValue}>{prettify(profile.gender)}</span>
+          </div>
+
+          <div className={styles.fieldItem}>
+            <span className={styles.fieldLabel}>{prettify(profile.id_type) || "National ID"}</span>
+            <span className={styles.fieldValue}>{maskId(profile.national_id)}</span>
+          </div>
+        </div>
+
+        <div className={styles.noticeBox}>
+          <Lock size={14} />
+          <span>These core identifiers are locked for medical security and compliance.</span>
+        </div>
       </section>
 
+      {/* Editable Contact & Guardian Form */}
       <form onSubmit={handleSave} className={styles.card}>
-        <h3 className={styles.cardTitle}>Contact and guardian</h3>
-        <div className={styles.grid}>
-          <div className={`${styles.field} ${styles.fieldFull}`}>
-            <label htmlFor="phone" className={styles.label}>Phone number</label>
-            <input
-              id="phone"
-              type="tel"
-              value={form.phone_number}
-              onChange={(e) => updateField("phone_number", e.target.value)}
-              className={styles.input}
-              required
-            />
+        <div className={styles.cardHeader}>
+          <div className={styles.cardIconWrap}>
+            <Users size={18} />
           </div>
-          <div className={styles.field}>
-            <label htmlFor="guardianName" className={styles.label}>Guardian or emergency contact</label>
+          <div>
+            <h3 className={styles.cardTitle}>Contact & Emergency Information</h3>
+            <p className={styles.cardDesc}>Update how your care team and clinics reach you</p>
+          </div>
+        </div>
+
+        <div className={styles.formGrid}>
+          <div className={`${styles.fieldGroup} ${styles.fullSpan}`}>
+            <label htmlFor="phone" className={styles.inputLabel}>Phone Number</label>
+            <div className={styles.inputWrapper}>
+              <Phone size={16} className={styles.inputIcon} />
+              <input
+                id="phone"
+                type="tel"
+                value={form.phone_number}
+                onChange={(e) => updateField("phone_number", e.target.value)}
+                className={styles.input}
+                placeholder="+254 712 345 678"
+                required
+              />
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label htmlFor="guardianName" className={styles.inputLabel}>Guardian / Emergency Contact</label>
             <input
               id="guardianName"
               value={form.guardian_name}
               onChange={(e) => updateField("guardian_name", e.target.value)}
-              placeholder="Name"
-              className={styles.input}
+              placeholder="Full name of contact"
+              className={styles.inputPlain}
             />
           </div>
-          <div className={styles.field}>
-            <label htmlFor="guardianPhone" className={styles.label}>Guardian phone</label>
+
+          <div className={styles.fieldGroup}>
+            <label htmlFor="guardianPhone" className={styles.inputLabel}>Emergency Phone Number</label>
             <input
               id="guardianPhone"
               type="tel"
               value={form.guardian_phone}
               onChange={(e) => updateField("guardian_phone", e.target.value)}
               placeholder="+254..."
-              className={styles.input}
+              className={styles.inputPlain}
             />
           </div>
         </div>
 
-        {saveError && <p className={styles.error}>{saveError}</p>}
+        {saveError && (
+          <div className={styles.errorBox}>
+            <AlertCircle size={16} />
+            <span>{saveError}</span>
+          </div>
+        )}
 
-        <div className={styles.actions}>
-          <button type="submit" disabled={saving || !hasChanges} className={styles.primaryButton}>
-            {saving ? "Saving..." : "Save changes"}
+        <div className={styles.formFooter}>
+          <button 
+            type="submit" 
+            disabled={saving || !hasChanges} 
+            className={styles.primaryButton}
+          >
+            {saving ? "Saving Changes..." : "Save Changes"}
           </button>
-          {success && <span className={styles.success}>Profile updated</span>}
+          
+          {success && (
+            <div className={styles.successMessage}>
+              <Check size={16} /> Profile updated successfully
+            </div>
+          )}
         </div>
       </form>
     </div>

@@ -18,14 +18,24 @@ export default function PatientLayout({ children }) {
     }
     getKycStatus()
       .then((res) => {
-        if (!res.kyc_verified) router.replace("/kyc");
-        else setChecking(false);
+        if (!res.kyc_verified) {
+          router.replace("/kyc");
+        } else {
+          setChecking(false);
+        }
       })
       .catch(() => router.replace("/login"));
   }, [router]);
 
   if (checking) {
-    return <div className={styles.loading}>Loading your account...</div>;
+    return (
+      <div className={styles.shell}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner} />
+          <p className={styles.loadingText}>Loading your health portal...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
