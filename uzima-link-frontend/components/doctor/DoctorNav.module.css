@@ -1,0 +1,40 @@
+.sidebar { display: none; }
+
+.bottomBar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: white; border-top: 1px solid #e2e8f0;
+  display: flex; justify-content: space-around;
+  padding: 0.5rem 0.25rem; z-index: 50;
+}
+
+.bottomLink {
+  display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  color: #94a3b8; text-decoration: none; font-size: 0.65rem; font-weight: 600;
+  padding: 0.3rem 0.4rem; border-radius: 0.5rem;
+}
+
+.bottomLinkActive { color: #059669; }
+
+@media (min-width: 860px) {
+  .sidebar {
+    display: flex; flex-direction: column; width: 15rem; min-height: 100vh;
+    background: white; border-right: 1px solid #e2e8f0; padding: 1.5rem 1rem;
+    position: sticky; top: 0;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem;
+    color: #0f172a; margin-bottom: 2rem; padding: 0 0.5rem;
+  }
+  .brandDot { width: 1.5rem; height: 1.5rem; border-radius: 0.4rem; background: linear-gradient(135deg, #059669, #0f766e); }
+  .links { display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
+  .link { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-radius: 0.6rem; color: #475569; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+  .link:hover { background: #f8fafc; }
+  .linkActive { background: #f0fdf4; color: #059669; font-weight: 600; }
+  .logout { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-radius: 0.6rem; color: #94a3b8; background: none; border: none; font-size: 0.9rem; font-weight: 500; cursor: pointer; text-align: left; }
+  .logout:hover { background: #fef2f2; color: #dc2626; }
+  .bottomBar { display: none; }
+}
+
+.subLink { display: flex; flex-direction: column; gap: 0.1rem; margin: -0.15rem 0 0.35rem 2.35rem; padding: 0.45rem 0.7rem; border-left: 2px solid #a7f3d0; border-radius: 0 0.5rem 0.5rem 0; text-decoration: none; background: #f0fdf4; }
+.subLabel { font-size: 0.8rem; font-weight: 600; color: #047857; }
+.subUid { font-family: ui-monospace, monospace; font-size: 0.72rem; color: #64748b; word-break: break-all; }

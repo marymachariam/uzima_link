@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 
 from main import app
 from database import Base, get_db
-import models
+import app.models as models
 
 TEST_DATABASE_URL = "sqlite:///./test_uzima_link.db"
 

@@ -1,0 +1,425 @@
+.pageContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.headerBlock {
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0.25rem 0 0;
+}
+
+/* Success/Error banners */
+.successBanner, .errorBanner {
+  padding: 0.85rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.successBanner {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.errorBanner {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Top Card */
+.topCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.photoRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.photoWrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f1f5f9;
+  border: 2px solid #e2e8f0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoPlaceholder {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nameText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.emailText {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.roleBadgeContainer {
+  margin-top: 0.3rem;
+}
+
+.roleBadge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.photoButton {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 0.35rem 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  border: 1px solid #a7f3d0;
+  transition: background 0.15s;
+  width: fit-content;
+}
+
+.photoButton:hover {
+  background: #d1fae5;
+}
+
+.badgeRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.badgeGood, .badgeBad, .badgeNeutral {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 9999px;
+}
+
+.badgeGood {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.badgeBad {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.badgeNeutral {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* Sections Grid */
+.gridSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .gridSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sectionCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+/* Forms */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.input {
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s;
+  background: white;
+}
+
+.input:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+.submitButton {
+  background: #059669;
+  color: white;
+  border: none;
+  padding: 0.7rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 0.5rem;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #047857;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Facility Info */
+.facilityContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.facilityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.facilityName {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.2rem 0;
+}
+
+.facilityTypeTag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.facilityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid #f1f5f9;
+}
+
+.factBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.factLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.factValue {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Invite Code Styling */
+.inviteWrap {
+  background: #fdf8f6;
+  border: 1px solid #fed7aa;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.inviteLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inviteLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #c2410c;
+  text-transform: uppercase;
+}
+
+.inviteSubHint {
+  font-size: 0.75rem;
+  color: #9a3412;
+}
+
+.inviteRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inviteCodeText {
+  flex-grow: 1;
+  background: white;
+  border: 1px solid #fdba74;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7c2d12;
+}
+
+.copyButton {
+  background: #c2410c;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.copyButton:hover {
+  background: #9a3412;
+}
+
+.emptyFacility {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.emptyText {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.centerBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid #059669;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingText {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}

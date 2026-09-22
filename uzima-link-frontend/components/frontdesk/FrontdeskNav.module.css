@@ -1,0 +1,207 @@
+/* Sidebar Layout */
+.sidebar {
+  width: 260px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+/* Brand Header */
+.brand {
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.brandIconWrap {
+  width: 38px;
+  height: 38px;
+  background: #ecfdf5;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brandDot {
+  width: 12px;
+  height: 12px;
+  background-color: #059669;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #a7f3d0;
+}
+
+.brandTextWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.brandSubtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.1rem;
+}
+
+/* Links Section */
+.linksSection {
+  padding: 1.5rem 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.navCategory {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  padding-left: 0.75rem;
+  margin: 0;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.6rem;
+  color: #475569;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.link svg {
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.link:hover svg {
+  color: #0f172a;
+}
+
+.linkActive {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+  font-weight: 700;
+}
+
+.linkActive svg {
+  color: #059669 !important;
+}
+
+/* Footer & Logout */
+.footerSection {
+  padding: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.logoutButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.6rem;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #b91c1c;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.logoutButton svg {
+  color: #dc2626;
+}
+
+.logoutButton:hover {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* Mobile Bottom Navigation Bar */
+.bottomBar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  justify-content: space-around;
+  z-index: 100;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.bottomLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-decoration: none;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.4rem;
+}
+
+.bottomLink svg {
+  color: #64748b;
+}
+
+.bottomLinkActive {
+  color: #059669;
+}
+
+.bottomLinkActive svg {
+  color: #059669;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .bottomBar {
+    display: flex;
+  }
+}

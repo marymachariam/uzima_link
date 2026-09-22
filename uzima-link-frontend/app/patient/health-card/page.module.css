@@ -1,0 +1,357 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.headerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f0fdf4;
+  color: #047857;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: fit-content;
+  border: 1px solid #bbf7d0;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.cardShowcase {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Digital Health Card Visual Masterpiece */
+.digitalCard {
+  background: linear-gradient(135deg, #065f46 0%, #047857 50%, #022c22 100%);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  color: white;
+  box-shadow: 0 12px 32px rgba(4, 120, 87, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.digitalCard::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  transform: rotate(30deg);
+  pointer-events: none;
+}
+
+.cardHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cardLogoIcon {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.cardBrandName {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+
+.secureTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cardBody {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.patientAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+}
+
+.patientInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.patientName {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.patientIdNum {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  margin: 0 0 0.5rem 0;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+}
+
+.patientMetaGrid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.4rem;
+  backdrop-filter: blur(4px);
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 1rem;
+  margin-top: 0.25rem;
+}
+
+.barcodeSection {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qrCodeIcon {
+  background: white;
+  color: #065f46;
+  padding: 0.25rem;
+  border-radius: 0.35rem;
+}
+
+.barcodeLines {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 28px;
+}
+
+.bar1 { width: 3px; height: 100%; background: white; }
+.bar2 { width: 1px; height: 100%; background: rgba(255,255,255,0.7); }
+.bar3 { width: 4px; height: 100%; background: white; }
+.bar4 { width: 2px; height: 100%; background: rgba(255,255,255,0.8); }
+
+.instantScanText {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  font-style: italic;
+  text-align: right;
+}
+
+/* Actions Card */
+.actionsCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actionsTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.actionsDescription {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.25rem;
+}
+
+.primaryButton, .secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 180px;
+}
+
+.primaryButton {
+  background: #059669;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.25);
+}
+
+.secondaryButton {
+  background: white;
+  color: #059669;
+  border: 1px solid #cbd5e1;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #059669;
+  color: #047857;
+}
+
+.primaryButton:disabled, .secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinnerDark {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #cbd5e1;
+  border-top-color: #059669;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .cardBody {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .buttonRow {
+    flex-direction: column;
+  }
+
+  .primaryButton, .secondaryButton {
+    width: 100%;
+  }
+}

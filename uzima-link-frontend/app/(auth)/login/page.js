@@ -2,75 +2,117 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
-import { login as loginRequest } from "@/lib/endpoints";
-import styles from "./login.module.css";
+import Link from "next/link";
+import { patientLoginStart, patientLoginChooseChannel } from "@/lib/endpoints";
+import styles from "../auth.module.css";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
+const METHODS = [
+  { value: "email", label: "Email" },
+  { value: "phone", label: "Phone" },
+  { value: "national_id", label: "National ID" },
+];
+
+export default function PatientLoginPage() {
+  const router = useRouter();
+  const [method, setMethod] = useState("email");
+  const [value, setValue] = useState("");
   const [password, setPassword] = useState("");
+  const [channel, setChannel] = useState("email");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { login } = useAuth();
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const response = await loginRequest(email, password);
-      login(response.access_token, response.role);
+      const res =
+        method === "national_id"
+          ? await patientLoginChooseChannel({ national_id: value, password, channel })
+          : await patientLoginStart({ method, value, password });
 
-      if (response.role === "patient") router.push("/patient");
-      else if (response.role === "doctor") router.push("/doctor");
-      else router.push("/kiosk");
+      // Save pending login info for the verification page and clear staff sessions
+      sessionStorage.setItem("uzima_pending_login", JSON.stringify({ method, value }));
+      sessionStorage.removeItem("uzima_pending_staff_login");
+
+      router.push(`/login/verify-otp?message=${encodeURIComponent(res.message || "Enter the verification code sent to you.")}`);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
+
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Log in</h1>
+    <div className={styles.page}>
+      <div className={styles.leftPanel}>
+        <div className={styles.leftBrand}>
+          <div className={styles.leftBrandDot} />
+          <span className={styles.leftBrandName}>Uzima Link</span>
+        </div>
+        <img src="/image.png" alt="" className={styles.leftImage} />
+        <p className={styles.leftCaption}>Your health record, wherever care finds you.</p>
+      </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
-            required
-          />
+      <div className={styles.rightPanel}>
+        <div className={styles.card}>
+          <h1 className={styles.title}>Welcome back</h1>
+          <p className={styles.subtitle}>Log in to your Uzima Link account</p>
 
-          {error && <p className={styles.error}>{error}</p>}
+          <div className={styles.roleSwitch}>
+            {METHODS.map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                onClick={() => setMethod(m.value)}
+                className={method === m.value ? styles.roleButtonActive : styles.roleButton}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
 
-          <button type="submit" disabled={loading} className={styles.button}>
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
-        <p className={styles.footer}>
-          No account?{" "}
-          <a href="/register" className={styles.link}>
-            Register here
-          </a>
-        </p>
-        <p className={styles.footer}>
-          <a href="/forgot-password" className={styles.link}>
-            Forgot your password?
-          </a>
-        </p>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <input
+              placeholder={method === "phone" ? "+254712345678" : method === "national_id" ? "National ID number" : "Email"}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              className={styles.input}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={styles.input}
+              required
+            />
+
+            {method === "national_id" && (
+              <select className={styles.input} value={channel} onChange={(e) => setChannel(e.target.value)}>
+                <option value="email">Send code to email</option>
+                <option value="phone">Send code to phone</option>
+              </select>
+            )}
+
+            {error && <p className={styles.error}>{error}</p>}
+
+            <button type="submit" disabled={loading} className={styles.button}>
+              {loading ? "Sending code..." : "Continue"}
+            </button>
+          </form>
+
+          <p className={styles.footer}>
+            <Link href="/forgot-password" className={styles.link}>Forgot your password?</Link>
+          </p>
+          <p className={styles.footer}>
+            Don&apos;t have an account? <Link href="/register" className={styles.link}>Create one</Link>
+          </p>
+          <p className={styles.footer}>
+            <Link href="/login/staff" className={styles.link}>Doctor or frontdesk staff? Sign in here</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,82 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.content {
+  flex: 1;
+  padding: 1.25rem 1.25rem 5.5rem;
+  max-width: 56rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+@media (min-width: 860px) {
+  .content {
+    padding: 2.5rem 3rem;
+  }
+}.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.content {
+  flex: 1;
+  padding: 1.25rem 1.25rem 5.5rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.loadingContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 100vh;
+}
+
+.loadingText {
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #0f172a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 860px) {
+  .shell {
+    flex-direction: row;
+  }
+
+  .content {
+    padding: 2.5rem 3rem;
+  }
+}

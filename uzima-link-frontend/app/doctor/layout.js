@@ -1,128 +1,67 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
-import AuthGuard from "@/components/AuthGuard";
-import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { clearSession } from "@/lib/auth";
 import styles from "./layout.module.css";
-import { useState, useEffect } from "react";
-import { getRecentRegistrations } from "@/lib/endpoints";
 
-function DoctorShell({ children }) {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+export default function DoctorLayout({ children }) {
   const pathname = usePathname();
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [loadingNotifs, setLoadingNotifs] = useState(false);
+  const router = useRouter();
 
-  useEffect(() => {
-    async function loadNotifications() {
-      setLoadingNotifs(true);
-      try {
-        const result = await getRecentRegistrations(5);
-        setNotifications(result);
-      } catch (err) {
-        console.error("Failed to load notifications:", err.message);
-      } finally {
-        setLoadingNotifs(false);
-      }
-    }
-    loadNotifications();
-    const interval = setInterval(loadNotifications, 60000); // refresh every 60s
-    return () => clearInterval(interval);
-  }, []);
+  const handleLogout = () => {
+    clearSession();
+    router.push("/login/staff");
+  };
 
   const navItems = [
-    { label: "Dashboard", path: "/doctor" },
-    { label: "Patients", path: "/doctor/patients" },
-    { label: "Allergy Alerts", path: "/doctor/alerts" },
-    { label: "Notes", path: "/doctor/notes" },
+    { href: "/doctor", label: "Home", icon: "🏠" },
+    { href: "/doctor/queue", label: "Queue", icon: "👥" },
+    { href: "/doctor/scan", label: "Scan Patient", icon: "🔍" },
+    { href: "/doctor/profile", label: "Profile", icon: "👤" },
   ];
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.dashboardContainer}>
+      {/* Sidebar */}
       <aside className={styles.sidebar}>
-        <div className={styles.brand}>
-          <div className={styles.logoDot} />
-          <span className={styles.brandName}>Uzima Link</span>
-        </div>
-
-        <nav className={styles.nav}>
-          {navItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => router.push(item.path)}
-              className={
-                pathname === item.path ? styles.navItemActive : styles.navItem
-              }
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
-        <div className={styles.notifSection}>
-          <button
-            onClick={() => setShowNotifications(!showNotifications)}
-            className={styles.notifButton}
-          >
-            🔔 New patients
-            {notifications.length > 0 && (
-              <span className={styles.notifBadge}>{notifications.length}</span>
-            )}
-          </button>
-
-          {showNotifications && (
-            <div className={styles.notifDropdown}>
-              {loadingNotifs ? (
-                <p className={styles.notifEmpty}>Loading...</p>
-              ) : notifications.length === 0 ? (
-                <p className={styles.notifEmpty}>No recent registrations</p>
-              ) : (
-                notifications.map((n) => (
-                  <div key={n.id} className={styles.notifItem}>
-                    <span className={styles.notifName}>{n.full_name}</span>
-                    <span className={styles.notifTime}>
-                      {new Date(n.created_at).toLocaleString([], {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      })}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className={styles.footer}>
-          <div className={styles.doctorInfo}>
-            <div className={styles.doctorAvatar}>
-              {user?.fullName?.[0]?.toUpperCase() || "D"}
-            </div>
-            <div>
-              <div className={styles.doctorName}>
-                {user?.fullName || "Doctor"}
-              </div>
-              <div className={styles.doctorFacility}>
-                {user?.facilityName || ""}
-              </div>
-            </div>
+        <div className={styles.sidebarTop}>
+          <div className={styles.brand}>
+            <div className={styles.brandDot} />
+            <span className={styles.brandName}>Uzima Link</span>
           </div>
-          <button onClick={logout} className={styles.logoutLink}>
-            Log out
+          <span className={styles.roleBadge}>Doctor Portal</span>
+        </div>
+
+        <nav className={styles.navMenu}>
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.navLink} ${isActive ? styles.activeNavLink : ""}`}
+              >
+                <span className={styles.navIcon}>{item.icon}</span>
+                <span className={styles.navLabel}>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Logout placed cleanly at the bottom after Profile */}
+        <div className={styles.sidebarBottom}>
+          <button onClick={handleLogout} className={styles.logoutButton}>
+            <span className={styles.navIcon}>🚪</span>
+            <span className={styles.navLabel}>Log out</span>
           </button>
         </div>
       </aside>
 
-      <main className={styles.content}>{children}</main>
+      {/* Main Content Area */}
+      <main className={styles.mainContent}>
+        <div className={styles.contentWrapper}>{children}</div>
+      </main>
     </div>
-  );
-}
-
-export default function DoctorLayout({ children }) {
-  return (
-    <AuthGuard allowedRoles={["doctor", "kiosk_operator"]}>
-      <DoctorShell>{children}</DoctorShell>
-    </AuthGuard>
   );
 }
