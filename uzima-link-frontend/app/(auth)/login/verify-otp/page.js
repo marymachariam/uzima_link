@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { 
-  verifyDoctorLogin, 
-  verifyFrontdeskLogin, 
-  getDoctorKycStatus, 
-  patientLoginVerify 
+import {
+  verifyDoctorLogin,
+  verifyFrontdeskLogin,
+  getDoctorKycStatus,
+  patientLoginVerify
 } from "@/lib/endpoints";
 import { saveSession } from "@/lib/auth";
 import styles from "../../auth.module.css";
 import { ShieldCheck, AlertCircle } from "lucide-react";
 
-export default function UnifiedVerifyOtpPage() {
+function UnifiedVerifyOtpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = searchParams.get("message") || "Enter the verification code sent to your email or phone.";
@@ -45,27 +45,24 @@ export default function UnifiedVerifyOtpPage() {
         if (role === "doctor") {
           try {
             const kyc = await getDoctorKycStatus();
-            if (kyc && kyc.kyc_status === "approved") {
-              router.push("/doctor");
-              return;
-            }
+            router.push(kyc?.kyc_verified ? "/doctor" : "/doctor/kyc");
           } catch {
+            router.push("/doctor/kyc");
           }
-          router.push("/kyc");
         } else {
-          router.push("/frontdesk");
+          router.push("/kiosk");
         }
 
       } else {
         const pendingLoginStr = sessionStorage.getItem("uzima_pending_login");
-        
+
         if (!pendingLoginStr) {
           throw new Error("Patient session data not found. Please sign in again.");
         }
 
         const { method, value } = JSON.parse(pendingLoginStr);
         const res = await patientLoginVerify({ method, value, otp });
-        
+
         saveSession(res.access_token, "patient");
         sessionStorage.removeItem("uzima_pending_login");
 
@@ -123,5 +120,13 @@ export default function UnifiedVerifyOtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UnifiedVerifyOtpPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: "2rem" }}>Loading...</div>}>
+      <UnifiedVerifyOtpContent />
+    </Suspense>
   );
 }

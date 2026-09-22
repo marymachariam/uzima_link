@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyDoctorLogin, verifyFrontdeskLogin, getDoctorKycStatus } from "@/lib/endpoints";
 import { saveSession } from "@/lib/auth";
 import styles from "../../../auth.module.css";
 import { ShieldCheck, AlertCircle } from "lucide-react";
 
-export default function StaffVerifyOtpPage() {
+function StaffVerifyOtpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = searchParams.get("message") || "Enter the verification code sent to your email.";
@@ -23,7 +23,7 @@ export default function StaffVerifyOtpPage() {
 
     try {
       const pendingStaffStr = sessionStorage.getItem("uzima_pending_staff_login");
-      
+
       if (!pendingStaffStr) {
         throw new Error("Staff session data not found. Please sign in again.");
       }
@@ -37,23 +37,18 @@ export default function StaffVerifyOtpPage() {
         res = await verifyFrontdeskLogin(email, otp);
       }
 
-  
       saveSession(res.access_token, role);
       sessionStorage.removeItem("uzima_pending_staff_login");
 
       if (role === "doctor") {
         try {
           const kyc = await getDoctorKycStatus();
-          if (kyc && kyc.kyc_status === "approved") {
-            router.push("/doctor");
-            return;
-          }
+          router.push(kyc?.kyc_verified ? "/doctor" : "/doctor/kyc");
         } catch {
-
+          router.push("/doctor/kyc");
         }
-        router.push("/kyc");
       } else {
-        router.push("/frontdesk");
+        router.push("/kiosk");
       }
 
     } catch (err) {
@@ -107,5 +102,13 @@ export default function StaffVerifyOtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function StaffVerifyOtpPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: "2rem" }}>Loading...</div>}>
+      <StaffVerifyOtpContent />
+    </Suspense>
   );
 }
