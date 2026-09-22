@@ -1,5 +1,8 @@
-import apiRequest, { API_BASE_URL } from "./api";
+import apiRequest from "./api";
 import { getAuthToken } from "./auth";
+
+// Defined locally to prevent any undefined module-import issues
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 // ---------- Patient Auth ----------
 
