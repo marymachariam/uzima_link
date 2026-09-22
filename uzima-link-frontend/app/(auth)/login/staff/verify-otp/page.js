@@ -37,7 +37,7 @@ export default function StaffVerifyOtpPage() {
         res = await verifyFrontdeskLogin(email, otp);
       }
 
-      // Pass token and role as separate parameters to match lib/auth.js
+  
       saveSession(res.access_token, role);
       sessionStorage.removeItem("uzima_pending_staff_login");
 
@@ -49,7 +49,7 @@ export default function StaffVerifyOtpPage() {
             return;
           }
         } catch {
-          // Fallback if KYC check fails
+
         }
         router.push("/kyc");
       } else {

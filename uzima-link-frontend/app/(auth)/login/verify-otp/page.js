@@ -50,7 +50,6 @@ export default function UnifiedVerifyOtpPage() {
               return;
             }
           } catch {
-            // Fallback if KYC check fails
           }
           router.push("/kyc");
         } else {
@@ -58,7 +57,6 @@ export default function UnifiedVerifyOtpPage() {
         }
 
       } else {
-        // --- PATIENT LOGIN FLOW ---
         const pendingLoginStr = sessionStorage.getItem("uzima_pending_login");
         
         if (!pendingLoginStr) {

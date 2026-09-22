@@ -291,3 +291,16 @@ export function getConsents() {
 export function revokeConsent(consentId) {
   return apiRequest(`/patient/consent/${consentId}`, { method: "DELETE" });
 }
+
+
+export function getFrontdeskProfile() {
+  return apiRequest("/frontdesk/profile/me", { method: "GET" });
+}
+
+export function updateFrontdeskProfile(data) {
+  return apiRequest("/frontdesk/profile/me", { method: "PATCH", body: data });
+}
+
+export function uploadFrontdeskPhoto(formData) {
+  return apiRequest("/frontdesk/profile/me/photo", { method: "POST", body: formData, isFormData: true });
+}
