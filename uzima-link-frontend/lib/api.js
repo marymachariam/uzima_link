@@ -1,9 +1,10 @@
-export const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 function getToken() {
-  if (typeof window === "undefined") return null; 
+  if (typeof window === "undefined") return null;
   return localStorage.getItem("uzima_token");
 }
+
 function getAdminApiKey() {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("uzima_admin_key");
@@ -16,12 +17,12 @@ async function apiRequest(path, { method = "GET", body = null, isFormData = fals
     headers["Content-Type"] = "application/json";
   }
 
-  const isadminRoute = isAdmin || path.startsWith("/admin");
+  const isAdminRoute = isAdmin || path.startsWith("/admin");
 
-  if (isadminRoute) {
+  if (isAdminRoute) {
     const adminKey = getAdminApiKey();
     if (adminKey) {
-      headers["x-admin-key"] = adminKey; 
+      headers["x-admin-key"] = adminKey;
     }
   } else if (auth) {
     const token = getToken();
@@ -48,7 +49,7 @@ async function apiRequest(path, { method = "GET", body = null, isFormData = fals
     data = null;
   }
 
-   if (!response.ok) {
+  if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
 
     if (data?.detail) {

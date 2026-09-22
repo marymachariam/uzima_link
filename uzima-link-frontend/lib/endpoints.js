@@ -8,7 +8,7 @@ export function registerPatient(data) {
 }
 
 export async function downloadHealthCard(format = "png") {
-  const res = await fetch(`http://127.0.0.1:8000/patient/health-card?format=${format}`, {
+  const res = await fetch(`${API_BASE_URL}/patient/health-card?format=${format}`, {
     headers: { Authorization: `Bearer ${getAuthToken()}` },
   });
   if (!res.ok) throw new Error("Failed to download health card");
@@ -291,7 +291,6 @@ export function getConsents() {
 export function revokeConsent(consentId) {
   return apiRequest(`/patient/consent/${consentId}`, { method: "DELETE" });
 }
-
 
 export function getFrontdeskProfile() {
   return apiRequest("/frontdesk/profile/me", { method: "GET" });
