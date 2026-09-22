@@ -14,6 +14,13 @@ export default function DoctorLayout({ children }) {
     router.push("/login/staff");
   };
 
+  const hideSidebarRoutes = ["/doctor/kyc"];
+  const shouldHideSidebar = hideSidebarRoutes.includes(pathname);
+
+  if (shouldHideSidebar) {
+    return <main>{children}</main>;
+  }
+
   const navItems = [
     { href: "/doctor", label: "Home", icon: "🏠" },
     { href: "/doctor/queue", label: "Queue", icon: "👥" },
@@ -49,7 +56,6 @@ export default function DoctorLayout({ children }) {
           })}
         </nav>
 
-        {/* Logout placed cleanly at the bottom after Profile */}
         <div className={styles.sidebarBottom}>
           <button onClick={handleLogout} className={styles.logoutButton}>
             <span className={styles.navIcon}>🚪</span>
@@ -57,8 +63,6 @@ export default function DoctorLayout({ children }) {
           </button>
         </div>
       </aside>
-
-      {/* Main Content Area */}
       <main className={styles.mainContent}>
         <div className={styles.contentWrapper}>{children}</div>
       </main>
