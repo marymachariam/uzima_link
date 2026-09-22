@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { patientResetPassword } from "@/lib/endpoints";
 import styles from "../auth.module.css";
@@ -19,7 +19,7 @@ function EyeIcon({ open }) {
   );
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
@@ -104,5 +104,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: "2rem" }}>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
