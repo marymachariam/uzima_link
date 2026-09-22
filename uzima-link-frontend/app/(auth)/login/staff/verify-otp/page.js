@@ -48,7 +48,7 @@ function StaffVerifyOtpContent() {
           router.push("/doctor/kyc");
         }
       } else {
-        router.push("/kiosk");
+        router.push("/frontdesk");
       }
 
     } catch (err) {
