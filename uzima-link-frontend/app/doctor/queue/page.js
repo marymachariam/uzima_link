@@ -13,8 +13,7 @@ import {
   CheckCircle2, 
   PlayCircle, 
   CheckSquare, 
-  UserSquare2,
-  AlertCircle
+  UserSquare2
 } from "lucide-react";
 import styles from "./page.module.css";
 
@@ -73,20 +72,20 @@ export default function DoctorQueuePage() {
           </p>
         </div>
         
-        {/* Quick Stats Bar */}
+        {/* Quick Stats Bar - Fully Wrapping for Mobile */}
         <div className={styles.statsBar}>
           <div className={styles.statPill}>
-            <Users className={styles.statIcon} size={18} />
+            <Users className={styles.statIcon} size={16} />
             <span className={styles.statLabel}>Waiting</span>
             <span className={styles.statCount}>{waitingCount}</span>
           </div>
           <div className={`${styles.statPill} ${styles.statPillActive}`}>
-            <Clock className={styles.statIconActive} size={18} />
+            <Clock className={styles.statIconActive} size={16} />
             <span className={styles.statLabel}>In Progress</span>
             <span className={styles.statCount}>{inProgressCount}</span>
           </div>
           <div className={`${styles.statPill} ${styles.statPillSuccess}`}>
-            <CheckCircle2 className={styles.statIconSuccess} size={18} />
+            <CheckCircle2 className={styles.statIconSuccess} size={16} />
             <span className={styles.statLabel}>Completed</span>
             <span className={styles.statCount}>{completedCount}</span>
           </div>
@@ -102,7 +101,7 @@ export default function DoctorQueuePage() {
         <div className={styles.emptyState}>
           <CheckCircle2 size={48} className={styles.emptyIcon} />
           <h3 className={styles.emptyTitle}>All caught up!</h3>
-          <p className={styles.emptyText}>There are no patients waiting in the queue right now.</p>
+          <p className={styles.emptyText}>There are no patients waiting in confidentiality right now.</p>
         </div>
       ) : (
         <div className={styles.queueGrid}>
@@ -128,8 +127,8 @@ export default function DoctorQueuePage() {
                   
                   <div className={styles.metaInfo}>
                     <span className={styles.timeInfo}>
-                      <Clock size={14} className={styles.metaIcon} />
-                      Checked in at {new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <Clock size={13} className={styles.metaIcon} />
+                      {new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {entry.patient_system_uid && (
                       <span className={styles.idInfo}>
@@ -140,13 +139,11 @@ export default function DoctorQueuePage() {
                 </div>
               </div>
 
-              <div className={styles.cardActions}>
-                <div className={styles.statusBadgeWrapper}>
-                   <span className={`${styles.statusBadge} ${styles[`badge_${entry.status}`]}`}>
-                    {entry.status === 'in_progress' && <span className={styles.pulsingDot}></span>}
-                    {entry.status.replace(/_/g, " ")}
-                  </span>
-                </div>
+              <div className={styles.cardFooter}>
+                <span className={`${styles.statusBadge} ${styles[`badge_${entry.status}`]}`}>
+                  {entry.status === 'in_progress' && <span className={styles.pulsingDot}></span>}
+                  {entry.status.replace(/_/g, " ")}
+                </span>
 
                 <div className={styles.buttonGroup}>
                   {entry.status === "waiting" && (
@@ -159,8 +156,8 @@ export default function DoctorQueuePage() {
                          <span className={styles.buttonSpinner}></span>
                       ) : (
                         <>
-                          <PlayCircle size={18} />
-                          Start Consult
+                          <PlayCircle size={16} />
+                          <span>Start Consult</span>
                         </>
                       )}
                     </button>
@@ -175,8 +172,8 @@ export default function DoctorQueuePage() {
                          <span className={styles.buttonSpinnerDark}></span>
                       ) : (
                         <>
-                          <CheckSquare size={18} />
-                          Complete
+                          <CheckSquare size={16} />
+                          <span>Complete</span>
                         </>
                       )}
                     </button>

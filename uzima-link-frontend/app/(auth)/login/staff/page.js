@@ -74,9 +74,10 @@ export default function StaffLoginPage() {
             </button>
           </form>
 
-          <p className={styles.footer}>
+         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.25rem", width: "100%" }}>
+            <Link href="/forgot-password" className={styles.link}>Forgot password?</Link>
             <Link href="/login" className={styles.link}>Patient? Sign in here</Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>

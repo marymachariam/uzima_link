@@ -49,7 +49,7 @@ export default function DoctorDashboard() {
         <div className={styles.heroContent}>
           <div className={styles.dateBadge}>📅 {currentTime}</div>
           <h1 className={styles.greeting}>
-            Good day, Dr. {profile?.full_name?.split(" ")[0] || "Doctor"} 👋
+            Good day, Dr. {profile?.full_name?.split(" ")[0] || "Doctor"}
           </h1>
           <p className={styles.subtitle}>
             <span>🏥 {facility?.name || "Watamu Hospital"}</span>

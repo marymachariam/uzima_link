@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/navigation"; 
+import { useState } from "react";
+import Link from "next/link"; 
 import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./PatientNav.module.css";
@@ -13,7 +14,9 @@ import {
   FileText, 
   ShieldCheck, 
   User, 
-  LogOut 
+  LogOut,
+  Menu,
+  X
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -30,6 +33,7 @@ const NAV_ITEMS = [
 export default function PatientNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   function handleLogout() {
     clearSession();
@@ -38,6 +42,7 @@ export default function PatientNav() {
 
   return (
     <>
+      {/* Desktop Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.brandContainer}>
           <div className={styles.brandLogo}>
@@ -55,10 +60,10 @@ export default function PatientNav() {
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
-              <a key={href} href={href} className={`${styles.link} ${active ? styles.linkActive : ""}`}>
+              <Link key={href} href={href} className={`${styles.link} ${active ? styles.linkActive : ""}`}>
                 <Icon size={20} className={styles.linkIcon} />
                 <span>{label}</span>
-              </a>
+              </Link>
             );
           })}
         </div>
@@ -71,16 +76,75 @@ export default function PatientNav() {
         </div>
       </aside>
 
+      {/* Mobile Top Bar */}
+      <div className={styles.mobileTopBar}>
+        <div className={styles.mobileBrand}>
+          <div className={styles.brandLogoSmall}>
+            <div className={styles.brandDotSmall} />
+          </div>
+          <span className={styles.mobileBrandTitle}>Uzima Link</span>
+        </div>
+        <button 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+          className={styles.menuToggleButton}
+          aria-label="Toggle Menu"
+        >
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {/* Mobile Full-Screen Slide-out Drawer (Holds all 8 links + Logout) */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
+          <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.drawerHeader}>
+              <span className={styles.drawerTitle}>All Menu Options</span>
+              <button onClick={() => setMobileMenuOpen(false)} className={styles.closeButton}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className={styles.drawerLinks}>
+              {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active = pathname === href;
+                return (
+                  <Link 
+                    key={href} 
+                    href={href} 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`${styles.drawerLink} ${active ? styles.drawerLinkActive : ""}`}
+                  >
+                    <Icon size={20} />
+                    <span>{label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            <div className={styles.drawerFooter}>
+              <button onClick={handleLogout} className={styles.logout}>
+                <LogOut size={18} />
+                <span>Log out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <nav className={styles.bottomBar}>
-        {NAV_ITEMS.slice(0, 5).map(({ href, label, icon: Icon }) => {
+        {NAV_ITEMS.slice(0, 4).map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
-            <a key={href} href={href} className={`${styles.bottomLink} ${active ? styles.bottomLinkActive : ""}`}>
+            <Link key={href} href={href} className={`${styles.bottomLink} ${active ? styles.bottomLinkActive : ""}`}>
               <Icon size={20} />
               <span>{label}</span>
-            </a>
+            </Link>
           );
         })}
+        <button 
+          onClick={() => setMobileMenuOpen(true)} 
+          className={styles.bottomLink}
+        >
+          <Menu size={20} />
+          <span>More</span>
+        </button>
       </nav>
     </>
   );

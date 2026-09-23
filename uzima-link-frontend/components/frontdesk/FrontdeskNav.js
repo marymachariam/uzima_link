@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./FrontdeskNav.module.css";
+import { Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/frontdesk", label: "Home", icon: HomeIcon },
@@ -15,6 +17,7 @@ const NAV_ITEMS = [
 export default function FrontdeskNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   function handleLogout() {
     clearSession();
@@ -23,6 +26,68 @@ export default function FrontdeskNav() {
 
   return (
     <>
+      {/* Mobile Top Header Bar with Hamburger Menu */}
+      <header className={styles.mobileTopBar}>
+        <div className={styles.brandMobile}>
+          <div className={styles.brandIconWrap}>
+            <div className={styles.brandDot} />
+          </div>
+          <span className={styles.brandTitleMobile}>Uzima Link</span>
+        </div>
+        <div className={styles.mobileTopRight}>
+          <span className={styles.roleBadgeMobile}>Frontdesk</span>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={styles.menuToggleButton}
+            aria-label="Toggle Menu"
+          >
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Full-Screen Slide-out Drawer Overlay */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
+          <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.drawerHeader}>
+              <span className={styles.drawerTitle}>Menu Options</span>
+              <button onClick={() => setMobileMenuOpen(false)} className={styles.closeButton}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className={styles.linksSection}>
+              <p className={styles.navCategory}>Main Menu</p>
+              <div className={styles.links}>
+                {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+                  const active = pathname === href;
+                  return (
+                    <Link 
+                      key={href} 
+                      href={href} 
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`${styles.link} ${active ? styles.linkActive : ""}`}
+                    >
+                      <Icon />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className={styles.footerSection}>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                <LogoutIcon />
+                <span>Log out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Sidebar */}
       <nav className={styles.sidebar}>
         <div className={styles.brand}>
           <div className={styles.brandIconWrap}>

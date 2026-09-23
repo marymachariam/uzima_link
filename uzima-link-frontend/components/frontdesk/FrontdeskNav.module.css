@@ -1,4 +1,4 @@
-/* Sidebar Layout */
+/* Sidebar Layout (Desktop) */
 .sidebar {
   width: 260px;
   background-color: #ffffff;
@@ -157,6 +157,108 @@
   border-color: #fecaca;
 }
 
+/* ------------------------------------------------ */
+/* Mobile UI Components (Hidden on Desktop)         */
+/* ------------------------------------------------ */
+.mobileTopBar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  width: 100%;
+}
+
+.brandMobile {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brandTitleMobile {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.mobileTopRight {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.roleBadgeMobile {
+  background-color: #ecfdf5;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.menuToggleButton {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Slide-out Drawer */
+.mobileDrawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.mobileDrawer {
+  width: 80%;
+  max-width: 300px;
+  background: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  animation: slideInRight 0.25s ease-out;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1rem 1rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.drawerTitle {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
 /* Mobile Bottom Navigation Bar */
 .bottomBar {
   display: none;
@@ -166,7 +268,7 @@
   right: 0;
   background: white;
   border-top: 1px solid #e2e8f0;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   justify-content: space-around;
   z-index: 100;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
@@ -196,10 +298,23 @@
   color: #059669;
 }
 
-/* Responsive Styles */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Responsive Trigger (768px and below) */
 @media (max-width: 768px) {
   .sidebar {
     display: none;
+  }
+  .mobileTopBar {
+    display: flex;
   }
   .bottomBar {
     display: flex;
