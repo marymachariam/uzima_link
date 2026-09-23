@@ -33,6 +33,7 @@ from app.routers.frontdesk.patients import router as frontdesk_patients_router
 from app.routers.frontdesk.checkin import router as frontdesk_checkin_router
 from app.routers.frontdesk.queue import router as frontdesk_queue_router
 from app.routers.shared.admin import router as shared_admin_router
+from app.routers.shared.assistant import router as assistant_router
 
 app = FastAPI(title="Uzima Link API")
 app.state.limiter = limiter
@@ -75,6 +76,7 @@ app.include_router(frontdesk_checkin_router)
 app.include_router(frontdesk_queue_router)
 app.include_router(shared_admin_router)
 app.include_router(doctor_kyc_router)
+app.include_router(assistant_router)
 
 scheduler = BackgroundScheduler()
 
