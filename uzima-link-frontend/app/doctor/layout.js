@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./layout.module.css";
+import { Menu, X } from "lucide-react";
 
 export default function DoctorLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     clearSession();
@@ -30,7 +33,61 @@ export default function DoctorLayout({ children }) {
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* Sidebar */}
+      {/* Mobile Top App Bar */}
+      <header className={styles.mobileTopBar}>
+        <div className={styles.brand}>
+          <div className={styles.brandDot} />
+          <span className={styles.brandName}>Uzima Link</span>
+        </div>
+        <div className={styles.mobileTopActions}>
+          <span className={styles.roleBadgeSmall}>Doctor</span>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={styles.menuToggleButton}
+            aria-label="Toggle Menu"
+          >
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Full-Screen Slide-out Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
+          <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.drawerHeader}>
+              <span className={styles.drawerTitle}>Menu Options</span>
+              <button onClick={() => setMobileMenuOpen(false)} className={styles.closeButton}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className={styles.drawerNavMenu}>
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`${styles.navLink} ${isActive ? styles.activeNavLink : ""}`}
+                  >
+                    <span className={styles.navIcon}>{item.icon}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            <div className={styles.drawerFooter}>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                <span className={styles.navIcon}>🚪</span>
+                <span className={styles.navLabel}>Log out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
           <div className={styles.brand}>
@@ -63,9 +120,28 @@ export default function DoctorLayout({ children }) {
           </button>
         </div>
       </aside>
+
+      {/* Main Content Area */}
       <main className={styles.mainContent}>
         <div className={styles.contentWrapper}>{children}</div>
       </main>
+
+      {/* Mobile Bottom Navigation Bar (App Bar Style) */}
+      <nav className={styles.bottomBar}>
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.bottomLink} ${isActive ? styles.bottomLinkActive : ""}`}
+            >
+              <span className={styles.bottomIcon}>{item.icon}</span>
+              <span className={styles.bottomLabel}>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

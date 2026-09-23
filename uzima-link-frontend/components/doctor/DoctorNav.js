@@ -1,10 +1,11 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./DoctorNav.module.css";
+import { Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/doctor", label: "Home", icon: HomeIcon, exact: true },
@@ -39,6 +40,7 @@ function getPatientFlow(pathname) {
 export default function DoctorNav() {
   const pathname = usePathname() || "";
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const flow = getPatientFlow(pathname);
 
   function handleLogout() {
@@ -48,10 +50,14 @@ export default function DoctorNav() {
 
   return (
     <>
+      {/* Desktop Sidebar */}
       <nav className={styles.sidebar}>
         <div className={styles.brand}>
           <div className={styles.brandDot} />
-          <span>Uzima Link</span>
+          <div>
+            <span className={styles.brandTitleText}>Uzima Link</span>
+            <span className={styles.brandSubtitle}>Doctor Portal</span>
+          </div>
         </div>
 
         <div className={styles.links}>
@@ -81,6 +87,70 @@ export default function DoctorNav() {
         </button>
       </nav>
 
+      {/* Mobile Top Bar */}
+      <div className={styles.mobileTopBar}>
+        <div className={styles.mobileBrand}>
+          <div className={styles.brandDotSmall} />
+          <span className={styles.mobileBrandTitle}>Uzima Link Doctor</span>
+        </div>
+        <button 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+          className={styles.menuToggleButton}
+          aria-label="Toggle Menu"
+        >
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {/* Mobile Full-Screen Slide-out Drawer */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
+          <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.drawerHeader}>
+              <span className={styles.drawerTitle}>Doctor Menu</span>
+              <button onClick={() => setMobileMenuOpen(false)} className={styles.closeButton}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className={styles.drawerLinks}>
+              {NAV_ITEMS.map((item) => {
+                const { href, label, icon: Icon } = item;
+                const active = isActive(item, pathname);
+                return (
+                  <Fragment key={href}>
+                    <Link 
+                      href={href} 
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`${styles.drawerLink} ${active ? styles.drawerLinkActive : ""}`}
+                    >
+                      <Icon />
+                      <span>{label}</span>
+                    </Link>
+                    {href === "/doctor/scan" && flow && (
+                      <Link 
+                        href={flow.href} 
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={styles.subLink}
+                      >
+                        <span className={styles.subLabel}>{flow.label}</span>
+                        <span className={styles.subUid}>{flow.uid}</span>
+                      </Link>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </div>
+            <div className={styles.drawerFooter}>
+              <button onClick={handleLogout} className={styles.logout}>
+                <LogoutIcon />
+                <span>Log out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Bottom Bar */}
       <nav className={styles.bottomBar}>
         {NAV_ITEMS.map((item) => {
           const { href, label, icon: Icon } = item;

@@ -60,7 +60,7 @@ export default function PatientDashboard() {
           <div className={styles.welcomeBadge}>
             <Sparkles size={14} /> Patient Portal
           </div>
-          <h1 className={styles.greeting}>Welcome back, {firstName} 👋</h1>
+          <h1 className={styles.greeting}>Welcome back, {firstName}</h1>
           <p className={styles.subtitle}>Here is a real-time overview of your unified health records.</p>
         </div>
         <div className={styles.verifiedBadge}>

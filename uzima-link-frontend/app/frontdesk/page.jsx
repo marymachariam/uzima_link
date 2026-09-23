@@ -44,7 +44,7 @@ export default function KioskDashboard() {
               Active Desk Session
             </div>
             <h1 className={styles.heroTitle}>
-              Welcome back, {firstName} 👋
+              Welcome back, {firstName}
             </h1>
             <p className={styles.heroSubtitle}>
               {facility?.name ? `Managing operations at ${facility.name}` : "No facility linked — please check your profile setup"}
