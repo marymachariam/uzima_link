@@ -26,3 +26,4 @@ from app.schemas.queue import QueueEntryCreate, QueueAssign, QueueEntryOut
 from app.schemas.admin import (
     InviteStaffRequest, StaffInviteOut, AdminPatientKycOut, AdminDoctorKycOut,
 )
+from app.schemas.assistant import AssistantChatRequest, AssistantChatResponse

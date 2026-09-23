@@ -306,3 +306,7 @@ export function updateFrontdeskProfile(data) {
 export function uploadFrontdeskPhoto(formData) {
   return apiRequest("/frontdesk/profile/me/photo", { method: "POST", body: formData, isFormData: true });
 }
+
+export function sendAssistantMessage(message) {
+  return apiRequest("/assistant/chat", { method: "POST", body: { message }, auth: false });
+}
