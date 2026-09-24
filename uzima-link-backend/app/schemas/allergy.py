@@ -1,13 +1,13 @@
-from pydantic import BaseModel
-from typing import Optional
 from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class AllergyCreate(BaseModel):
-    patient_id: Optional[UUID] = None   # set by the server from the logged-in user
+    patient_id: UUID | None = None  # set by the server from the logged-in user
     allergen: str
     severity: str
-    reaction: Optional[str] = None
+    reaction: str | None = None
 
 
 class AllergyOut(BaseModel):
@@ -15,7 +15,7 @@ class AllergyOut(BaseModel):
     patient_id: UUID
     allergen: str
     severity: str
-    reaction: Optional[str] = None
+    reaction: str | None = None
 
     class Config:
         from_attributes = True

@@ -1,15 +1,14 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class DrugInfoOut(BaseModel):
     query: str
     found: bool
-    generic_name: Optional[str] = None
-    brand_name: Optional[str] = None
-    purpose: Optional[str] = None
-    warnings: Optional[str] = None
-    dosage_info: Optional[str] = None
-    source: Optional[str] = None
+    generic_name: str | None = None
+    brand_name: str | None = None
+    purpose: str | None = None
+    warnings: str | None = None
+    dosage_info: str | None = None
+    source: str | None = None
     note: str
-    video_url: Optional[str] = None
+    video_url: str | None = None

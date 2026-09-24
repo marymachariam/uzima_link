@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,5 +20,6 @@ class Settings:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     ADMIN_API_KEY = os.getenv("ADMIN_API_KEY")
     ADMIN_NOTIFICATION_EMAIL = os.getenv("ADMIN_NOTIFICATION_EMAIL")
+
 
 settings = Settings()

@@ -22,6 +22,7 @@ def upload_patient_photo(file_obj, patient_id: str) -> str:
     )
     return result["secure_url"]
 
+
 def upload_staff_photo(file_obj, user_id: str) -> str:
     result = cloudinary.uploader.upload(
         file_obj,
@@ -32,6 +33,7 @@ def upload_staff_photo(file_obj, user_id: str) -> str:
     )
     return result["secure_url"]
 
+
 def upload_kyc_selfie(file_obj, patient_id: str) -> str:
     result = cloudinary.uploader.upload(
         file_obj,
@@ -41,6 +43,7 @@ def upload_kyc_selfie(file_obj, patient_id: str) -> str:
         resource_type="image",
     )
     return result["secure_url"]
+
 
 def upload_doctor_kyc_selfie(file_obj, user_id: str) -> str:
     result = cloudinary.uploader.upload(

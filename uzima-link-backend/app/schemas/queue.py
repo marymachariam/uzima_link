@@ -1,7 +1,7 @@
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class QueueEntryCreate(BaseModel):
@@ -15,10 +15,10 @@ class QueueAssign(BaseModel):
 class QueueEntryOut(BaseModel):
     id: UUID
     patient_id: UUID
-    patient_name: Optional[str] = None
-    patient_system_uid: Optional[str] = None
+    patient_name: str | None = None
+    patient_system_uid: str | None = None
     facility_id: UUID
-    assigned_doctor_id: Optional[UUID] = None
+    assigned_doctor_id: UUID | None = None
     status: str
     created_at: datetime
     updated_at: datetime

@@ -1,17 +1,16 @@
-import sys
 import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
-from alembic import context
-
-from database import Base
-from config import settings
 import app.models  # noqa: F401 — registers every model onto Base.metadata
+from alembic import context
+from config import settings
+from database import Base
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

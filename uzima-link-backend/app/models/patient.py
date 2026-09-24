@@ -1,8 +1,9 @@
-from sqlalchemy import Column, String, Boolean, DateTime
+import uuid
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from datetime import datetime
-import uuid
 
 from database import Base
 
@@ -20,8 +21,10 @@ class Patient(Base):
     date_of_birth = Column(String, nullable=False)
     gender = Column(String, nullable=False)
 
-    phone_number = Column(String, unique=True, index=True, nullable=False)  
-    phone_verified = Column(Boolean, nullable=False, default=False, server_default="false")
+    phone_number = Column(String, unique=True, index=True, nullable=False)
+    phone_verified = Column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
 
     id_type = Column(String, nullable=False, default="none")
     national_id = Column(String, unique=True, index=True, nullable=True)

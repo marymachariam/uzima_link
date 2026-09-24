@@ -2,11 +2,12 @@
 One-time seed: loads a downloaded KMHFR facilities CSV into the database.
 This version reports exactly why any row was skipped, for debugging.
 """
-import sys
-import csv
 
+import csv
+import sys
+
+from app.repository import facility_repository
 from database import SessionLocal
-import app.repository.facility_repository as facility_repository
 
 COLUMN_MAP = {
     "code": "Code",
@@ -41,20 +42,26 @@ def seed_from_csv(filepath: str):
 
                 try:
                     facility_repository.create_facility(
-                        db, name=name, kmhfr_code=code,
-                        facility_type=(row.get(COLUMN_MAP["facility_type"]) or "").strip() or None,
+                        db,
+                        name=name,
+                        kmhfr_code=code,
+                        facility_type=(
+                            row.get(COLUMN_MAP["facility_type"]) or ""
+                        ).strip()
+                        or None,
                         county=(row.get(COLUMN_MAP["county"]) or "").strip() or None,
-                        sub_county=(row.get(COLUMN_MAP["sub_county"]) or "").strip() or None,
+                        sub_county=(row.get(COLUMN_MAP["sub_county"]) or "").strip()
+                        or None,
                         source="kmhfr_seed",
                     )
                     created += 1
                 except Exception as e:
                     db.rollback()
                     skipped_error += 1
-                    if skipped_error <= 5:  
+                    if skipped_error <= 5:
                         print(f"Row {i} (code={code!r}) failed: {e}")
 
-        print(f"\nDone.")
+        print("\nDone.")
         print(f"Created: {created}")
         print(f"Skipped (missing code/name): {skipped_missing_field}")
         print(f"Skipped (already exists): {skipped_duplicate}")

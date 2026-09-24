@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.allergy_repository as allergy_repository
-import app.models as models
-import app.schemas as schemas
+from app.repository import allergy_repository
+from database import get_db
 
 router = APIRouter(prefix="/patient/allergies", tags=["patient-allergies"])
 
@@ -25,8 +24,11 @@ def add_allergy(
     user: models.User = Depends(require_role("patient")),
 ):
     return allergy_repository.create_allergy(
-        db, patient_id=user.patient_id, allergen=data.allergen,
-        severity=data.severity, reaction=data.reaction
+        db,
+        patient_id=user.patient_id,
+        allergen=data.allergen,
+        severity=data.severity,
+        reaction=data.reaction,
     )
 
 

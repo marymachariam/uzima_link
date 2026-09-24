@@ -11,7 +11,13 @@ def _call_groq(endpoint: str, file_obj, filename: str) -> str:
     files = {"file": (filename, file_obj, "application/octet-stream")}
     data = {"model": MODEL}
 
-    response = requests.post(f"{GROQ_BASE_URL}/{endpoint}", headers=headers, files=files, data=data, timeout=30)
+    response = requests.post(
+        f"{GROQ_BASE_URL}/{endpoint}",
+        headers=headers,
+        files=files,
+        data=data,
+        timeout=30,
+    )
     response.raise_for_status()
     return response.json().get("text", "").strip()
 
@@ -28,15 +34,26 @@ def translate_audio_to_english(file_obj, filename: str) -> str:
 
 def translate_text(text: str, target_language: str = "Swahili") -> str:
     """Text-to-text translation via Groq's LLM — used after Whisper produces an English transcript."""
-    headers = {"Authorization": f"Bearer {settings.GROQ_API_KEY}", "Content-Type": "application/json"}
+    headers = {
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+        "Content-Type": "application/json",
+    }
     payload = {
         "model": "llama-3.1-8b-instant",
         "messages": [
-            {"role": "system", "content": f"Translate the user's message into {target_language}. Respond with only the translation, nothing else."},
+            {
+                "role": "system",
+                "content": f"Translate the user's message into {target_language}. Respond with only the translation, nothing else.",
+            },
             {"role": "user", "content": text},
         ],
         "temperature": 0,
     }
-    response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload, timeout=20)
+    response = requests.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        headers=headers,
+        json=payload,
+        timeout=20,
+    )
     response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"].strip()

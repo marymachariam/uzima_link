@@ -1,12 +1,13 @@
 from uuid import UUID
+
 from fastapi import Depends, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from app import models
+from app.repository import user_repository
+from app.services import auth_service
 from database import get_db
-import app.repository.user_repository as user_repository
-import app.services.auth_service as auth_service
-import app.models as models
 
 bearer_scheme = HTTPBearer()
 
@@ -32,6 +33,10 @@ def get_current_user(
 def require_role(*allowed_roles: str):
     def role_checker(user: models.User = Depends(get_current_user)) -> models.User:
         if user.role not in allowed_roles:
-            raise HTTPException(status_code=403, detail="You don't have permission to access this resource")
+            raise HTTPException(
+                status_code=403,
+                detail="You don't have permission to access this resource",
+            )
         return user
+
     return role_checker

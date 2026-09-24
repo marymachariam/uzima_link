@@ -1,8 +1,9 @@
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey
+import uuid
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from datetime import datetime
-import uuid
 
 from database import Base
 
@@ -13,7 +14,9 @@ class Visit(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     patient_id = Column(UUID(as_uuid=True), ForeignKey("patients.id"), nullable=False)
     facility_id = Column(UUID(as_uuid=True), ForeignKey("facilities.id"), nullable=True)
-    attending_doctor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    attending_doctor_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
     source = Column(String, nullable=False, default="kiosk")
     visit_date = Column(DateTime, default=datetime.utcnow)
     raw_transcript = Column(Text, nullable=True)

@@ -1,29 +1,58 @@
-from app.schemas.auth import (
-    PatientRegister, PatientLoginStart, PatientLoginChooseChannel, PatientLoginVerify,
-    LoginOtpSentOut, DoctorRegister, FrontdeskRegister, LoginRequest,
-    TokenResponse, ForgotPasswordRequest, ResetPasswordRequest,
-    VerifyEmailRequest, RegistrationPendingOut, ResendVerificationRequest, StaffLoginVerify,
-)
-
-from app.schemas.patient import (
-    PatientCreate, PatientOut, PatientListItem, VisitNoteItem,
-    PatientUpdate, PatientNotification, PatientProfileOut,
-    PatientProfileUpdate, KycStatusOut, KycDecision, DoctorPatientView,
-)
-
-from app.schemas.allergy import AllergyCreate, AllergyOut, AllergyRecommendation
-from app.schemas.clinical_entity import ClinicalEntityOut
-from app.schemas.facility import FacilityOut, FacilityCreate
-from app.schemas.user import UserOut, StaffProfileUpdate, StaffProfileOut
-from app.schemas.visit import VisitCreate, VisitOut, SymptomEntryCreate, VisitNotesUpdate, DoctorNoteCreate
-from app.schemas.drug import DrugInfoOut
-from app.schemas.consent import (
-    ConsentGrant, ConsentOut, ConsentRequestOut, ConsentRequestDecision,
-)
-from app.schemas.kyc import KycStatusOut, KycDecision
-from app.schemas.prescription import PrescriptionCreate, PrescriptionOut
-from app.schemas.queue import QueueEntryCreate, QueueAssign, QueueEntryOut
 from app.schemas.admin import (
-    InviteStaffRequest, StaffInviteOut, AdminPatientKycOut, AdminDoctorKycOut,
+    AdminDoctorKycOut,
+    AdminPatientKycOut,
+    InviteStaffRequest,
+    StaffInviteOut,
 )
+from app.schemas.allergy import AllergyCreate, AllergyOut, AllergyRecommendation
 from app.schemas.assistant import AssistantChatRequest, AssistantChatResponse
+from app.schemas.auth import (
+    DoctorRegister,
+    ForgotPasswordRequest,
+    FrontdeskRegister,
+    LoginOtpSentOut,
+    LoginRequest,
+    PatientLoginChooseChannel,
+    PatientLoginStart,
+    PatientLoginVerify,
+    PatientRegister,
+    RegistrationPendingOut,
+    ResendVerificationRequest,
+    ResetPasswordRequest,
+    StaffLoginVerify,
+    TokenResponse,
+    VerifyEmailRequest,
+)
+from app.schemas.clinical_entity import ClinicalEntityOut
+from app.schemas.consent import (
+    ConsentGrant,
+    ConsentOut,
+    ConsentRequestDecision,
+    ConsentRequestOut,
+)
+from app.schemas.drug import DrugInfoOut
+from app.schemas.facility import FacilityCreate, FacilityOut
+from app.schemas.kyc import KycDecision, KycStatusOut
+from app.schemas.patient import (
+    DoctorPatientView,
+    KycDecision,
+    KycStatusOut,
+    PatientCreate,
+    PatientListItem,
+    PatientNotification,
+    PatientOut,
+    PatientProfileOut,
+    PatientProfileUpdate,
+    PatientUpdate,
+    VisitNoteItem,
+)
+from app.schemas.prescription import PrescriptionCreate, PrescriptionOut
+from app.schemas.queue import QueueAssign, QueueEntryCreate, QueueEntryOut
+from app.schemas.user import StaffProfileOut, StaffProfileUpdate, UserOut
+from app.schemas.visit import (
+    DoctorNoteCreate,
+    SymptomEntryCreate,
+    VisitCreate,
+    VisitNotesUpdate,
+    VisitOut,
+)

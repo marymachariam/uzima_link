@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { verifyEmail, resendVerificationEmail } from "@/lib/endpoints";
 import styles from "../(auth)/auth.module.css";
+import Image from "next/image";
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
@@ -49,18 +50,30 @@ function VerifyEmailContent() {
     <div className={styles.page}>
       <div className={styles.leftPanel}>
         <div className={styles.leftBrand}>
-          <div className={styles.leftBrandDot} />
-          <span className={styles.leftBrandName}>Uzima Link</span>
+          <span className={styles.leftBrandName}>
+            <Image
+              src="/logo1.png"
+              alt="Uzima Link"
+              width={100}
+              height={100}
+              className={styles.brandLogo}
+              priority
+            />
+          </span>
         </div>
         <img src="/image.png" alt="" className={styles.leftImage} />
-        <p className={styles.leftCaption}>Your health record, wherever care finds you.</p>
+        <p className={styles.leftCaption}>
+          Your health record, wherever care finds you.
+        </p>
       </div>
 
       <div className={styles.rightPanel}>
         <div className={styles.card}>
           <h1 className={styles.title}>Email verification</h1>
 
-          {status === "loading" && <p className={styles.subtitle}>Verifying your email...</p>}
+          {status === "loading" && (
+            <p className={styles.subtitle}>Verifying your email...</p>
+          )}
           {status === "success" && <p className={styles.success}>{message}</p>}
 
           {status === "error" && (
@@ -69,11 +82,14 @@ function VerifyEmailContent() {
 
               {resendSent ? (
                 <p className={styles.success}>
-                  If that email is registered and not yet verified, a new link is on its way.
+                  If that email is registered and not yet verified, a new link
+                  is on its way.
                 </p>
               ) : (
                 <form onSubmit={handleResend} className={styles.form}>
-                  <p className={styles.subtitle}>Enter your email to get a new verification link.</p>
+                  <p className={styles.subtitle}>
+                    Enter your email to get a new verification link.
+                  </p>
                   <input
                     type="email"
                     placeholder="Email"
@@ -82,7 +98,11 @@ function VerifyEmailContent() {
                     className={styles.input}
                     required
                   />
-                  <button type="submit" disabled={resendLoading} className={styles.button}>
+                  <button
+                    type="submit"
+                    disabled={resendLoading}
+                    className={styles.button}
+                  >
                     {resendLoading ? "Sending..." : "Resend verification email"}
                   </button>
                 </form>
@@ -92,7 +112,9 @@ function VerifyEmailContent() {
 
           {status !== "loading" && (
             <p className={styles.footer}>
-              <Link href="/login" className={styles.link}>Continue to sign in</Link>
+              <Link href="/login" className={styles.link}>
+                Continue to sign in
+              </Link>
             </p>
           )}
         </div>

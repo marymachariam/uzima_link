@@ -1,11 +1,13 @@
 from uuid import UUID
+
 from sqlalchemy.orm import Session
 
-import app.models as models
+from app import models
 
 
-def create_allergy(db: Session, patient_id: UUID, allergen: str, severity: str,
-                    reaction: str = None) -> models.Allergy:
+def create_allergy(
+    db: Session, patient_id: UUID, allergen: str, severity: str, reaction: str = None
+) -> models.Allergy:
     new_allergy = models.Allergy(
         patient_id=patient_id,
         allergen=allergen,
@@ -19,7 +21,9 @@ def create_allergy(db: Session, patient_id: UUID, allergen: str, severity: str,
 
 
 def get_allergies_for_patient(db: Session, patient_id: UUID):
-    return db.query(models.Allergy).filter(models.Allergy.patient_id == patient_id).all()
+    return (
+        db.query(models.Allergy).filter(models.Allergy.patient_id == patient_id).all()
+    )
 
 
 def get_allergy_by_id(db: Session, allergy_id: UUID) -> models.Allergy | None:
@@ -35,7 +39,9 @@ def has_severe_allergy(db: Session, patient_id: UUID) -> bool:
     """Used for the has_allergy_alert flag shown in PatientListItem."""
     return (
         db.query(models.Allergy)
-        .filter(models.Allergy.patient_id == patient_id, models.Allergy.severity == "severe")
+        .filter(
+            models.Allergy.patient_id == patient_id, models.Allergy.severity == "severe"
+        )
         .first()
         is not None
     )

@@ -1,4 +1,5 @@
 import os
+
 import requests
 from dotenv import load_dotenv
 
@@ -7,7 +8,7 @@ load_dotenv()
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 
-_video_cache: dict[str, str] = {} 
+_video_cache: dict[str, str] = {}
 
 
 def find_explainer_video(drug_name: str) -> str | None:

@@ -1,28 +1,28 @@
-from pydantic import BaseModel, field_validator
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
+from pydantic import BaseModel, field_validator
 
 
 class VisitCreate(BaseModel):
     patient_id: UUID
-    facility_id: Optional[UUID] = None
-    attending_doctor_id: Optional[UUID] = None
+    facility_id: UUID | None = None
+    attending_doctor_id: UUID | None = None
     source: str = "kiosk"
-    raw_transcript: Optional[str] = None
+    raw_transcript: str | None = None
 
 
 class VisitOut(BaseModel):
     id: UUID
     patient_id: UUID
-    facility_id: Optional[UUID] = None
-    attending_doctor_id: Optional[UUID] = None
+    facility_id: UUID | None = None
+    attending_doctor_id: UUID | None = None
     source: str
     visit_date: datetime
-    raw_transcript: Optional[str] = None
-    english_transcript: Optional[str] = None
-    swahili_transcript: Optional[str] = None
-    doctor_notes: Optional[str] = None
+    raw_transcript: str | None = None
+    english_transcript: str | None = None
+    swahili_transcript: str | None = None
+    doctor_notes: str | None = None
 
     class Config:
         from_attributes = True
@@ -41,7 +41,8 @@ class SymptomEntryCreate(BaseModel):
 
 class VisitNotesUpdate(BaseModel):
     doctor_notes: str
-    
+
+
 class DoctorNoteCreate(BaseModel):
     patient_id: UUID
     note: str

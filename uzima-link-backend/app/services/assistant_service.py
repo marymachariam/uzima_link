@@ -58,7 +58,9 @@ def ask_assistant(message: str) -> str:
     }
 
     try:
-        response = requests.post(GROQ_CHAT_URL, headers=headers, json=payload, timeout=15)
+        response = requests.post(
+            GROQ_CHAT_URL, headers=headers, json=payload, timeout=15
+        )
         response.raise_for_status()
         data = response.json()
         return data["choices"][0]["message"]["content"].strip()

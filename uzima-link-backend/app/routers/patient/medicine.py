@@ -1,24 +1,23 @@
 import io
-
 import traceback
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-import app.services.transcription_service as transcription_service
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.drug_repository as drug_repository
-import app.services.openfda_service as openfda_service
-import app.services.rxnorm_service as rxnorm_service
-import app.services.dailymed_service as dailymed_service
-import app.services.youtube_service as youtube_service
-import app.services.ocr_service as ocr_service
-import app.services.speech_service as speech_service
-import app.services.tts_service as tts_service
-import app.models as models
-import app.schemas as schemas
+from app.repository import drug_repository
+from app.services import (
+    dailymed_service,
+    ocr_service,
+    openfda_service,
+    rxnorm_service,
+    transcription_service,
+    tts_service,
+    youtube_service,
+)
+from database import get_db
 
 router = APIRouter(prefix="/patient/medicine", tags=["patient-medicine"])
 
@@ -72,7 +71,9 @@ def check_medicine(
             continue
 
         if result:
-            saved = drug_repository.upsert_drug(db, query_name=name, source=source_name, **result)
+            saved = drug_repository.upsert_drug(
+                db, query_name=name, source=source_name, **result
+            )
             video_url = _safe_video(saved.generic_name or name)
             return schemas.DrugInfoOut(
                 query=name,
@@ -175,7 +176,11 @@ def check_medicine_audio(
         text_to_speak = f"Sorry, no information was found for {name}."
     else:
         parts = [p for p in [result.purpose, result.dosage_info] if p]
-        text_to_speak = " ".join(parts) if parts else f"No detailed information available for {name}."
+        text_to_speak = (
+            " ".join(parts)
+            if parts
+            else f"No detailed information available for {name}."
+        )
 
     audio_bytes = tts_service.synthesize(text_to_speak)
     return StreamingResponse(io.BytesIO(audio_bytes), media_type="audio/mpeg")

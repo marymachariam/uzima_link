@@ -1,18 +1,18 @@
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class PatientCreate(BaseModel):
     full_name: str
     date_of_birth: str
     gender: str
-    phone_number: Optional[str] = None
+    phone_number: str | None = None
     id_type: str = "none"
-    national_id: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_phone: Optional[str] = None
+    national_id: str | None = None
+    guardian_name: str | None = None
+    guardian_phone: str | None = None
 
 
 class PatientOut(BaseModel):
@@ -21,11 +21,11 @@ class PatientOut(BaseModel):
     full_name: str
     date_of_birth: str
     gender: str
-    phone_number: Optional[str] = None
+    phone_number: str | None = None
     id_type: str
-    national_id: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_phone: Optional[str] = None
+    national_id: str | None = None
+    guardian_name: str | None = None
+    guardian_phone: str | None = None
     created_at: datetime
 
     class Config:
@@ -52,8 +52,8 @@ class VisitNoteItem(BaseModel):
 
 
 class PatientUpdate(BaseModel):
-    phone_number: Optional[str] = None
-    national_id: Optional[str] = None
+    phone_number: str | None = None
+    national_id: str | None = None
 
 
 class PatientNotification(BaseModel):
@@ -72,12 +72,12 @@ class PatientProfileOut(BaseModel):
     full_name: str
     date_of_birth: str
     gender: str
-    phone_number: Optional[str] = None
+    phone_number: str | None = None
     id_type: str
-    national_id: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_phone: Optional[str] = None
-    photo_url: Optional[str] = None
+    national_id: str | None = None
+    guardian_name: str | None = None
+    guardian_phone: str | None = None
+    photo_url: str | None = None
     created_at: datetime
 
     class Config:
@@ -85,21 +85,21 @@ class PatientProfileOut(BaseModel):
 
 
 class PatientProfileUpdate(BaseModel):
-    full_name: Optional[str] = None
-    phone_number: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_phone: Optional[str] = None
+    full_name: str | None = None
+    phone_number: str | None = None
+    guardian_name: str | None = None
+    guardian_phone: str | None = None
 
 
 class KycStatusOut(BaseModel):
-    kyc_status: Optional[str] = None
+    kyc_status: str | None = None
     kyc_verified: bool
     message: str
 
 
 class KycDecision(BaseModel):
     approve: bool
-    note: Optional[str] = None
+    note: str | None = None
 
 
 class DoctorPatientView(BaseModel):
@@ -110,9 +110,11 @@ class DoctorPatientView(BaseModel):
 
 
 from app.schemas.allergy import AllergyOut
-from app.schemas.visit import VisitOut
 from app.schemas.prescription import PrescriptionOut
+from app.schemas.visit import VisitOut
+
 DoctorPatientView.model_rebuild()
+
 
 class PatientProfileOut(BaseModel):
     id: UUID
@@ -120,12 +122,12 @@ class PatientProfileOut(BaseModel):
     full_name: str
     date_of_birth: str
     gender: str
-    phone_number: Optional[str] = None
+    phone_number: str | None = None
     id_type: str
-    national_id: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_phone: Optional[str] = None
-    photo_url: Optional[str] = None
+    national_id: str | None = None
+    guardian_name: str | None = None
+    guardian_phone: str | None = None
+    photo_url: str | None = None
     kyc_verified: bool
     created_at: datetime
 

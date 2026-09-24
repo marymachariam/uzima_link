@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Fraunces, Inter } from "next/font/google";
 import styles from "./page.module.css";
+import Image from "next/image";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -20,9 +21,17 @@ export default function LandingPage() {
       {/* Navbar Header */}
       <header className={styles.navbar}>
         <div className={styles.navContainer}>
-          <Link href="/" className={styles.brandLogo}>
-            <span className={styles.logoIcon}>+</span> Uzima Link
+          <Link href="/" className={styles.brandLink}>
+            <Image
+              src="/logo.png"
+              alt="Uzima Link"
+              width={100}
+              height={100}
+              className={styles.brandLogo}
+              priority
+            />
           </Link>
+
           <div className={styles.navActions}>
             <Link href="/login" className={styles.navLogin}>
               Log in
@@ -58,7 +67,8 @@ export default function LandingPage() {
           <div className={styles.trustBanner}>
             <div className={styles.trustIcons}>🏥</div>
             <p className={styles.trustLine}>
-              Trusted and connected across <strong>12,000+</strong> health facilities in Kenya
+              Trusted and connected across <strong>12,000+</strong> health
+              facilities in Kenya
             </p>
           </div>
         </div>
@@ -70,15 +80,21 @@ export default function LandingPage() {
             </div>
             <div className={styles.demoBubbleIncoming}>
               <span className={styles.demoLabel}>Patient says (Swahili)</span>
-              <p>&ldquo;Nimekuwa na maumivu ya kichwa na homa tangu jana.&rdquo;</p>
+              <p>
+                &ldquo;Nimekuwa na maumivu ya kichwa na homa tangu jana.&rdquo;
+              </p>
             </div>
             <div className={styles.demoArrowContainer}>
               <div className={styles.demoArrowLine} />
-              <span className={styles.demoArrowBadge}>Instant AI Structured</span>
+              <span className={styles.demoArrowBadge}>
+                Instant AI Structured
+              </span>
               <div className={styles.demoArrowLine} />
             </div>
             <div className={styles.demoStructured}>
-              <span className={styles.demoLabel}>Your doctor sees instantly</span>
+              <span className={styles.demoLabel}>
+                Your doctor sees instantly
+              </span>
               <div className={styles.demoRow}>
                 <span className={styles.demoTag}>Symptoms</span>
                 <span className={styles.demoValue}>Headache, Fever</span>
@@ -97,28 +113,31 @@ export default function LandingPage() {
         <div className={styles.sectionHeader}>
           <span className={styles.sectionSubTag}>Seamless Workflow</span>
           <h2 className={styles.sectionTitle}>How Uzima Link works for you</h2>
-          <p className={styles.sectionDesc}>Get set up in under 2 minutes and carry your history securely everywhere.</p>
+          <p className={styles.sectionDesc}>
+            Get set up in under 2 minutes and carry your history securely
+            everywhere.
+          </p>
         </div>
         <div className={styles.stepsGrid}>
-          <Step 
-            number="1" 
+          <Step
+            number="1"
             title="Quick Sign Up"
-            text="Register safely using your phone number and email address." 
+            text="Register safely using your phone number and email address."
           />
-          <Step 
-            number="2" 
+          <Step
+            number="2"
             title="Secure Verification"
-            text="Verify your email and log in securely with instant one-time codes." 
+            text="Verify your email and log in securely with instant one-time codes."
           />
-          <Step 
-            number="3" 
+          <Step
+            number="3"
             title="Speak Naturally"
-            text="Describe how you're feeling by voice or text, in your preferred local language." 
+            text="Describe how you're feeling by voice or text, in your preferred local language."
           />
-          <Step 
-            number="4" 
+          <Step
+            number="4"
             title="Instant Access"
-            text="Your doctor accesses your full verified medical history instantly at any facility." 
+            text="Your doctor accesses your full verified medical history instantly at any facility."
           />
         </div>
       </section>
@@ -126,8 +145,12 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className={styles.features}>
         <div className={styles.sectionHeader}>
-          <span className={styles.sectionSubTag}>Built for Patients & Doctors</span>
-          <h2 className={styles.sectionTitle}>Designed for modern healthcare mobility</h2>
+          <span className={styles.sectionSubTag}>
+            Built for Patients & Doctors
+          </span>
+          <h2 className={styles.sectionTitle}>
+            Designed for modern healthcare mobility
+          </h2>
         </div>
         <div className={styles.featureGrid}>
           <FeatureCard
@@ -157,7 +180,16 @@ export default function LandingPage() {
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
           <div className={styles.footerBrand}>
-            <span className={styles.logoIcon}>+</span> Uzima Link
+            <Link href="/" className={styles.brandLink}>
+            <Image
+              src="/logo.png"
+              alt="Uzima Link"
+              width={60}
+              height={60}
+              className={styles.brandLogo}
+              priority
+            />
+          </Link>
           </div>
           <p className={styles.footerText}>
             Are you a healthcare provider?{" "}
@@ -165,7 +197,9 @@ export default function LandingPage() {
               Staff portal sign in &rarr;
             </Link>
           </p>
-          <p className={styles.copyright}>© {new Date().getFullYear()} Uzima Link. All rights reserved.</p>
+          <p className={styles.copyright}>
+            © {new Date().getFullYear()} Uzima Link. All rights reserved.
+          </p>
         </div>
       </footer>
     </main>

@@ -1,4 +1,4 @@
-from services.ai_service import translate_text, extract_clinical_entities
+from services.ai_service import extract_clinical_entities, translate_text
 
 text = "Nina maumivu ya kichwa na nimekuwa na kikohozi kwa siku tatu"
 

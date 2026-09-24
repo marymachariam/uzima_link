@@ -1,8 +1,9 @@
 import secrets
 from datetime import datetime, timedelta
 from uuid import UUID
+
+from jose import jwt
 from passlib.context import CryptContext
-from jose import jwt, JWTError
 
 from config import settings
 
@@ -46,6 +47,7 @@ def generate_email_verification_token() -> str:
 
 def hash_otp(code: str) -> str:
     import hashlib
+
     return hashlib.sha256(code.encode()).hexdigest()
 
 

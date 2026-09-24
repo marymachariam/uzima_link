@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.prescription_repository as prescription_repository
-import app.models as models
-import app.schemas as schemas
+from app.repository import prescription_repository
+from database import get_db
 
 router = APIRouter(prefix="/patient/prescriptions", tags=["patient-prescriptions"])
 

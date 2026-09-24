@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./FrontdeskNav.module.css";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const NAV_ITEMS = [
   { href: "/frontdesk", label: "Home", icon: HomeIcon },
@@ -29,10 +30,16 @@ export default function FrontdeskNav() {
       {/* Mobile Top Header Bar with Hamburger Menu */}
       <header className={styles.mobileTopBar}>
         <div className={styles.brandMobile}>
-          <div className={styles.brandIconWrap}>
-            <div className={styles.brandDot} />
-          </div>
-          <span className={styles.brandTitleMobile}>Uzima Link</span>
+           <span className={styles.brandTitleMobile}>
+              <Image
+                src="/logo.png"
+                alt="Uzima Link"
+                width={100}
+                height={100}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
         </div>
         <div className={styles.mobileTopRight}>
           <span className={styles.roleBadgeMobile}>Frontdesk</span>
@@ -90,11 +97,17 @@ export default function FrontdeskNav() {
       {/* Desktop Sidebar */}
       <nav className={styles.sidebar}>
         <div className={styles.brand}>
-          <div className={styles.brandIconWrap}>
-            <div className={styles.brandDot} />
-          </div>
           <div className={styles.brandTextWrap}>
-            <span className={styles.brandTitle}>Uzima Link</span>
+               <span className={styles.brandTitle}>
+              <Image
+                src="/logo.png"
+                alt="Uzima Link"
+                width={100}
+                height={100}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
             <span className={styles.brandSubtitle}>Frontdesk Portal</span>
           </div>
         </div>

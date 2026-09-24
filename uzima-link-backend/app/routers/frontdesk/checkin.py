@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.patient_repository as patient_repository
-import app.repository.queue_repository as queue_repository
-import app.repository.consent_repository as consent_repository
-import app.services.audit_service as audit_service
-import app.models as models
-import app.schemas as schemas
+from app.repository import consent_repository, patient_repository, queue_repository
+from app.services import audit_service
+from database import get_db
 
 router = APIRouter(prefix="/frontdesk/checkin", tags=["frontdesk-checkin"])
 
@@ -23,11 +20,19 @@ def check_in_patient(
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
-    entry = queue_repository.create_queue_entry(db, patient_id=patient.id, facility_id=user.facility_id)
+    entry = queue_repository.create_queue_entry(
+        db, patient_id=patient.id, facility_id=user.facility_id
+    )
 
     consent_repository.create_consent_request(
         db, patient_id=patient.id, facility_id=user.facility_id, requested_by=user.id
     )
 
-    audit_service.log_action(db, user_id=user.id, action="checkin_patient", resource_type="patient", resource_id=patient.id)
+    audit_service.log_action(
+        db,
+        user_id=user.id,
+        action="checkin_patient",
+        resource_type="patient",
+        resource_id=patient.id,
+    )
     return entry

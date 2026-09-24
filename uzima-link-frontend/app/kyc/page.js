@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getKycStatus, submitKyc } from "@/lib/endpoints";
 import { isLoggedIn } from "@/lib/auth";
 import styles from "../(auth)/auth.module.css";
+import Image from "next/image";
 
 export default function KycPage() {
   const router = useRouter();
@@ -55,15 +56,27 @@ export default function KycPage() {
       <div className={styles.page}>
         <div className={styles.leftPanel}>
           <div className={styles.leftBrand}>
-            <div className={styles.leftBrandDot} />
-            <span className={styles.leftBrandName}>Uzima Link</span>
+            <span className={styles.leftBrandName}>
+              <Image
+                src="/logo1.png"
+                alt="Uzima Link"
+                width={100}
+                height={100}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
           </div>
           <img src="/image.png" alt="" className={styles.leftImage} />
-          <p className={styles.leftCaption}>Your health record, wherever care finds you.</p>
+          <p className={styles.leftCaption}>
+            Your health record, wherever care finds you.
+          </p>
         </div>
         <div className={styles.rightPanel}>
           <div className={styles.card}>
-            <p className={styles.subtitle}>Checking your verification status...</p>
+            <p className={styles.subtitle}>
+              Checking your verification status...
+            </p>
           </div>
         </div>
       </div>
@@ -74,11 +87,21 @@ export default function KycPage() {
     <div className={styles.page}>
       <div className={styles.leftPanel}>
         <div className={styles.leftBrand}>
-          <div className={styles.leftBrandDot} />
-          <span className={styles.leftBrandName}>Uzima Link</span>
+             <span className={styles.leftBrandName}>
+              <Image
+                src="/logo1.png"
+                alt="Uzima Link"
+                width={100}
+                height={100}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
         </div>
         <img src="/image.png" alt="" className={styles.leftImage} />
-        <p className={styles.leftCaption}>Your health record, wherever care finds you.</p>
+        <p className={styles.leftCaption}>
+          Your health record, wherever care finds you.
+        </p>
       </div>
 
       <div className={styles.rightPanel}>
@@ -88,17 +111,21 @@ export default function KycPage() {
               <h1 className={styles.title}>Verification pending</h1>
               <p className={styles.success}>{status.message}</p>
               <p className={styles.subtitle}>
-                This usually takes a short while. You&apos;ll be able to use your account once it&apos;s approved.
+                This usually takes a short while. You&apos;ll be able to use
+                your account once it&apos;s approved.
               </p>
             </>
           ) : (
             <>
               <h1 className={styles.title}>Verify your identity</h1>
               <p className={styles.subtitle}>
-                To keep your health record secure, we need a quick selfie and a photo of your ID.
+                To keep your health record secure, we need a quick selfie and a
+                photo of your ID.
               </p>
 
-              {status?.kyc_status === "rejected" && <p className={styles.error}>{status.message}</p>}
+              {status?.kyc_status === "rejected" && (
+                <p className={styles.error}>{status.message}</p>
+              )}
               {error && <p className={styles.error}>{error}</p>}
 
               <form onSubmit={handleSubmit} className={styles.form}>
@@ -120,7 +147,11 @@ export default function KycPage() {
                   required
                 />
 
-                <button type="submit" disabled={loading} className={styles.button}>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={styles.button}
+                >
                   {loading ? "Submitting..." : "Submit for review"}
                 </button>
               </form>

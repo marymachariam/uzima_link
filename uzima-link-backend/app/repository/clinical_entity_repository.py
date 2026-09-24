@@ -1,11 +1,13 @@
 from uuid import UUID
+
 from sqlalchemy.orm import Session
 
-import app.models as models
+from app import models
 
 
-def create_clinical_entity(db: Session, visit_id: UUID, entity_type: str,
-                            description: str) -> models.ClinicalEntity:
+def create_clinical_entity(
+    db: Session, visit_id: UUID, entity_type: str, description: str
+) -> models.ClinicalEntity:
     new_entity = models.ClinicalEntity(
         visit_id=visit_id,
         entity_type=entity_type,
@@ -18,7 +20,11 @@ def create_clinical_entity(db: Session, visit_id: UUID, entity_type: str,
 
 
 def get_entities_for_visit(db: Session, visit_id: UUID):
-    return db.query(models.ClinicalEntity).filter(models.ClinicalEntity.visit_id == visit_id).all()
+    return (
+        db.query(models.ClinicalEntity)
+        .filter(models.ClinicalEntity.visit_id == visit_id)
+        .all()
+    )
 
 
 def get_entities_for_patient(db: Session, patient_id: UUID):

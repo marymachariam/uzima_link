@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.patient_repository as patient_repository
-import app.services.audit_service as audit_service
-import app.models as models
-import app.schemas as schemas
+from app.repository import patient_repository
+from app.services import audit_service
+from database import get_db
 
 router = APIRouter(prefix="/frontdesk/patients", tags=["frontdesk-patients"])
 
@@ -17,16 +16,37 @@ def register_walkin_patient(
     db: Session = Depends(get_db),
     user: models.User = Depends(require_role("kiosk_operator")),
 ):
-    if data.phone_number and patient_repository.get_patient_by_phone(db, data.phone_number):
-        raise HTTPException(status_code=400, detail="A patient with these details already exists")
-    if data.national_id and patient_repository.get_patient_by_national_id(db, data.national_id):
-        raise HTTPException(status_code=400, detail="A patient with these details already exists")
+    if data.phone_number and patient_repository.get_patient_by_phone(
+        db, data.phone_number
+    ):
+        raise HTTPException(
+            status_code=400, detail="A patient with these details already exists"
+        )
+    if data.national_id and patient_repository.get_patient_by_national_id(
+        db, data.national_id
+    ):
+        raise HTTPException(
+            status_code=400, detail="A patient with these details already exists"
+        )
 
     patient = patient_repository.create_patient(
-        db, data.full_name, data.date_of_birth, data.gender, data.phone_number,
-        data.id_type, data.national_id, data.guardian_name, data.guardian_phone
+        db,
+        data.full_name,
+        data.date_of_birth,
+        data.gender,
+        data.phone_number,
+        data.id_type,
+        data.national_id,
+        data.guardian_name,
+        data.guardian_phone,
     )
-    audit_service.log_action(db, user_id=user.id, action="register_walkin_patient", resource_type="patient", resource_id=patient.id)
+    audit_service.log_action(
+        db,
+        user_id=user.id,
+        action="register_walkin_patient",
+        resource_type="patient",
+        resource_id=patient.id,
+    )
     return patient
 
 

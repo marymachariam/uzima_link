@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./DoctorNav.module.css";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const NAV_ITEMS = [
   { href: "/doctor", label: "Home", icon: HomeIcon, exact: true },
@@ -53,9 +54,17 @@ export default function DoctorNav() {
       {/* Desktop Sidebar */}
       <nav className={styles.sidebar}>
         <div className={styles.brand}>
-          <div className={styles.brandDot} />
           <div>
-            <span className={styles.brandTitleText}>Uzima Link</span>
+              <span className={styles.brandTitle}>
+              <Image
+                src="/logo1.png"
+                alt="Uzima Link"
+                width={200}
+                height={200}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
             <span className={styles.brandSubtitle}>Doctor Portal</span>
           </div>
         </div>
