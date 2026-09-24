@@ -1,4 +1,5 @@
 import os
+
 from brevo import Brevo
 from brevo.transactional_emails import (
     SendTransacEmailRequestSender,
@@ -21,7 +22,7 @@ def _base_template(
     button_text: str = None,
     button_url: str = None,
     footer_note: str = None,
-    accent_color: str = "#059669"
+    accent_color: str = "#059669",
 ) -> str:
     button_html = ""
     if button_text and button_url:
@@ -111,6 +112,7 @@ def _send(to_email: str, to_name: str, subject: str, html_content: str):
 
 # ====================== EMAILS ======================
 
+
 def send_verification_email(to_email: str, to_name: str, verification_token: str):
     verify_link = f"{FRONTEND_URL}/verify-email?token={verification_token}"
     html = _base_template(
@@ -123,7 +125,7 @@ def send_verification_email(to_email: str, to_name: str, verification_token: str
         """,
         button_text="Verify Email Address",
         button_url=verify_link,
-        footer_note="If you didn't create an account, you can safely ignore this email."
+        footer_note="If you didn't create an account, you can safely ignore this email.",
     )
     _send(to_email, to_name, "Verify your Uzima Link email", html)
 
@@ -132,7 +134,7 @@ def send_login_otp_email(to_email: str, to_name: str, code: str):
     html = _base_template(
         title="Your login code",
         body_html=f"""
-          Hi <strong>{(to_name or 'there').split()[0]}</strong>,<br><br>
+          Hi <strong>{(to_name or "there").split()[0]}</strong>,<br><br>
           Use the code below to log in to your Uzima Link account:
           <br><br>
           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px 24px;text-align:center;margin:20px 0;">
@@ -142,7 +144,7 @@ def send_login_otp_email(to_email: str, to_name: str, code: str):
           <br><br>
           If you didn't request this, please ignore this email.
         """,
-        footer_note="For your security, never share this code with anyone."
+        footer_note="For your security, never share this code with anyone.",
     )
     _send(to_email, to_name, f"Your Uzima Link login code: {code}", html)
 
@@ -152,14 +154,14 @@ def send_password_reset_email(to_email: str, reset_token: str, to_name: str = No
     html = _base_template(
         title="Reset your password",
         body_html=f"""
-          Hi <strong>{(to_name or 'there').split()[0]}</strong>,<br><br>
+          Hi <strong>{(to_name or "there").split()[0]}</strong>,<br><br>
           We received a request to reset the password for your Uzima Link account.
           <br><br>
           Click the button below to choose a new password. This link expires in <strong>30 minutes</strong>.
         """,
         button_text="Reset Password",
         button_url=reset_link,
-        footer_note="If you didn't request a password reset, you can safely ignore this email."
+        footer_note="If you didn't request a password reset, you can safely ignore this email.",
     )
     _send(to_email, to_name or "there", "Reset your Uzima Link password", html)
 
@@ -168,14 +170,14 @@ def send_password_changed_email(to_email: str, to_name: str = ""):
     html = _base_template(
         title="Your password was changed",
         body_html=f"""
-          Hi <strong>{(to_name or 'there').split()[0]}</strong>,<br><br>
+          Hi <strong>{(to_name or "there").split()[0]}</strong>,<br><br>
           This is a confirmation that the password for your Uzima Link account was just changed.
           <br><br>
           If you made this change, no further action is needed.
           <br><br>
           <strong>If you did not change your password</strong>, please contact support immediately.
         """,
-        footer_note="Uzima Link Security Team"
+        footer_note="Uzima Link Security Team",
     )
     _send(to_email, to_name, "Your Uzima Link password was changed", html)
 
@@ -184,7 +186,7 @@ def send_welcome_email(to_email: str, to_name: str, role: str):
     role_label = {
         "patient": "patient",
         "doctor": "doctor",
-        "kiosk_operator": "kiosk operator"
+        "kiosk_operator": "kiosk operator",
     }.get(role, role)
 
     html = _base_template(
@@ -196,12 +198,17 @@ def send_welcome_email(to_email: str, to_name: str, role: str):
         """,
         button_text="Go to Dashboard",
         button_url=f"{FRONTEND_URL}/login",
-        footer_note="We're glad to have you on board."
+        footer_note="We're glad to have you on board.",
     )
     _send(to_email, to_name, "Welcome to Uzima Link", html)
-    
-def send_staff_invite_email(to_email: str, to_name: str, role: str, facility_name: str, invite_code: str):
-    role_label = {"doctor": "doctor", "kiosk_operator": "frontdesk operator"}.get(role, role)
+
+
+def send_staff_invite_email(
+    to_email: str, to_name: str, role: str, facility_name: str, invite_code: str
+):
+    role_label = {"doctor": "doctor", "kiosk_operator": "frontdesk operator"}.get(
+        role, role
+    )
     register_link = f"{FRONTEND_URL}/register/{role}?invite_code={invite_code}"
     html = _base_template(
         title="You've been invited to Uzima Link",
@@ -218,7 +225,9 @@ def send_staff_invite_email(to_email: str, to_name: str, role: str, facility_nam
         button_text="Register Now",
         button_url=register_link,
     )
-    _send(to_email, to_name, f"You've been invited to Uzima Link ({facility_name})", html)
+    _send(
+        to_email, to_name, f"You've been invited to Uzima Link ({facility_name})", html
+    )
 
 
 def send_admin_kyc_notification(admin_email: str, subject_name: str, role: str):
@@ -231,8 +240,11 @@ def send_admin_kyc_notification(admin_email: str, subject_name: str, role: str):
         button_url=f"{FRONTEND_URL}/admin/kyc",
     )
     _send(admin_email, "Admin", "New KYC submission pending review", html)
-    
-def send_doctor_approval_email(to_email: str, to_name: str, facility_name: str, invite_code: str):
+
+
+def send_doctor_approval_email(
+    to_email: str, to_name: str, facility_name: str, invite_code: str
+):
     login_link = f"{FRONTEND_URL}/login/staff"
     html = _base_template(
         title="You're approved!",
@@ -248,15 +260,21 @@ def send_doctor_approval_email(to_email: str, to_name: str, facility_name: str, 
         """,
         button_text="Log In to Staff Portal",
         button_url=login_link,
-        footer_note="Uzima Link Security Team — Protecting patient data at all costs."
+        footer_note="Uzima Link Security Team — Protecting patient data at all costs.",
     )
-    _send(to_email, to_name, "Your Uzima Link doctor account is approved & facility code generated", html)
-    
+    _send(
+        to_email,
+        to_name,
+        "Your Uzima Link doctor account is approved & facility code generated",
+        html,
+    )
+
+
 def send_patient_kyc_approved_email(to_email: str, to_name: str):
     html = _base_template(
         title="You're verified!",
         body_html=f"""
-          Hi <strong>{(to_name or 'there').split()[0]}</strong>,<br><br>
+          Hi <strong>{(to_name or "there").split()[0]}</strong>,<br><br>
           Your identity has been verified and your Uzima Link account is now fully active.
           <br><br>
           You can now log in and start using your health record.

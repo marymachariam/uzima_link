@@ -1,10 +1,11 @@
 import re
 import secrets
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
+
 from sqlalchemy.orm import Session
 
-import app.models as models
+from app import models
 
 
 def get_facility_by_id(db: Session, facility_id: UUID) -> models.Facility | None:
@@ -12,18 +13,36 @@ def get_facility_by_id(db: Session, facility_id: UUID) -> models.Facility | None
 
 
 def get_facility_by_kmhfr_code(db: Session, kmhfr_code: str) -> models.Facility | None:
-    return db.query(models.Facility).filter(models.Facility.kmhfr_code == kmhfr_code).first()
+    return (
+        db.query(models.Facility)
+        .filter(models.Facility.kmhfr_code == kmhfr_code)
+        .first()
+    )
 
 
-def get_facility_by_registration_number(db: Session, ppb_registration_number: str) -> models.Facility | None:
-    return db.query(models.Facility).filter(models.Facility.ppb_registration_number == ppb_registration_number).first()
+def get_facility_by_registration_number(
+    db: Session, ppb_registration_number: str
+) -> models.Facility | None:
+    return (
+        db.query(models.Facility)
+        .filter(models.Facility.ppb_registration_number == ppb_registration_number)
+        .first()
+    )
 
 
-def get_facility_by_invite_code(db: Session, invite_code: str) -> models.Facility | None:
-    return db.query(models.Facility).filter(models.Facility.invite_code == invite_code).first()
+def get_facility_by_invite_code(
+    db: Session, invite_code: str
+) -> models.Facility | None:
+    return (
+        db.query(models.Facility)
+        .filter(models.Facility.invite_code == invite_code)
+        .first()
+    )
 
 
-def search_facilities(db: Session, name: str = None, county: str = None, limit: int = 20):
+def search_facilities(
+    db: Session, name: str = None, county: str = None, limit: int = 20
+):
     query = db.query(models.Facility)
     if name:
         query = query.filter(models.Facility.name.ilike(f"%{name}%"))
@@ -32,9 +51,16 @@ def search_facilities(db: Session, name: str = None, county: str = None, limit: 
     return query.limit(limit).all()
 
 
-def create_facility(db: Session, name: str, kmhfr_code: str = None, ppb_registration_number: str = None,
-                     facility_type: str = None, county: str = None, sub_county: str = None,
-                     source: str = "manual") -> models.Facility:
+def create_facility(
+    db: Session,
+    name: str,
+    kmhfr_code: str = None,
+    ppb_registration_number: str = None,
+    facility_type: str = None,
+    county: str = None,
+    sub_county: str = None,
+    source: str = "manual",
+) -> models.Facility:
     new_facility = models.Facility(
         name=name,
         kmhfr_code=kmhfr_code,
@@ -43,8 +69,10 @@ def create_facility(db: Session, name: str, kmhfr_code: str = None, ppb_registra
         county=county,
         sub_county=sub_county,
         source=source,
-        invite_code=generate_facility_code(name), 
-        last_synced_at=datetime.utcnow() if source not in ("manual", "doctor_reported") else None,
+        invite_code=generate_facility_code(name),
+        last_synced_at=datetime.utcnow()
+        if source not in ("manual", "doctor_reported")
+        else None,
     )
     db.add(new_facility)
     db.commit()
@@ -52,8 +80,14 @@ def create_facility(db: Session, name: str, kmhfr_code: str = None, ppb_registra
     return new_facility
 
 
-def update_facility_from_sync(db: Session, facility: models.Facility, name: str = None,
-                               facility_type: str = None, county: str = None, sub_county: str = None) -> models.Facility:
+def update_facility_from_sync(
+    db: Session,
+    facility: models.Facility,
+    name: str = None,
+    facility_type: str = None,
+    county: str = None,
+    sub_county: str = None,
+) -> models.Facility:
     if name is not None:
         facility.name = name
     if facility_type is not None:
@@ -76,8 +110,10 @@ def generate_facility_code(name: str) -> str:
     return f"{slug}-{suffix}"
 
 
-def generate_invite_code_for_facility(db: Session, facility: models.Facility, invite_code: str = None) -> models.Facility:
+def generate_invite_code_for_facility(
+    db: Session, facility: models.Facility, invite_code: str = None
+) -> models.Facility:
     facility.invite_code = invite_code or generate_facility_code(facility.name)
     db.commit()
     db.refresh(facility)
-    return facility  
+    return facility

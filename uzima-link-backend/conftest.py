@@ -3,9 +3,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from main import app
+from app import models
 from database import Base, get_db
-import app.models as models
+from main import app
 
 TEST_DATABASE_URL = "sqlite:///./test_uzima_link.db"
 
@@ -49,37 +49,46 @@ def facility(db_session):
 
 @pytest.fixture
 def registered_patient(client):
-    response = client.post("/auth/register/patient", json={
-        "full_name": "Test Patient",
-        "date_of_birth": "01-01-2000",
-        "gender": "female",
-        "phone_number": "0700000001",
-        "national_id": "10000001",
-        "email": "patient@test.com",
-        "password": "password123",
-    })
+    response = client.post(
+        "/auth/register/patient",
+        json={
+            "full_name": "Test Patient",
+            "date_of_birth": "01-01-2000",
+            "gender": "female",
+            "phone_number": "0700000001",
+            "national_id": "10000001",
+            "email": "patient@test.com",
+            "password": "password123",
+        },
+    )
     return response.json()
 
 
 @pytest.fixture
 def registered_doctor(client, facility):
-    response = client.post("/auth/register/staff", json={
-        "full_name": "Test Doctor",
-        "email": "doctor@test.com",
-        "password": "password123",
-        "role": "doctor",
-        "invite_code": facility.invite_code,
-    })
+    response = client.post(
+        "/auth/register/staff",
+        json={
+            "full_name": "Test Doctor",
+            "email": "doctor@test.com",
+            "password": "password123",
+            "role": "doctor",
+            "invite_code": facility.invite_code,
+        },
+    )
     return response.json()
 
 
 @pytest.fixture
 def registered_kiosk_operator(client, facility):
-    response = client.post("/auth/register/staff", json={
-        "full_name": "Test Kiosk",
-        "email": "kiosk@test.com",
-        "password": "password123",
-        "role": "kiosk_operator",
-        "invite_code": facility.invite_code,
-    })
+    response = client.post(
+        "/auth/register/staff",
+        json={
+            "full_name": "Test Kiosk",
+            "email": "kiosk@test.com",
+            "password": "password123",
+            "role": "kiosk_operator",
+            "invite_code": facility.invite_code,
+        },
+    )
     return response.json()

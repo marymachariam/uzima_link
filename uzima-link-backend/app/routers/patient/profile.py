@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.patient_repository as patient_repository
-import app.services.cloudinary_service as cloudinary_service
-import app.models as models
-import app.schemas as schemas
+from app.repository import patient_repository
+from app.services import cloudinary_service
+from database import get_db
 
 router = APIRouter(prefix="/patient/profile", tags=["patient-profile"])
 
@@ -33,7 +32,8 @@ def update_my_profile(
         raise HTTPException(status_code=404, detail="Patient profile not found")
 
     updated = patient_repository.update_patient_profile(
-        db, patient,
+        db,
+        patient,
         full_name=data.full_name,
         phone_number=data.phone_number,
         guardian_name=data.guardian_name,
@@ -56,5 +56,7 @@ def upload_my_photo(
         raise HTTPException(status_code=404, detail="Patient profile not found")
 
     photo_url = cloudinary_service.upload_patient_photo(file.file, str(patient.id))
-    updated = patient_repository.update_patient_profile(db, patient, photo_url=photo_url)
+    updated = patient_repository.update_patient_profile(
+        db, patient, photo_url=photo_url
+    )
     return updated

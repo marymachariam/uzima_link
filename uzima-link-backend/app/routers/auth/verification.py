@@ -1,13 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from database import get_db
-import app.repository.user_repository as user_repository
-import app.repository.patient_repository as patient_repository
-import app.services.email_service as email_service
-import app.services.auth_service as auth_service
-import app.schemas as schemas
+from app import schemas
 from app.core.limiter import limiter
+from app.repository import patient_repository, user_repository
+from app.services import auth_service, email_service
+from database import get_db
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -16,7 +14,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def verify_email(data: schemas.VerifyEmailRequest, db: Session = Depends(get_db)):
     user = user_repository.get_user_by_verification_token(db, data.token)
     if not user:
-        raise HTTPException(status_code=400, detail="This verification link is invalid or has expired.")
+        raise HTTPException(
+            status_code=400, detail="This verification link is invalid or has expired."
+        )
 
     if not user.is_verified:
         user_repository.mark_user_verified(db, user)
@@ -29,7 +29,9 @@ def verify_email(data: schemas.VerifyEmailRequest, db: Session = Depends(get_db)
                 display_name = patient.full_name
 
         try:
-            email_service.send_welcome_email(user.email, display_name or "there", user.role)
+            email_service.send_welcome_email(
+                user.email, display_name or "there", user.role
+            )
         except Exception as e:
             print(f"Failed to send welcome email: {e}")
 
@@ -38,7 +40,11 @@ def verify_email(data: schemas.VerifyEmailRequest, db: Session = Depends(get_db)
 
 @router.post("/resend-verification")
 @limiter.limit("3/hour")
-def resend_verification(request: Request, data: schemas.ResendVerificationRequest, db: Session = Depends(get_db)):
+def resend_verification(
+    request: Request,
+    data: schemas.ResendVerificationRequest,
+    db: Session = Depends(get_db),
+):
     user = user_repository.get_user_by_email(db, data.email)
     if user and not user.is_verified:
         token = auth_service.generate_email_verification_token()
@@ -51,8 +57,12 @@ def resend_verification(request: Request, data: schemas.ResendVerificationReques
                 display_name = patient.full_name
 
         try:
-            email_service.send_verification_email(user.email, display_name or "there", token)
+            email_service.send_verification_email(
+                user.email, display_name or "there", token
+            )
         except Exception as e:
             print(f"Failed to resend verification email: {e}")
 
-    return {"message": "If an account exists with that email and isn't verified yet, a new link has been sent."}
+    return {
+        "message": "If an account exists with that email and isn't verified yet, a new link has been sent."
+    }

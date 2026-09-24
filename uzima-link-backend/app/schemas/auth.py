@@ -1,7 +1,8 @@
-from pydantic import BaseModel, EmailStr, field_validator
-from typing import Optional, Literal
+from typing import Literal
+
 import phonenumbers
 from phonenumbers import NumberParseException
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 class PatientRegister(BaseModel):
@@ -10,9 +11,9 @@ class PatientRegister(BaseModel):
     gender: str
     phone_number: str
     id_type: str = "none"
-    national_id: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_phone: Optional[str] = None
+    national_id: str | None = None
+    guardian_name: str | None = None
+    guardian_phone: str | None = None
     email: EmailStr
     password: str
 
@@ -122,7 +123,7 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     role: str
-    verified: Optional[bool] = None
+    verified: bool | None = None
 
 
 class ForgotPasswordRequest(BaseModel):
@@ -154,7 +155,8 @@ class RegistrationPendingOut(BaseModel):
 
 class ResendVerificationRequest(BaseModel):
     email: EmailStr
-    
+
+
 class StaffLoginVerify(BaseModel):
     email: EmailStr
     otp: str

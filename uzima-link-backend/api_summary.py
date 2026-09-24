@@ -22,7 +22,13 @@ def resolve(node, depth=0):
     return node.get("type", "any")
 
 
-PREFIXES = ("/doctor/", "/frontdesk/", "/patient/prescriptions", "/patient/symptoms", "/patient/consent")
+PREFIXES = (
+    "/doctor/",
+    "/frontdesk/",
+    "/patient/prescriptions",
+    "/patient/symptoms",
+    "/patient/consent",
+)
 
 for path, methods in spec["paths"].items():
     if not path.startswith(PREFIXES) or "/auth/" in path or "/profile/" in path:
@@ -34,5 +40,7 @@ for path, methods in spec["paths"].items():
             print("  params", params)
         for ctype, c in op.get("requestBody", {}).get("content", {}).items():
             print("  request", ctype, json.dumps(resolve(c.get("schema", {}))))
-        for ctype, c in op.get("responses", {}).get("200", {}).get("content", {}).items():
+        for ctype, c in (
+            op.get("responses", {}).get("200", {}).get("content", {}).items()
+        ):
             print("  response", json.dumps(resolve(c.get("schema", {}))))

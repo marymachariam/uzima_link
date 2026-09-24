@@ -10,7 +10,7 @@ from config import settings
 # ---------------------------------------------------------------------------
 # Canvas – portrait / almost-square card
 # ---------------------------------------------------------------------------
-LOGICAL_W, LOGICAL_H = 540, 720          # tall enough for all content
+LOGICAL_W, LOGICAL_H = 540, 720  # tall enough for all content
 FINAL_W, FINAL_H = 600, 800
 SUPERSAMPLE = 2
 K = FINAL_W * SUPERSAMPLE / LOGICAL_W
@@ -40,23 +40,43 @@ ASSET_FONT_DIR = os.path.join(
 )
 
 _REGULAR = [
-    "Inter-Regular.ttf", "Ubuntu-R.ttf", "NotoSans-Regular.ttf",
-    "LiberationSans-Regular.ttf", "DejaVuSans.ttf", "arial.ttf", "Arial.ttf",
+    "Inter-Regular.ttf",
+    "Ubuntu-R.ttf",
+    "NotoSans-Regular.ttf",
+    "LiberationSans-Regular.ttf",
+    "DejaVuSans.ttf",
+    "arial.ttf",
+    "Arial.ttf",
 ]
 _FONT_FILES = {
     "regular": _REGULAR,
     "bold": [
-        "Inter-Bold.ttf", "Ubuntu-B.ttf", "NotoSans-Bold.ttf",
-        "LiberationSans-Bold.ttf", "DejaVuSans-Bold.ttf", "arialbd.ttf", "Arial Bold.ttf",
+        "Inter-Bold.ttf",
+        "Ubuntu-B.ttf",
+        "NotoSans-Bold.ttf",
+        "LiberationSans-Bold.ttf",
+        "DejaVuSans-Bold.ttf",
+        "arialbd.ttf",
+        "Arial Bold.ttf",
     ],
     "italic": [
-        "Inter-Italic.ttf", "Ubuntu-RI.ttf", "NotoSans-Italic.ttf",
-        "LiberationSans-Italic.ttf", "DejaVuSans-Oblique.ttf", "ariali.ttf", "Arial Italic.ttf",
+        "Inter-Italic.ttf",
+        "Ubuntu-RI.ttf",
+        "NotoSans-Italic.ttf",
+        "LiberationSans-Italic.ttf",
+        "DejaVuSans-Oblique.ttf",
+        "ariali.ttf",
+        "Arial Italic.ttf",
     ],
     "mono": [
-        "JetBrainsMono-Regular.ttf", "UbuntuMono-R.ttf", "LiberationMono-Regular.ttf",
-        "DejaVuSansMono.ttf", "cour.ttf", "Courier New.ttf",
-    ] + _REGULAR,
+        "JetBrainsMono-Regular.ttf",
+        "UbuntuMono-R.ttf",
+        "LiberationMono-Regular.ttf",
+        "DejaVuSansMono.ttf",
+        "cour.ttf",
+        "Courier New.ttf",
+    ]
+    + _REGULAR,
 }
 _FONT_CACHE = {}
 
@@ -170,10 +190,13 @@ def _ring(draw, cx, cy, r, x, y, size, color):
     s = size / 24
     draw.ellipse(
         [
-            px(x + (cx - r) * s), px(y + (cy - r) * s),
-            px(x + (cx + r) * s), px(y + (cy + r) * s),
+            px(x + (cx - r) * s),
+            px(y + (cy - r) * s),
+            px(x + (cx + r) * s),
+            px(y + (cy + r) * s),
         ],
-        outline=color, width=_stroke_width(size),
+        outline=color,
+        width=_stroke_width(size),
     )
 
 
@@ -181,10 +204,14 @@ def _box(draw, x0, y0, x1, y1, radius, x, y, size, color):
     s = size / 24
     draw.rounded_rectangle(
         [
-            px(x + x0 * s), px(y + y0 * s),
-            px(x + x1 * s), px(y + y1 * s),
+            px(x + x0 * s),
+            px(y + y0 * s),
+            px(x + x1 * s),
+            px(y + y1 * s),
         ],
-        radius=px(radius * s), outline=color, width=_stroke_width(size),
+        radius=px(radius * s),
+        outline=color,
+        width=_stroke_width(size),
     )
 
 
@@ -197,9 +224,21 @@ def _icon_card(d, x, y, size, color):
 def _icon_shield(d, x, y, size, color):
     _stroke(
         d,
-        [(12, 2.5), (20, 5.5), (20, 12), (17.5, 17), (12, 21.5),
-         (6.5, 17), (4, 12), (4, 5.5), (12, 2.5)],
-        x, y, size, color,
+        [
+            (12, 2.5),
+            (20, 5.5),
+            (20, 12),
+            (17.5, 17),
+            (12, 21.5),
+            (6.5, 17),
+            (4, 12),
+            (4, 5.5),
+            (12, 2.5),
+        ],
+        x,
+        y,
+        size,
+        color,
     )
     _stroke(d, [(8.5, 12), (11, 14.5), (15.5, 9.5)], x, y, size, color)
 
@@ -208,9 +247,20 @@ def _icon_user(d, x, y, size, color):
     _ring(d, 12, 7, 4, x, y, size, color)
     _stroke(
         d,
-        [(4, 21), (4, 19), (5.3, 16.3), (8, 15), (16, 15),
-         (18.7, 16.3), (20, 19), (20, 21)],
-        x, y, size, color,
+        [
+            (4, 21),
+            (4, 19),
+            (5.3, 16.3),
+            (8, 15),
+            (16, 15),
+            (18.7, 16.3),
+            (20, 19),
+            (20, 21),
+        ],
+        x,
+        y,
+        size,
+        color,
     )
 
 
@@ -222,7 +272,9 @@ def _icon_calendar(d, x, y, size, color):
 
 
 def _icon_pulse(d, x, y, size, color):
-    _stroke(d, [(22, 12), (18, 12), (15, 21), (9, 3), (6, 12), (2, 12)], x, y, size, color)
+    _stroke(
+        d, [(22, 12), (18, 12), (15, 21), (9, 3), (6, 12), (2, 12)], x, y, size, color
+    )
 
 
 def _icon_check(d, x, y, size, color):
@@ -236,14 +288,28 @@ def _pill(draw, x, y, w, h, fill, outline=None, outline_w=1.4):
     box = [px(x), px(y), px(x + w), px(y + h)]
     if outline:
         draw.rounded_rectangle(
-            box, radius=px(h / 2), fill=fill, outline=outline, width=max(1, px(outline_w))
+            box,
+            radius=px(h / 2),
+            fill=fill,
+            outline=outline,
+            width=max(1, px(outline_w)),
         )
     else:
         draw.rounded_rectangle(box, radius=px(h / 2), fill=fill)
 
 
-def _info_pill(draw, x, y, icon, label, value, fill=PILL_DARK,
-               label_color=None, value_color=WHITE, icon_color=MUTED):
+def _info_pill(
+    draw,
+    x,
+    y,
+    icon,
+    label,
+    value,
+    fill=PILL_DARK,
+    label_color=None,
+    value_color=WHITE,
+    icon_color=MUTED,
+):
     h = 32
     label_font, value_font = _font(15), _font(15, bold=True)
     label_text = label + " "
@@ -285,7 +351,9 @@ def _allergy_chip(draw, x, y, allergen, severity, right=None, draw_it=True):
         cy = y + CHIP_H / 2
         draw.ellipse([px(x + 12), px(cy - 4), px(x + 20), px(cy + 4)], fill=dot_color)
         _text(draw, (px(x + 28), px(cy)), name, name_font, text_color)
-        _text(draw, (px(x + 28 + name_w), px(cy)), sev_text, sev_font, (*text_color, 190))
+        _text(
+            draw, (px(x + 28 + name_w), px(cy)), sev_text, sev_font, (*text_color, 190)
+        )
     return width
 
 
@@ -298,7 +366,9 @@ def _more_chip(draw, x, y, count):
 
 
 def _draw_allergies(draw, allergies, x0, y, right):
-    ordered = sorted(allergies, key=lambda a: _SEVERITY_ORDER.get(str(a.severity).lower(), 3))
+    ordered = sorted(
+        allergies, key=lambda a: _SEVERITY_ORDER.get(str(a.severity).lower(), 3)
+    )
     x = x0
     for i, a in enumerate(ordered):
         remaining = len(ordered) - i - 1
@@ -307,14 +377,25 @@ def _draw_allergies(draw, allergies, x0, y, right):
         if i > 0 and x + measured + reserve > right:
             _more_chip(draw, x, y, len(ordered) - i)
             return
-        x += _allergy_chip(draw, x, y, a.allergen, a.severity, right=right - reserve) + 8
+        x += (
+            _allergy_chip(draw, x, y, a.allergen, a.severity, right=right - reserve) + 8
+        )
 
 
 def _no_allergy_chip(draw, x, y):
     font = _font(14, bold=True)
     text = "No known allergies on record"
     w = 12 + 16 + 6 + draw.textlength(text, font=font) / K + 12
-    _pill(draw, x, y, w, CHIP_H, (52, 211, 153, 40), outline=(52, 211, 153, 110), outline_w=1.1)
+    _pill(
+        draw,
+        x,
+        y,
+        w,
+        CHIP_H,
+        (52, 211, 153, 40),
+        outline=(52, 211, 153, 110),
+        outline_w=1.1,
+    )
     _icon_check(draw, x + 12, y + (CHIP_H - 16) / 2, 16, (110, 231, 183))
     _text(draw, (px(x + 34), px(y + CHIP_H / 2)), text, font, (209, 250, 229))
 
@@ -354,10 +435,16 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
     d.polygon([(px(280), 0), (W, 0), (W, px(200))], fill=(255, 255, 255, 12))
 
     # ---- Header ----
-    d.rounded_rectangle([px(MARGIN), px(28), px(MARGIN + 44), px(72)], radius=px(10), fill=(255, 255, 255, 40))
+    d.rounded_rectangle(
+        [px(MARGIN), px(28), px(MARGIN + 44), px(72)],
+        radius=px(10),
+        fill=(255, 255, 255, 40),
+    )
     _icon_card(d, MARGIN + 10, 38, 22, WHITE)
     _text(d, (px(MARGIN + 56), px(40)), "Uzima Link", _font(22, bold=True), WHITE)
-    _spaced(d, MARGIN + 56, 60, "OFFICIAL MEDICAL ID", _font(11), (*MUTED, 210), spacing=1.6)
+    _spaced(
+        d, MARGIN + 56, 60, "OFFICIAL MEDICAL ID", _font(11), (*MUTED, 210), spacing=1.6
+    )
 
     # Verified badge – top right, smaller
     badge_font = _font(13, bold=True)
@@ -374,12 +461,17 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
     photo = _load_patient_photo(getattr(patient, "photo_url", None), px(ad))
     if photo:
         mask = Image.new("L", photo.size, 0)
-        ImageDraw.Draw(mask).ellipse([0, 0, photo.size[0] - 1, photo.size[1] - 1], fill=255)
+        ImageDraw.Draw(mask).ellipse(
+            [0, 0, photo.size[0] - 1, photo.size[1] - 1], fill=255
+        )
         card.paste(photo, (px(ax), px(ay)), mask)
     else:
         _icon_user(d, ax + 21, ay + 21, 36, WHITE)
-    d.ellipse([px(ax), px(ay), px(ax + ad), px(ay + ad)],
-              outline=(255, 255, 255, 100), width=max(1, px(2.2)))
+    d.ellipse(
+        [px(ax), px(ay), px(ax + ad), px(ay + ad)],
+        outline=(255, 255, 255, 100),
+        width=max(1, px(2.2)),
+    )
 
     name = _clean(getattr(patient, "full_name", None)) or "Unknown patient"
     size = 24
@@ -391,7 +483,13 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
     _text(d, (px(ax + ad + 16), px(108)), name, name_font, WHITE)
 
     uid = _clean(getattr(patient, "system_uid", None)) or "N/A"
-    _text(d, (px(ax + ad + 16), px(138)), f"ID: {uid}", _font(15, mono=True), (*MUTED, 230))
+    _text(
+        d,
+        (px(ax + ad + 16), px(138)),
+        f"ID: {uid}",
+        _font(15, mono=True),
+        (*MUTED, 230),
+    )
 
     # ---- Info pills (wrap to two rows if needed) ----
     pill_y = 188
@@ -407,11 +505,20 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
         w = _info_pill(d, pill_x, pill_y, _icon_user, "Gender:", gender.title())
         pill_x += w + gap
 
-    blood = _clean(getattr(patient, "blood_group", None)) or _clean(getattr(patient, "blood_type", None))
+    blood = _clean(getattr(patient, "blood_group", None)) or _clean(
+        getattr(patient, "blood_type", None)
+    )
     if blood:
         # if it doesn't fit on the same line, move to next line
         remaining = right - pill_x
-        test_w = 14 + 16 + 7 + d.textlength("Blood: ", font=_font(15)) / K + d.textlength(blood, font=_font(15, bold=True)) / K + 14
+        test_w = (
+            14
+            + 16
+            + 7
+            + d.textlength("Blood: ", font=_font(15)) / K
+            + d.textlength(blood, font=_font(15, bold=True)) / K
+            + 14
+        )
         if test_w > remaining and pill_x > MARGIN + 10:
             pill_x = MARGIN
             pill_y += 40
@@ -424,7 +531,13 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
 
     def detail_row(label, value, y_pos):
         _spaced(d, MARGIN, y_pos, label, label_font, (*MUTED, 190), spacing=1.4)
-        _text(d, (px(MARGIN), px(y_pos + 20)), _fit(d, value, value_font, right - MARGIN), value_font, WHITE)
+        _text(
+            d,
+            (px(MARGIN), px(y_pos + 20)),
+            _fit(d, value, value_font, right - MARGIN),
+            value_font,
+            WHITE,
+        )
         return y_pos + 48
 
     phone = _clean(getattr(patient, "phone_number", None)) or "No phone on record"
@@ -445,8 +558,15 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
     # ---- Allergies ----
     y += 8
     has_allergies = len(allergies) > 0
-    _spaced(d, MARGIN, y, "CRITICAL ALLERGIES", label_font,
-            (252, 165, 165, 230) if has_allergies else (*MUTED, 190), spacing=1.4)
+    _spaced(
+        d,
+        MARGIN,
+        y,
+        "CRITICAL ALLERGIES",
+        label_font,
+        (252, 165, 165, 230) if has_allergies else (*MUTED, 190),
+        spacing=1.4,
+    )
     y += 22
     if has_allergies:
         _draw_allergies(d, allergies, MARGIN, y, right)
@@ -455,27 +575,38 @@ def generate_health_card_image(patient, allergies: list) -> Image.Image:
     y += 42
 
     # ---- Divider ----
-    d.line([(px(MARGIN), px(y)), (px(right), px(y))],
-           fill=(255, 255, 255, 35), width=max(1, px(1.2)))
+    d.line(
+        [(px(MARGIN), px(y)), (px(right), px(y))],
+        fill=(255, 255, 255, 35),
+        width=max(1, px(1.2)),
+    )
     y += 18
 
     # ---- Footer: QR + text ----
     tile = 86
-    d.rounded_rectangle([px(MARGIN), px(y), px(MARGIN + tile), px(y + tile)],
-                        radius=px(12), fill=WHITE)
+    d.rounded_rectangle(
+        [px(MARGIN), px(y), px(MARGIN + tile), px(y + tile)], radius=px(12), fill=WHITE
+    )
     qr_img = _build_qr(uid, px(tile - 14))
     card.paste(
         qr_img,
-        (px(MARGIN) + (px(tile) - qr_img.width) // 2,
-         px(y) + (px(tile) - qr_img.height) // 2),
+        (
+            px(MARGIN) + (px(tile) - qr_img.width) // 2,
+            px(y) + (px(tile) - qr_img.height) // 2,
+        ),
     )
 
     # Text next to QR
     text_x = MARGIN + tile + 16
     mid = y + tile / 2
     _text(d, (px(text_x), px(mid - 14)), "Scan to verify", _font(16, bold=True), WHITE)
-    _text(d, (px(text_x), px(mid + 10)), "Emergency clinical records",
-          _font(13, italic=True), (*MUTED, 200))
+    _text(
+        d,
+        (px(text_x), px(mid + 10)),
+        "Emergency clinical records",
+        _font(13, italic=True),
+        (*MUTED, 200),
+    )
 
     # ---- Finish ----
     card = card.resize((FINAL_W, FINAL_H), Image.LANCZOS)

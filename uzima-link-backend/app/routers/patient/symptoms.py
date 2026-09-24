@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
-from sqlalchemy.orm import Session
 import io
 
-from database import get_db
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.visit_repository as visit_repository
-import app.services.transcription_service as transcription_service
-import app.models as models
-import app.schemas as schemas
+from app.repository import visit_repository
+from app.services import transcription_service
+from database import get_db
 
 router = APIRouter(prefix="/patient/symptoms", tags=["patient-symptoms"])
 
@@ -33,7 +33,14 @@ def log_symptoms_voice(
     db: Session = Depends(get_db),
     user: models.User = Depends(require_role("patient")),
 ):
-    if file.content_type not in ("audio/mpeg", "audio/mp4", "audio/wav", "audio/webm", "audio/ogg", "audio/x-m4a"):
+    if file.content_type not in (
+        "audio/mpeg",
+        "audio/mp4",
+        "audio/wav",
+        "audio/webm",
+        "audio/ogg",
+        "audio/x-m4a",
+    ):
         raise HTTPException(status_code=400, detail="Unsupported audio format")
 
     audio_bytes = file.file.read()
@@ -47,6 +54,7 @@ def log_symptoms_voice(
         )
     except Exception as e:
         import traceback
+
         traceback.print_exc()
         raise HTTPException(status_code=502, detail=f"Audio processing failed: {e}")
 

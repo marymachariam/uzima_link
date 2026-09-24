@@ -1,7 +1,7 @@
 from sqlalchemy import text
 
-from database import Base, engine
 import app.models  # noqa: F401
+from database import Base, engine
 
 with engine.connect() as conn:
     conn.execute(text("DROP SCHEMA public CASCADE"))

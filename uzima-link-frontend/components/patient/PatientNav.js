@@ -1,22 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link"; 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./PatientNav.module.css";
-import { 
-  LayoutDashboard, 
-  Activity, 
-  AlertTriangle, 
-  Pill, 
-  CreditCard, 
-  FileText, 
-  ShieldCheck, 
-  User, 
+import Image from "next/image";
+import {
+  LayoutDashboard,
+  Activity,
+  AlertTriangle,
+  Pill,
+  CreditCard,
+  FileText,
+  ShieldCheck,
+  User,
   LogOut,
   Menu,
-  X
+  X,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -45,11 +46,17 @@ export default function PatientNav() {
       {/* Desktop Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.brandContainer}>
-          <div className={styles.brandLogo}>
-            <div className={styles.brandDot} />
-          </div>
           <div className={styles.brandText}>
-            <span className={styles.brandTitle}>Uzima Link</span>
+            <span className={styles.brandTitle}>
+              <Image
+                src="/logo1.png"
+                alt="Uzima Link"
+                width={200}
+                height={200}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
             <span className={styles.brandSubtitle}>Patient Portal</span>
           </div>
         </div>
@@ -60,7 +67,11 @@ export default function PatientNav() {
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
-              <Link key={href} href={href} className={`${styles.link} ${active ? styles.linkActive : ""}`}>
+              <Link
+                key={href}
+                href={href}
+                className={`${styles.link} ${active ? styles.linkActive : ""}`}
+              >
                 <Icon size={20} className={styles.linkIcon} />
                 <span>{label}</span>
               </Link>
@@ -84,8 +95,8 @@ export default function PatientNav() {
           </div>
           <span className={styles.mobileBrandTitle}>Uzima Link</span>
         </div>
-        <button 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className={styles.menuToggleButton}
           aria-label="Toggle Menu"
         >
@@ -95,11 +106,20 @@ export default function PatientNav() {
 
       {/* Mobile Full-Screen Slide-out Drawer (Holds all 8 links + Logout) */}
       {mobileMenuOpen && (
-        <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
-          <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={styles.mobileDrawerOverlay}
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div
+            className={styles.mobileDrawer}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className={styles.drawerHeader}>
               <span className={styles.drawerTitle}>All Menu Options</span>
-              <button onClick={() => setMobileMenuOpen(false)} className={styles.closeButton}>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className={styles.closeButton}
+              >
                 <X size={20} />
               </button>
             </div>
@@ -107,9 +127,9 @@ export default function PatientNav() {
               {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active = pathname === href;
                 return (
-                  <Link 
-                    key={href} 
-                    href={href} 
+                  <Link
+                    key={href}
+                    href={href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`${styles.drawerLink} ${active ? styles.drawerLinkActive : ""}`}
                   >
@@ -132,14 +152,18 @@ export default function PatientNav() {
         {NAV_ITEMS.slice(0, 4).map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
-            <Link key={href} href={href} className={`${styles.bottomLink} ${active ? styles.bottomLinkActive : ""}`}>
+            <Link
+              key={href}
+              href={href}
+              className={`${styles.bottomLink} ${active ? styles.bottomLinkActive : ""}`}
+            >
               <Icon size={20} />
               <span>{label}</span>
             </Link>
           );
         })}
-        <button 
-          onClick={() => setMobileMenuOpen(true)} 
+        <button
+          onClick={() => setMobileMenuOpen(true)}
           className={styles.bottomLink}
         >
           <Menu size={20} />

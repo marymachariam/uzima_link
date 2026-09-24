@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-import app.services.assistant_service as assistant_service
-import app.schemas as schemas
+from app import schemas
+from app.services import assistant_service
 
 router = APIRouter(prefix="/assistant", tags=["assistant"])
 

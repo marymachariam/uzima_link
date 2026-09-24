@@ -1,39 +1,38 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from apscheduler.schedulers.background import BackgroundScheduler
 
-from database import Base, engine, SessionLocal
+import app.models
 from app.core.limiter import limiter
-import app.models  # noqa: F401
-import app.services.kmhfr_sync_service as kmhfr_sync_service
-
-from app.routers.auth.patient import router as patient_auth_router
 from app.routers.auth.doctor import router as doctor_auth_router
 from app.routers.auth.frontdesk import router as frontdesk_auth_router
+from app.routers.auth.patient import router as patient_auth_router
 from app.routers.auth.verification import router as auth_verification_router
+from app.routers.doctor.consultation import router as doctor_consultation_router
 from app.routers.doctor.kyc import router as doctor_kyc_router
+from app.routers.doctor.patient_records import router as doctor_patient_records_router
+from app.routers.doctor.prescriptions import router as doctor_prescriptions_router
+from app.routers.doctor.profile import router as doctor_profile_router
+from app.routers.doctor.queue import router as doctor_queue_router
+from app.routers.doctor.visits import router as doctor_visits_router
+from app.routers.frontdesk.checkin import router as frontdesk_checkin_router
+from app.routers.frontdesk.patients import router as frontdesk_patients_router
+from app.routers.frontdesk.profile import router as frontdesk_profile_router
+from app.routers.frontdesk.queue import router as frontdesk_queue_router
+from app.routers.patient.allergies import router as patient_allergies_router
+from app.routers.patient.consent import router as patient_consent_router
+from app.routers.patient.health_card import router as patient_health_card_router
+from app.routers.patient.kyc import router as patient_kyc_router
+from app.routers.patient.medicine import router as patient_medicine_router
+from app.routers.patient.prescriptions import router as patient_prescriptions_router
 from app.routers.patient.profile import router as patient_profile_router
 from app.routers.patient.symptoms import router as patient_symptoms_router
-from app.routers.patient.allergies import router as patient_allergies_router
-from app.routers.patient.health_card import router as patient_health_card_router
-from app.routers.patient.medicine import router as patient_medicine_router
-from app.routers.patient.kyc import router as patient_kyc_router
-from app.routers.patient.consent import router as patient_consent_router
-from app.routers.patient.prescriptions import router as patient_prescriptions_router
-from app.routers.doctor.profile import router as doctor_profile_router
-from app.routers.doctor.patient_records import router as doctor_patient_records_router
-from app.routers.doctor.visits import router as doctor_visits_router
-from app.routers.doctor.consultation import router as doctor_consultation_router
-from app.routers.doctor.prescriptions import router as doctor_prescriptions_router
-from app.routers.doctor.queue import router as doctor_queue_router
-from app.routers.frontdesk.profile import router as frontdesk_profile_router
-from app.routers.frontdesk.patients import router as frontdesk_patients_router
-from app.routers.frontdesk.checkin import router as frontdesk_checkin_router
-from app.routers.frontdesk.queue import router as frontdesk_queue_router
 from app.routers.shared.admin import router as shared_admin_router
 from app.routers.shared.assistant import router as assistant_router
+from app.services import kmhfr_sync_service
+from database import Base, SessionLocal, engine
 
 app = FastAPI(title="Uzima Link API")
 app.state.limiter = limiter
@@ -91,7 +90,9 @@ def run_facility_sync():
 
 @app.on_event("startup")
 def start_scheduler():
-    scheduler.add_job(run_facility_sync, "interval", days=1, id="kmhfr_sync", replace_existing=True)
+    scheduler.add_job(
+        run_facility_sync, "interval", days=1, id="kmhfr_sync", replace_existing=True
+    )
     scheduler.start()
 
 

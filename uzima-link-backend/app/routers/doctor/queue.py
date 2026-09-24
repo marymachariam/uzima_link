@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.queue_repository as queue_repository
-import app.models as models
-import app.schemas as schemas
+from app.repository import queue_repository
+from database import get_db
 
 router = APIRouter(prefix="/doctor/queue", tags=["doctor-queue"])
 
@@ -29,7 +28,9 @@ def get_my_facility_queue(
     db: Session = Depends(get_db),
     user: models.User = Depends(require_role("doctor")),
 ):
-    entries = queue_repository.get_queue_for_facility(db, user.facility_id, status="waiting")
+    entries = queue_repository.get_queue_for_facility(
+        db, user.facility_id, status="waiting"
+    )
     return [_to_out(e) for e in entries]
 
 

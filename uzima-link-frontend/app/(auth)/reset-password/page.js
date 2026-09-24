@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { patientResetPassword } from "@/lib/endpoints";
 import styles from "../auth.module.css";
+import Image from "next/image";
 
 function EyeIcon({ open }) {
   return open ? (
@@ -48,8 +49,16 @@ function ResetPasswordContent() {
     <div className={styles.page}>
       <div className={styles.leftPanel}>
         <div className={styles.leftBrand}>
-          <div className={styles.leftBrandDot} />
-          <span className={styles.leftBrandName}>Uzima Link</span>
+           <span className={styles.leftBrandName}>
+            <Image
+              src="/logo1.png"
+              alt="Uzima Link"
+              width={100}
+              height={100}
+              className={styles.brandLogo}
+              priority
+            />
+            </span>
         </div>
         <img src="/image.png" alt="" className={styles.leftImage} />
         <p className={styles.leftCaption}>Your health record, wherever care finds you.</p>

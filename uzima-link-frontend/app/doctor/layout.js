@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { clearSession } from "@/lib/auth";
 import styles from "./layout.module.css";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 export default function DoctorLayout({ children }) {
   const pathname = usePathname();
@@ -36,8 +37,16 @@ export default function DoctorLayout({ children }) {
       {/* Mobile Top App Bar */}
       <header className={styles.mobileTopBar}>
         <div className={styles.brand}>
-          <div className={styles.brandDot} />
-          <span className={styles.brandName}>Uzima Link</span>
+            <span className={styles.brandName}>
+              <Image
+                src="/logo.png"
+                alt="Uzima Link"
+                width={100}
+                height={100}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
         </div>
         <div className={styles.mobileTopActions}>
           <span className={styles.roleBadgeSmall}>Doctor</span>
@@ -91,8 +100,16 @@ export default function DoctorLayout({ children }) {
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
           <div className={styles.brand}>
-            <div className={styles.brandDot} />
-            <span className={styles.brandName}>Uzima Link</span>
+              <span className={styles.brandName}>
+              <Image
+                src="/logo.png"
+                alt="Uzima Link"
+                width={100}
+                height={100}
+                className={styles.brandLogo}
+                priority
+              />
+            </span>
           </div>
           <span className={styles.roleBadge}>Doctor Portal</span>
         </div>

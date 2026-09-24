@@ -1,8 +1,9 @@
-from sqlalchemy import Column, String, DateTime
+import uuid
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from datetime import datetime
-import uuid
 
 from database import Base
 
@@ -20,7 +21,9 @@ class Facility(Base):
 
     invite_code = Column(String, unique=True, index=True, nullable=True)
 
-    source = Column(String, nullable=False, default="manual")  # "manual" | "kmhfr_seed" | "kmhfr_sync" | "doctor_reported"
+    source = Column(
+        String, nullable=False, default="manual"
+    )  # "manual" | "kmhfr_seed" | "kmhfr_sync" | "doctor_reported"
     last_synced_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

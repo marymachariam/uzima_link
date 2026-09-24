@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from database import get_db
+from app import models, schemas
 from app.core.dependencies import require_role
-import app.repository.user_repository as user_repository
-import app.services.cloudinary_service as cloudinary_service
-import app.models as models
-import app.schemas as schemas
+from app.repository import user_repository
+from app.services import cloudinary_service
+from database import get_db
 
 router = APIRouter(prefix="/frontdesk/profile", tags=["frontdesk-profile"])
 
@@ -22,7 +21,9 @@ def update_my_profile(
     db: Session = Depends(get_db),
     user: models.User = Depends(require_role("kiosk_operator")),
 ):
-    return user_repository.update_user_profile(db, user, full_name=data.full_name, specialty=data.specialty)
+    return user_repository.update_user_profile(
+        db, user, full_name=data.full_name, specialty=data.specialty
+    )
 
 
 @router.post("/me/photo", response_model=schemas.StaffProfileOut)
