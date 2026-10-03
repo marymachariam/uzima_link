@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Fraunces, Inter } from "next/font/google";
 import styles from "./page.module.css";
 import Image from "next/image";
+import { Mic, QrCode, Pill, ShieldCheck } from "lucide-react";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -154,22 +155,22 @@ export default function LandingPage() {
         </div>
         <div className={styles.featureGrid}>
           <FeatureCard
-            icon="🗣️"
+            icon={<Mic size={22} strokeWidth={2} />}
             title="Speak naturally"
-            description="Tell us how you're feeling in your own words  typed or spoken, in any language. Your words are automatically translated and organized into symptoms, conditions, and medications your doctor can act on immediately."
+            description="Tell us how you're feeling in your own words, typed or spoken, in any language. Your words are automatically translated and organized into symptoms, conditions, and medications your doctor can act on immediately."
           />
           <FeatureCard
-            icon=""
+            icon={<QrCode size={22} strokeWidth={2} />}
             title="A health card that travels with you"
             description="Download a digital health card with a secure scannable code. Any doctor at any participating facility can pull up your history safely in seconds."
           />
           <FeatureCard
-            icon=""
+            icon={<Pill size={22} strokeWidth={2} />}
             title="Know what you're taking"
             description="Check any medicine by name before you take it, and see plain-language safety info sourced directly from verified medical databases."
           />
           <FeatureCard
-            icon=""
+            icon={<ShieldCheck size={22} strokeWidth={2} />}
             title="You control your record"
             description="Your identity is verified once, and every facility must request explicit permission before viewing your history. Nothing is ever shared without your consent."
           />
