@@ -22,3 +22,16 @@ class QueueEntryOut(BaseModel):
     status: str
     created_at: datetime
     updated_at: datetime
+
+
+class QueueEntryOut(BaseModel):
+    id: UUID
+    patient_id: UUID
+    patient_name: str | None = None
+    patient_system_uid: str | None = None
+    facility_id: UUID
+    assigned_doctor_id: UUID | None = None
+    status: str
+    created_at: datetime
+    updated_at: datetime
+    position: int | None = None

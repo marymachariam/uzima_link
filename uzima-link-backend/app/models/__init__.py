@@ -10,3 +10,5 @@ from app.models.prescription import Prescription
 from app.models.queue_entry import QueueEntry
 from app.models.user import User
 from app.models.visit import Visit
+from app.models.appointment import Appointment
+from app.models.availability_slot import AvailabilitySlot

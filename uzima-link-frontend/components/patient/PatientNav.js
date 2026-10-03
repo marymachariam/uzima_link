@@ -14,6 +14,7 @@ import {
   CreditCard,
   FileText,
   ShieldCheck,
+  CalendarDays,
   User,
   LogOut,
   Menu,
@@ -27,6 +28,9 @@ const NAV_ITEMS = [
   { href: "/patient/medicine", label: "Medicine", icon: Pill },
   { href: "/patient/health-card", label: "Health Card", icon: CreditCard },
   { href: "/patient/prescriptions", label: "Prescriptions", icon: FileText },
+  { href: "/patient/consent", label: "Consent", icon: ShieldCheck },
+  { href: "/patient/prescriptions", label: "Prescriptions", icon: FileText },
+  { href: "/patient/appointments", label: "Appointments", icon: CalendarDays },
   { href: "/patient/consent", label: "Consent", icon: ShieldCheck },
   { href: "/patient/profile", label: "Profile", icon: User },
 ];

@@ -47,3 +47,31 @@ def update_status(
     db.commit()
     db.refresh(entry)
     return entry
+
+
+def get_active_entry_for_patient(db: Session, patient_id: UUID) -> models.QueueEntry | None:
+    return (
+        db.query(models.QueueEntry)
+        .filter(
+            models.QueueEntry.patient_id == patient_id,
+            models.QueueEntry.status.in_(["waiting", "in_progress"]),
+        )
+        .order_by(models.QueueEntry.created_at.desc())
+        .first()
+    )
+
+
+def get_position_in_queue(db: Session, entry: models.QueueEntry) -> int:
+    """1-based position among patients still waiting at the same facility, ordered by check-in time."""
+    if entry.status != "waiting":
+        return 0
+    ahead = (
+        db.query(models.QueueEntry)
+        .filter(
+            models.QueueEntry.facility_id == entry.facility_id,
+            models.QueueEntry.status == "waiting",
+            models.QueueEntry.created_at < entry.created_at,
+        )
+        .count()
+    )
+    return ahead + 1

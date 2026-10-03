@@ -29,9 +29,9 @@ export default function DoctorLayout({ children }) {
     { href: "/doctor", label: "Home", icon: "🏠" },
     { href: "/doctor/queue", label: "Queue", icon: "👥" },
     { href: "/doctor/scan", label: "Scan Patient", icon: "🔍" },
+    { href: "/doctor/appointments", label: "Appointments", icon: "📅" },
     { href: "/doctor/profile", label: "Profile", icon: "👤" },
   ];
-
   return (
     <div className={styles.dashboardContainer}>
       {/* Mobile Top App Bar */}

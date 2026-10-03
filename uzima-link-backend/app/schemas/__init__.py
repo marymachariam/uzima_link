@@ -56,3 +56,11 @@ from app.schemas.visit import (
     VisitNotesUpdate,
     VisitOut,
 )
+from app.schemas.appointment import (
+    AppointmentBook,
+    AppointmentOut,
+    DoctorListOut,
+    SlotCreate,
+    SlotOut,
+    FacilityListOut,
+)

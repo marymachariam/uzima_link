@@ -25,3 +25,8 @@ class Consent(Base):
     patient = relationship("Patient")
     facility = relationship("Facility")
     doctor = relationship("User")
+    
+    
+    @property
+    def facility_name(self):
+        return self.facility.name if self.facility else None

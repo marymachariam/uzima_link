@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/doctor/queue", label: "Queue", icon: QueueIcon },
   { href: "/doctor/scan", label: "Scan Patient", icon: ScanIcon, also: ["/doctor/consent", "/doctor/patients"] },
   { href: "/doctor/profile", label: "Profile", icon: UserIcon },
+  { href: "/patient/appointments", label: "Appointments", icon: CalendarDays },
 ];
 
 function isActive(item, pathname) {
