@@ -159,17 +159,17 @@ export default function LandingPage() {
             description="Tell us how you're feeling in your own words  typed or spoken, in any language. Your words are automatically translated and organized into symptoms, conditions, and medications your doctor can act on immediately."
           />
           <FeatureCard
-            icon="🪪"
+            icon=""
             title="A health card that travels with you"
             description="Download a digital health card with a secure scannable code. Any doctor at any participating facility can pull up your history safely in seconds."
           />
           <FeatureCard
-            icon="💊"
+            icon=""
             title="Know what you're taking"
             description="Check any medicine by name before you take it, and see plain-language safety info sourced directly from verified medical databases."
           />
           <FeatureCard
-            icon="🔒"
+            icon=""
             title="You control your record"
             description="Your identity is verified once, and every facility must request explicit permission before viewing your history. Nothing is ever shared without your consent."
           />

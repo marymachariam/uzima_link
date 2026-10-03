@@ -23,7 +23,7 @@ class Facility(Base):
 
     source = Column(
         String, nullable=False, default="manual"
-    )  # "manual" | "kmhfr_seed" | "kmhfr_sync" | "doctor_reported"
+    ) 
     last_synced_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

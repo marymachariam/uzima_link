@@ -310,3 +310,55 @@ export function uploadFrontdeskPhoto(formData) {
 export function sendAssistantMessage(message) {
   return apiRequest("/assistant/chat", { method: "POST", body: { message }, auth: false });
 }
+
+export function getMyQueueStatus() {
+  return apiRequest("/patient/queue/status", { method: "GET" });
+}
+
+// ---------- Appointments (patient) ----------
+
+export function getBookableFacilities() {
+  return apiRequest("/patient/appointments/facilities", { method: "GET" });
+}
+
+export function getBookableDoctors(facilityId) {
+  const query = facilityId ? `?facility_id=${facilityId}` : "";
+  return apiRequest(`/patient/appointments/doctors${query}`, { method: "GET" });
+}
+
+export function getDoctorOpenSlots(doctorId) {
+  return apiRequest(`/patient/appointments/doctors/${doctorId}/slots`, { method: "GET" });
+}
+
+export function bookAppointment(slotId) {
+  return apiRequest("/patient/appointments", { method: "POST", body: { slot_id: slotId } });
+}
+
+export function getMyAppointments() {
+  return apiRequest("/patient/appointments", { method: "GET" });
+}
+
+export function cancelMyAppointment(appointmentId) {
+  return apiRequest(`/patient/appointments/${appointmentId}`, { method: "DELETE" });
+}
+
+// ---------- Appointments (doctor) ----------
+
+export function getMySlots() {
+  return apiRequest("/doctor/appointments/slots", { method: "GET" });
+}
+
+export function createSlot(startTime, endTime) {
+  return apiRequest("/doctor/appointments/slots", {
+    method: "POST",
+    body: { start_time: startTime, end_time: endTime },
+  });
+}
+
+export function deleteSlot(slotId) {
+  return apiRequest(`/doctor/appointments/slots/${slotId}`, { method: "DELETE" });
+}
+
+export function getDoctorAppointments() {
+  return apiRequest("/doctor/appointments", { method: "GET" });
+}

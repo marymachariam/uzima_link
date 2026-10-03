@@ -1,0 +1,14 @@
+.banner {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+  border-radius: 0.6rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.inProgress {
+  background: #d1fae5;
+  border-color: #6ee7b7;
+}

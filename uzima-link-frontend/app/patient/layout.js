@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { isLoggedIn } from "@/lib/auth";
 import { getKycStatus } from "@/lib/endpoints";
 import PatientNav from "@/components/patient/PatientNav";
+import QueueStatusBanner from "@/components/patient/QueueStatusBanner";
 import styles from "./layout.module.css";
 
 export default function PatientLayout({ children }) {
@@ -41,7 +42,10 @@ export default function PatientLayout({ children }) {
   return (
     <div className={styles.shell}>
       <PatientNav />
-      <main className={styles.content}>{children}</main>
+      <main className={styles.content}>
+        <QueueStatusBanner />
+        {children}
+      </main>
     </div>
   );
 }

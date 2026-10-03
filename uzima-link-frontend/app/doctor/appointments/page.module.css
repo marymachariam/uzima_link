@@ -1,0 +1,20 @@
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 12px; font-weight: 700; color: #475569; }
+.input {
+  padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px;
+  font-size: 14px; background: #fff; color: #0f172a;
+}
+
+.slotChip { display: inline-flex; align-items: center; gap: 8px; cursor: default; }
+.slotBooked { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.bookedText { font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.iconButton {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; color: #b91c1c; cursor: pointer; padding: 2px;
+}
