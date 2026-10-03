@@ -39,3 +39,18 @@ class ConsentRequestOut(BaseModel):
 
 class ConsentRequestDecision(BaseModel):
     approve: bool
+
+
+class ConsentOut(BaseModel):
+    id: UUID
+    patient_id: UUID
+    facility_id: UUID | None = None
+    facility_name: str | None = None
+    doctor_id: UUID | None = None
+    scope: str
+    granted: bool
+    granted_at: datetime
+    revoked_at: datetime | None = None
+
+    class Config:
+        from_attributes = True

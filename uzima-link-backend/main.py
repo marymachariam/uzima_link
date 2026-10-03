@@ -33,6 +33,7 @@ from app.routers.shared.admin import router as shared_admin_router
 from app.routers.shared.assistant import router as assistant_router
 from app.services import kmhfr_sync_service
 from database import Base, SessionLocal, engine
+from app.routers.patient.queue import router as patient_queue_router
 
 app = FastAPI(title="Uzima Link API")
 app.state.limiter = limiter
@@ -53,8 +54,6 @@ app.include_router(patient_auth_router)
 app.include_router(doctor_auth_router)
 app.include_router(frontdesk_auth_router)
 app.include_router(auth_verification_router)
-
-# Everything else
 app.include_router(patient_profile_router)
 app.include_router(patient_symptoms_router)
 app.include_router(patient_allergies_router)
@@ -76,6 +75,7 @@ app.include_router(frontdesk_queue_router)
 app.include_router(shared_admin_router)
 app.include_router(doctor_kyc_router)
 app.include_router(assistant_router)
+app.include_router(patient_queue_router)
 
 scheduler = BackgroundScheduler()
 
