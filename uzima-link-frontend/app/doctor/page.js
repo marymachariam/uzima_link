@@ -47,28 +47,27 @@ export default function DoctorDashboard() {
       {/* Hero Welcome Banner */}
       <div className={styles.heroBanner}>
         <div className={styles.heroContent}>
-          <div className={styles.dateBadge}>📅 {currentTime}</div>
+          <div className={styles.dateBadge}>{currentTime}</div>
           <h1 className={styles.greeting}>
             Good day, Dr. {profile?.full_name?.split(" ")[0] || "Doctor"}
           </h1>
           <p className={styles.subtitle}>
-            <span>🏥 {facility?.name || "Watamu Hospital"}</span>
+            <span>{facility?.name || "Watamu Hospital"}</span>
             <span className={styles.dotDivider}>•</span>
-            <span>📍 {facility?.county || "County Facility"}</span>
+            <span>{facility?.county || "County Facility"}</span>
           </p>
         </div>
         <div className={styles.heroStatusWrapper}>
           <div className={profile?.kyc_verified ? styles.badgeGood : styles.badgeBad}>
             {profile?.kyc_verified ? "✓ Verified Practitioner" : "⚠ Pending Verification"}
           </div>
-          <span className={styles.dutyStatus}>● On Duty & Active</span>
+          <span className={styles.dutyStatus}>On Duty & Active</span>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className={styles.statsGrid}>
         <StatCard
-          icon="👥"
           label="Patients Waiting"
           value={waiting.length}
           href="/doctor/queue"
@@ -76,7 +75,6 @@ export default function DoctorDashboard() {
           description="In queue for consultation"
         />
         <StatCard
-          icon="⚡"
           label="In Progress"
           value={inProgress.length}
           href="/doctor/queue"
@@ -84,7 +82,6 @@ export default function DoctorDashboard() {
           description="Currently being examined"
         />
         <StatCard
-          icon="🏢"
           label="Facility County"
           value={facility?.county || "Kenya"}
           isText
@@ -106,7 +103,7 @@ export default function DoctorDashboard() {
           <div className={styles.queueCard}>
             {waiting.length === 0 && inProgress.length === 0 ? (
               <div className={styles.emptyQueue}>
-                <span className={styles.emptyIcon}>🎉</span>
+                <span className={styles.emptyIcon}></span>
                 <p className={styles.emptyText}>Queue is completely clear!</p>
                 <span className={styles.emptySubtext}>No patients are currently waiting at your facility.</span>
               </div>
@@ -149,21 +146,18 @@ export default function DoctorDashboard() {
           <div className={styles.actionsGrid}>
             <ActionCard
               href="/doctor/scan"
-              icon="🔍"
               title="Scan Patient Health Card"
               description="Look up complete medical records via QR code or manual ID."
               color="#0d9488"
             />
             <ActionCard
               href="/doctor/queue"
-              icon="📋"
               title="Manage Facility Queue"
               description="Monitor active consultations, triage status, and patient flow."
               color="#2563eb"
             />
             <ActionCard
               href="/doctor/profile"
-              icon="⚙️"
               title="Doctor Profile & Settings"
               description="Update medical credentials, profile photo, and specialty tags."
               color="#7c3aed"

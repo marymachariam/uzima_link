@@ -26,11 +26,11 @@ export default function DoctorLayout({ children }) {
   }
 
   const navItems = [
-    { href: "/doctor", label: "Home", icon: "🏠" },
-    { href: "/doctor/queue", label: "Queue", icon: "👥" },
-    { href: "/doctor/scan", label: "Scan Patient", icon: "🔍" },
-    { href: "/doctor/appointments", label: "Appointments", icon: "📅" },
-    { href: "/doctor/profile", label: "Profile", icon: "👤" },
+    { href: "/doctor", label: "Home" },
+    { href: "/doctor/queue", label: "Queue"},
+    { href: "/doctor/scan", label: "Scan Patient"},
+    { href: "/doctor/appointments", label: "Appointments" },
+    { href: "/doctor/profile", label: "Profile"},
   ];
   return (
     <div className={styles.dashboardContainer}>
@@ -88,7 +88,7 @@ export default function DoctorLayout({ children }) {
             </div>
             <div className={styles.drawerFooter}>
               <button onClick={handleLogout} className={styles.logoutButton}>
-                <span className={styles.navIcon}>🚪</span>
+                <span className={styles.navIcon}></span>
                 <span className={styles.navLabel}>Log out</span>
               </button>
             </div>
@@ -132,7 +132,7 @@ export default function DoctorLayout({ children }) {
 
         <div className={styles.sidebarBottom}>
           <button onClick={handleLogout} className={styles.logoutButton}>
-            <span className={styles.navIcon}>🚪</span>
+            <span className={styles.navIcon}></span>
             <span className={styles.navLabel}>Log out</span>
           </button>
         </div>

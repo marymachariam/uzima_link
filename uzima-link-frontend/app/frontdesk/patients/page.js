@@ -109,7 +109,7 @@ export default function KioskPatientsPage() {
 
       {checkedInMsg && (
         <div className={styles.successBox}>
-          <span className={styles.alertIcon}>✅</span>
+          <span className={styles.alertIcon}></span>
           <div>
             <p className={styles.alertTitle}>Check-in Successful</p>
             <p className={styles.alertDesc}>{checkedInMsg}</p>
@@ -119,7 +119,7 @@ export default function KioskPatientsPage() {
 
       {error && (
         <div className={styles.errorBox}>
-          <span className={styles.alertIcon}>⚠️</span>
+          <span className={styles.alertIcon}></span>
           <div>
             <p className={styles.alertTitle}>Action Required</p>
             <p className={styles.alertDesc}>{error}</p>
@@ -131,7 +131,7 @@ export default function KioskPatientsPage() {
         <div className={styles.contentCard}>
           <form onSubmit={handleSearch} className={styles.searchForm}>
             <div className={styles.inputWrapper}>
-              <span className={styles.searchIcon}>🔎</span>
+              <span className={styles.searchIcon}></span>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -161,7 +161,7 @@ export default function KioskPatientsPage() {
                     <p className={styles.cardMeta}>
                       <span className={styles.badgeUid}>{p.system_uid}</span>
                       <span>📞 {p.phone_number || "No phone on record"}</span>
-                      {p.national_id && <span>🆔 {p.national_id}</span>}
+                      {p.national_id && <span>{p.national_id}</span>}
                     </p>
                   </div>
                 </div>

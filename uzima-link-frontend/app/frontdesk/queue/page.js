@@ -70,7 +70,7 @@ export default function KioskQueuePage() {
         </div>
 
         <div className={styles.searchWrapper}>
-          <span className={styles.searchIcon}>🔍</span>
+          <span className={styles.searchIcon}></span>
           <input
             type="text"
             placeholder="Filter queue by patient name..."
@@ -89,7 +89,7 @@ export default function KioskQueuePage() {
         </div>
       ) : filteredQueue.length === 0 ? (
         <div className={styles.emptyStateCard}>
-          <span className={styles.emptyIcon}>📋</span>
+          <span className={styles.emptyIcon}></span>
           <p className={styles.emptyTitle}>No queue records found</p>
           <p className={styles.emptyDesc}>
             {queue.length === 0 ? "No one is checked into the facility right now." : "No patients match your active filter or search."}
