@@ -66,7 +66,6 @@ export default function KioskDashboard() {
             value={waiting.length}
             href="/frontdesk/queue"
             tone="waiting"
-            icon="⏳"
             description="Awaiting triage or consultation"
           />
           <StatCard
@@ -74,14 +73,12 @@ export default function KioskDashboard() {
             value={inProgress.length}
             href="/frontdesk/queue"
             tone="progress"
-            icon="🩺"
             description="Currently with a clinician"
           />
           <StatCard
             label="Facility County"
             value={facility?.county || "—"}
             isText
-            icon="📍"
             description="Registered regional station"
           />
         </div>
@@ -98,20 +95,17 @@ export default function KioskDashboard() {
             href="/frontdesk/patients"
             title="Register or Check-in"
             description="Search existing patient records or register a new walk-in arrival."
-            icon="👤"
             badge="Primary"
           />
           <ActionCard
             href="/frontdesk/queue"
             title="Live Facility Queue"
             description="Monitor everyone waiting and track patient status in real-time."
-            icon="📋"
           />
           <ActionCard
             href="/frontdesk/profile"
             title="Staff Profile & Code"
             description="View your credentials, upload photo, and check facility invite code."
-            icon="🛡️"
           />
         </div>
       </div>
