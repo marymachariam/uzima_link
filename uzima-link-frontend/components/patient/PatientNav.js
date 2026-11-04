@@ -29,7 +29,6 @@ const NAV_ITEMS = [
   { href: "/patient/health-card", label: "Health Card", icon: CreditCard },
   { href: "/patient/prescriptions", label: "Prescriptions", icon: FileText },
   { href: "/patient/consent", label: "Consent", icon: ShieldCheck },
-  { href: "/patient/prescriptions", label: "Prescriptions", icon: FileText },
   { href: "/patient/appointments", label: "Appointments", icon: CalendarDays },
   { href: "/patient/profile", label: "Profile", icon: User },
 ];
