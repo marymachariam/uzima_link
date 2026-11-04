@@ -32,7 +32,6 @@ export default function PatientLoginPage() {
           ? await patientLoginChooseChannel({ national_id: value, password, channel })
           : await patientLoginStart({ method, value, password });
 
-      // Save pending login info for the verification page and clear staff sessions
       sessionStorage.setItem("uzima_pending_login", JSON.stringify({ method, value }));
       sessionStorage.removeItem("uzima_pending_staff_login");
 
